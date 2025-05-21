@@ -1,4 +1,3 @@
-<!-- src/components/HelloWorld.vue -->
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useWindowSize, useRafFn } from '@vueuse/core'
