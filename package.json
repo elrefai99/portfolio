@@ -10,11 +10,17 @@
   },
   "dependencies": {
     "@vueuse/core": "^13.2.0",
+    "@vueuse/head": "^2.0.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@iconify-json/carbon": "^1.2.8",
+    "@iconify-json/ri": "^1.2.5",
+    "@unocss/reset": "^66.1.2",
     "@vitejs/plugin-vue": "^5.2.3",
+    "unocss": "^66.1.2",
     "vite": "^6.2.4",
-    "vite-plugin-vue-devtools": "^7.7.2"
+    "vite-plugin-vue-devtools": "^7.7.2",
+    "vue-meta": "^2.4.0"
   }
 }
