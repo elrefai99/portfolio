@@ -16,10 +16,9 @@ const MIN_BRANCH = 60
 const stopped = ref(false)
 
 function initCanvas(canvas: HTMLCanvasElement, width = 400, height = 400, _dpi?: number) {
-  const ctx = canvas.getContext('2d')!
+  const ctx: any = canvas.getContext('2d')!
   const dpr = window.devicePixelRatio || 1
   const bsr =
-    // @ts-expect-error vendor
     ctx.webkitBackingStorePixelRatio ||
     ctx.mozBackingStorePixelRatio ||
     ctx.msBackingStorePixelRatio ||
