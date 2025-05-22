@@ -4,12 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  dev:
-    vite:
-      specifier: ^5.3.1
-      version: 5.4.19
-
 importers:
 
   .:
@@ -63,9 +57,6 @@ importers:
       npm-run-all2:
         specifier: ^6.2.0
         version: 6.2.6
-      pnpm:
-        specifier: ^10.11.0
-        version: 10.11.0
       typescript:
         specifier: ~5.4.0
         version: 5.4.5
@@ -79,7 +70,7 @@ importers:
         specifier: ^28.5.0
         version: 28.5.0(@babel/parser@7.27.2)(vue@3.5.14(typescript@5.4.5))
       vite:
-        specifier: catalog:dev
+        specifier: ^5.3.1
         version: 5.4.19(@types/node@20.17.50)
       vue-tsc:
         specifier: ^2.0.21
@@ -959,11 +950,6 @@ packages:
 
   pkg-types@2.1.0:
     resolution: {integrity: sha512-wmJwA+8ihJixSoHKxZJRBQG1oY8Yr9pGLzRmSsNms0iNWyHHAlZCa7mmKiFR10YPZuz/2k169JiS/inOjBCZ2A==}
-
-  pnpm@10.11.0:
-    resolution: {integrity: sha512-ZUBYP0HMX2KOs9l3Ps7oAvT575kjzEW2mJD7R5kdSwkpZGlOw6T3OKQgyRijMwYsi5JdMS9C5PDCY+tgNVH5dw==}
-    engines: {node: '>=18.12'}
-    hasBin: true
 
   postcss@8.5.3:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
@@ -2039,8 +2025,6 @@ snapshots:
       confbox: 0.2.2
       exsolve: 1.0.5
       pathe: 2.0.3
-
-  pnpm@10.11.0: {}
 
   postcss@8.5.3:
     dependencies:
