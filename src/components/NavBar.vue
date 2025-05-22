@@ -6,7 +6,7 @@
   <div flex="~ gap2" text-3xl items-center px8 pt8 pb2 p5 mx-7xl>
     <h1 text-3xl font-serif op50>
       <a href="/">
-      <span font-bold>Mohamed Mostafa</span>
+      <span font-bold italic>el</span>
       </a>
     </h1>
     <div flex-auto  />
