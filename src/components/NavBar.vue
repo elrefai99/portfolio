@@ -9,11 +9,14 @@
       <span font-bold>Mohamed Mostafa</span>
       </a>
     </h1>
-    <div flex-auto />
-    <a icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />
-    <a icon-btn i-carbon-logo-x href="https://x.com/elrefai99" target="_blank" title="X.com" />
-    <a icon-btn i-carbon-logo-linkedin href="https://www.linkedin.com/in/elrefai99/" target="_blank" title="LinkedIn" />
-    <a icon-btn i-carbon-logo-facebook href="https://www.facebook.com/hamada.mostafa.18007" target="_blank" title="Facebook" />
+    <div flex-auto  />
+    <router-link text-2xl font-serif op50 to="/about">About</router-link>
+    <router-link text-2xl font-serif op50 to="/projects">Project</router-link>
+    <div mx-6 />
+    <a text-2xl font-serif op50 icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />
+    <a text-2xl font-serif op50 icon-btn i-carbon-logo-x href="https://x.com/elrefai99" target="_blank" title="X.com" />
+    <a text-2xl font-serif op50 icon-btn i-carbon-logo-linkedin href="https://www.linkedin.com/in/elrefai99/" target="_blank" title="LinkedIn" />
+    <a text-2xl font-serif op50 icon-btn i-carbon-logo-facebook href="https://www.facebook.com/hamada.mostafa.18007" target="_blank" title="Facebook" />
     <!-- <a icon-btn i-carbon-logo- href="https://github.com/antfu/what-time" target="_blank" title="GitHub" /> -->
     <!-- <DarkMode /> -->
   </div>
