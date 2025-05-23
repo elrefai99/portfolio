@@ -10,8 +10,6 @@
       </a>
     </h1>
     <div flex-auto  />
-    <router-link text-2xl font-serif op50 to="/about">About</router-link>
-    <router-link text-2xl font-serif op50 to="/projects">Project</router-link>
     <div mx-6 />
     <a text-2xl font-serif op50 icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />
     <a text-2xl font-serif op50 icon-btn i-carbon-logo-x href="https://x.com/elrefai99" target="_blank" title="X.com" />
