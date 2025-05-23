@@ -14,7 +14,7 @@ export const tagsSEO = {
       content: 'Mohamed Mostafa'
     },
         {
-      name: 'og:description',
+      property: 'og:description',
       content: 'Mohamed Mostafa Portfolio.'
     },
     {
