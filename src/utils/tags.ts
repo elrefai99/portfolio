@@ -7,15 +7,23 @@ export const tagsSEO = {
     },
     {
       name: 'description',
-      content: 'This is the SEO description.'
+      content: 'Mohamed Mostafa Portfolio.'
     },
     {
       property: 'og:title',
       content: 'Mohamed Mostafa'
     },
+        {
+      name: 'og:description',
+      content: 'Mohamed Mostafa Portfolio.'
+    },
     {
       name: 'twitter:title',
       content: 'Mohamed Mostafa'
-    }
+    },
+        {
+      name: 'twitter:description',
+      content: 'Mohamed Mostafa Portfolio.'
+    },
   ]
 }
