@@ -11,14 +11,14 @@
     </h1>
     <div flex-auto  />
     <router-link text-2xl font-serif op50 icon-btn i-carbon:shopping-bag to="/projects" />
-    <router-link text-2xl font-serif op50 icon-btn i-carbon:shopping-bag to="/resume" />
+    <router-link text-2xl font-serif op50 icon-btn i-carbon:align-box-top-center to="/resume" />
 
-    <div mx-6 />
-    <a text-2xl font-serif op50 icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />
-    <a text-2xl font-serif op50 icon-btn i-carbon-logo-x href="https://x.com/elrefai99" target="_blank" title="X.com" />
-    <a text-2xl font-serif op50 icon-btn i-carbon-logo-linkedin href="https://www.linkedin.com/in/elrefai99/" target="_blank" title="LinkedIn" />
-    <a text-2xl font-serif op50 icon-btn i-carbon-logo-instagram href="https://www.instagram.com/elrefai99/" target="_blank" title="LinkedIn" />
-    <a text-2xl font-serif op50 icon-btn i-carbon-logo-facebook href="https://www.facebook.com/hamada.mostafa.18007" target="_blank" title="Facebook" />
+    <div md:mx-6 />
+    <a hidden md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />
+    <a hidden md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-x href="https://x.com/elrefai99" target="_blank" title="X.com" />
+    <a hidden md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-linkedin href="https://www.linkedin.com/in/elrefai99/" target="_blank" title="LinkedIn" />
+    <a hidden md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-instagram href="https://www.instagram.com/elrefai99/" target="_blank" title="LinkedIn" />
+    <a hidden md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-facebook href="https://www.facebook.com/hamada.mostafa.18007" target="_blank" title="Facebook" />
     <!-- <a icon-btn i-carbon-logo- href="https://github.com/antfu/what-time" target="_blank" title="GitHub" /> -->
     <!-- <DarkMode /> -->
   </div>

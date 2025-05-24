@@ -8,11 +8,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    'About.me': typeof import('./src/components/about.me.vue')['default']
     Aboutme: typeof import('./src/components/aboutme.vue')['default']
     BackGround: typeof import('./src/components/BackGround.vue')['default']
     DarkMode: typeof import('./src/components/DarkMode.vue')['default']
-    Model: typeof import('./src/components/modelView.vue')['default']
     ModelView: typeof import('./src/components/modelView.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     ProjectModel: typeof import('./src/components/projectModel.vue')['default']
