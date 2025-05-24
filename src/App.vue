@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { useHead } from '@vueuse/head'
-import {tagsSEO} from './utils/tags'
-useHead(tagsSEO)
+// import { useHead } from '@vueuse/head'
+// import {tagsSEO} from './utils/tags'
+// useHead(tagsSEO)
 </script>
 
 <template>
