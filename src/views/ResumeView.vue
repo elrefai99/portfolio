@@ -2,11 +2,7 @@
   <div bg-white p-0 m-0 font-sans text-gray-800 max-w="210mm" mx-auto>
     <div min-h="297mm" p="20mm" bg-white shadow-md print:shadow-none print:min-h-0 print:p-0 mb-5 print:mb-0 print:break-after-page>
       <div border-b-2 border-gray-800 pb-2 mb-5>
-<div flex>
           <h1 text-2xl font-bold m-0>Mohamed Mostafa</h1>
-        <a     text-2xl font-serif op50 icon-btn i-carbon:shopping-bag  mt2 mx-5   href="/resume.pdf" download />
-
-</div>
         <p text-lg font-semibold m-0 mt-1>Software Engineer</p>
         <div flex flex-wrap gap-4 text-sm mt-2>
           <span>Phone: (+20)114 231 4446</span>
@@ -118,6 +114,8 @@
         <p text-sm>Arabic (Native speaker), English (Intermediate)</p>
       </div>
     </div>
+        <a     text-2xl mt2 mx-5   href="/resume.pdf" download>Download Resume </a>
+
   </div>
 </template>
 
