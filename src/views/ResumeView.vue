@@ -1,25 +1,30 @@
 <template>
-  <div bg-white p-0 m-0 font-sans text-gray-800 max-w="210mm" mx-auto>
-    <div min-h="297mm" p="20mm" bg-white shadow-md print:shadow-none print:min-h-0 print:p-0 mb-5 print:mb-0 print:break-after-page>
+    <main>
+        <div bg-white p-0 m-0 font-sans text-gray-800 w-full>
+          <div max-w="210mm" mx-auto p-6 space-y-12>
+    <div min-h="297mm" p="20mm" bg-white shadow-md print:shadow-none print:min-h-0 print:p-0 mb-5 print:mb-0 print:break-after-page w-full>
       <div border-b-2 border-gray-800 pb-2 mb-5>
-          <h1 text-2xl font-bold m-0>Mohamed Mostafa</h1>
-        <p text-lg font-semibold m-0 mt-1>Software Engineer</p>
-        <div flex flex-wrap gap-4 text-sm mt-2>
-          <span>Phone: (+20)114 231 4446</span>
-          <span>E-mail: mohamed.mostafa0699@gmail.com</span>
-          <span>GitHub: elrefai99 (Mohamed Elrefai)</span>
-          <span>Country: Egypt City: Banha Exempted</span>
+          <h1 text-2xl font-bold m-0 text-center>Mohamed Mostafa</h1>
+        <p text-lg font-semibold m-0 mt-1 text-center>Software Engineer</p>
+        <div flex flex-wrap gap-4 justify-center text-sm mt-2>
+          <a md:px-6 flex text-2xl font-serif op50 icon-btn i-carbon-email href="mailto:mohamed.mostafa0699@gmail.com" target="_blank" title="Email" />
+          <a md:px-6 flex text-2xl font-serif op50 icon-btn i-carbon-phone href="tel:+201142314446" target="_blank" title="Phone" />
+          <a md:px-6 flex text-2xl font-serif op50 icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />
+          <a md:px-6 flex text-2xl font-serif op50 icon-btn i-carbon-logo-linkedin href="https://www.linkedin.com/in/elrefai99/" target="_blank" title="LinkedIn" />
+          <a md:px-6 flex text-2xl font-serif op50 icon-btn i-carbon-logo-instagram href="https://www.instagram.com/elrefai99/" target="_blank" title="Instagram" />
+          <a hidden md:px-6 md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-facebook href="https://www.facebook.com/hamada.mostafa.18007" target="_blank" title="Facebook" />
+          <span hidden md:flex md:text-sm>Country: Egypt City: Banha Exempted</span>
         </div>
       </div>
 
-      <div mb-5>
+      <div mb-5 w-full>
         <h2 text-xl border-b border-gray-300 pb-1 mb-3>About me</h2>
         <p text-sm leading-relaxed>
           I'm a software engineer with 4+ years of experience in web development, specializing in backend development with Node.js and AWS (EC2, S3). I've recently expanded into frontend development and continuously seek to grow by exploring new technologies and working across diverse environments.
         </p>
       </div>
 
-      <div mb-5>
+      <div mb-5 w-full>
         <h2 text-xl border-b border-gray-300 pb-1 mb-3>Work Experience</h2>
         
         <div mb-4>
@@ -72,7 +77,7 @@
       </div>
     </div>
 
-    <div min-h="297mm" p="20mm" bg-white shadow-md print:shadow-none print:min-h-0 print:p-0 print:break-after-page>
+    <div min-h="297mm" p="20mm" bg-white shadow-md print:shadow-none print:min-h-0 print:p-0 print:break-after-page w-full>
       <div mb-4>
         <h3 text-base font-semibold mb-1>Wedding Organization System (Graduation Project – Backend Developer)</h3>
         <ul list-disc pl-5 text-sm space-y-1>
@@ -114,23 +119,27 @@
         <p text-sm>Arabic (Native speaker), English (Intermediate)</p>
       </div>
     </div>
-        <a     text-2xl mt2 mx-5   href="/resume.pdf" download>Download Resume </a>
+    <div flex justify-center w-full>
+      <a text-2xl mt-2 mx-5 py-2 px-4 text-black rounded hover:bg="#202020" transition-colors i-carbon:document-pdf href="/resume.pdf" download />
+    </div>
+          </div>
 
   </div>
+</main>
+
 </template>
 
 <style>
-
 @page {
   size: A4;
   margin: 0;
 }
 
 @media print {
-  body {
+  body, html {
+    width: 100%;
     margin: 0;
     padding: 0;
-    width: 100%;
     background: white;
   }
   
@@ -153,5 +162,10 @@
   .print\:mb-0 {
     margin-bottom: 0;
   }
+}
+
+/* Ensure full width for all elements */
+div {
+  max-width: 100%;
 }
 </style>
