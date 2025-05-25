@@ -3,8 +3,8 @@
 </script>
 
 <template>
-  <div flex="~ gap2" text-3xl items-center px8 pt8 pb2 p5 mx-7xl>
-    <h1 text-3xl font-serif op50>
+  <div flex="~ gap2" text-3xl items-center px2 pt6 pb2 p3 mx-7xl>
+    <h1 text-4xl font-serif op50>
       <a href="/">
       <span font-bold italic>el</span>
       </a>
