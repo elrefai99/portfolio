@@ -2,50 +2,90 @@
     <section max-w-5xl mx-auto p-6 space-y-12>
     <div>
       <h1 text-4xl font-bold>Mohamed Mostafa</h1>
-<p mt-4 text-lg leading-relaxed>
-  I’m a seasoned <strong>backend software engineer</strong> with a strong drive to architect robust, scalable, and secure systems. With hands-on experience across multiple industries, I’ve cultivated deep expertise in 
-  <span font-bold inline-flex items-center gap-2>
-    <i text-xl font-serif opacity-70 icon-btn i-skill-icons:nodejs-dark></i>
-    Node.js
-  </span>, 
-  <span font-bold inline-flex items-center gap-2>
-    <i text-xl font-serif opacity-70 icon-btn i-skill-icons:typescript></i>
-    TypeScript
-  </span>, and 
-  <span font-bold inline-flex items-center gap-2>
-    <i text-xl font-serif opacity-70 icon-btn i-skill-icons:mongodb></i>
-    MongoDB
-  </span>. I apply clean architecture and proven engineering practices—from designing RESTful APIs to deploying resilient services on AWS.
-</p>
-
+      <p mt-4 text-lg leading-relaxed>
+        I’m a seasoned <strong>backend software engineer</strong> with a strong drive to architect robust, scalable, and secure systems. With hands-on experience across multiple industries, I’ve cultivated deep expertise in 
+        <span font-bold inline-flex items-center gap-2>
+          <i  font-serif opacity-70 icon-btn i-logos:nodejs-icon-alt></i>
+          Node.js
+        </span>, 
+        <span font-bold inline-flex items-center gap-2>
+          <i  font-serif opacity-70 icon-btn i-skill-icons:typescript></i>
+          TypeScript
+        </span>, and 
+        <span font-bold inline-flex items-center gap-2>
+          <i  font-serif opacity-70 icon-btn i-skill-icons:mongodb></i>
+          MongoDB
+        </span>. I apply clean architecture and proven engineering practices—from designing RESTful APIs to deploying resilient services on AWS.
+      </p>
     </div>
 
     <div>
       <h2 text-3xl font-semibold>Technical Proficiency & Engineering Philosophy</h2>
       <ul list-disc ml-6 mt-4 space-y-2 text-base>
         <li>
-          <strong>Node.js & Express.js:</strong> Building performant APIs and services.
-          <a href="https://nodejs.org/en/about/" target="_blank" font-bold underline ml-1>(Source)</a>
+          <strong>Backend:</strong> Building performant APIs useing:   
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:nodejs-icon-alt></i>
+              Node.js
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-skill-icons:javascript></i>
+              JavaScript
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:typescript-icon></i>
+              TypeScript
+            </span>,
+
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-skill-icons:expressjs-light></i>
+              Express.js
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:nestjs></i>
+              Nest.js
+            </span> .
         </li>
         <li>
-          <strong>TypeScript:</strong> Writing type-safe, maintainable backend logic.
-          <a href="https://www.typescriptlang.org/docs/handbook/intro.html" target="_blank" font-bold underline ml-1>(Docs)</a>
+          <strong>Database:</strong> Designing normalized schemas and efficient queries useing:
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:mongodb-icon></i>
+              MongoDB
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:postgresql></i>
+             PostgreSQL
+            </span>.
         </li>
         <li>
-          <strong>MongoDB:</strong> Creating scalable, schema-driven NoSQL databases.
-          <a href="https://www.mongodb.com/what-is-mongodb" target="_blank" font-bold underline ml-1>(Overview)</a>
+          <strong>AWS Cloud:</strong> Deploying and maintaining cloud systems using: 
+            <span font-bold inline-flex items-center gap-2>
+              <i font-serif opacity-70 icon-btn i-logos:aws-ec2></i>
+              EC2
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i font-serif opacity-70 icon-btn i-logos:aws-s3></i>
+              S3
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i font-serif opacity-70 icon-btn i-logos:aws-route53></i>
+              Route 53
+            </span>, and 
+                        <span font-bold inline-flex items-center gap-2>
+              <i font-serif opacity-70 icon-btn i-logos:aws-cloudfront></i>
+             CloudFront
+            </span>.  
         </li>
         <li>
-          <strong>AWS Cloud:</strong> Deploying and maintaining cloud systems using EC2, S3, Route 53, and CloudFront.
-          <a href="https://aws.amazon.com/what-is-aws/" target="_blank" font-bold underline ml-1>(Learn more)</a>
+          <strong>DevOps:</strong> Setting up CI/CD pipelines, Dockerized apps, and deploying to 
+                      <span font-bold inline-flex items-center gap-2>
+                      <i  font-serif opacity-70 icon-btn i-logos:aws-ec2></i>
+                      AWS EC2
+                    </span>  and Render.
         </li>
-        <li>
-          <strong>DevOps:</strong> CI/CD pipelines and containerization using Docker.
-          <a href="https://docs.docker.com/" target="_blank" font-bold underline ml-1>Docker</a>,
-        </li>
+
         <li>
           <strong>Nginx & Redis:</strong> Load balancing and high-performance caching for scalable systems.
-          <a href="https://www.nginx.com/" target="_blank" font-bold underline ml-1>(Nginx Info)</a>
         </li>
       </ul>
     </div>

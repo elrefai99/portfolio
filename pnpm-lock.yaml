@@ -24,6 +24,12 @@ importers:
       '@iconify-json/carbon':
         specifier: ^1.2.8
         version: 1.2.8
+      '@iconify-json/circle-flags':
+        specifier: ^1.2.6
+        version: 1.2.6
+      '@iconify-json/logos':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@iconify-json/nonicons':
         specifier: ^1.2.2
         version: 1.2.2
@@ -251,6 +257,12 @@ packages:
 
   '@iconify-json/carbon@1.2.8':
     resolution: {integrity: sha512-6xh4YiFBz6qoSnB3XMe23WvjTJroDFXB17J1MbiT7nATFe+70+em1acRXr8hgP/gYpwFMHFc4IvjA/IPTPnTzg==}
+
+  '@iconify-json/circle-flags@1.2.6':
+    resolution: {integrity: sha512-UR7hL1nxOFWDVlSTuAmssyAzm3U1PuE5CMVLlahuVsnm1l7Q2b29+jUaSLTDCFqrpvdeWifCmj4C6Ojkj+4uww==}
+
+  '@iconify-json/logos@1.2.4':
+    resolution: {integrity: sha512-XC4If5D/hbaZvUkTV8iaZuGlQCyG6CNOlaAaJaGa13V5QMYwYjgtKk3vPP8wz3wtTVNVEVk3LRx1fOJz+YnSMw==}
 
   '@iconify-json/nonicons@1.2.2':
     resolution: {integrity: sha512-W68A8EuZxQTsaLh9jI44DhGUJwhyaqUWlGjhkM9791tOV1iYiB8Eigsu63sz59M9zueaFNuOCLKdUF69ayulwA==}
@@ -1290,6 +1302,14 @@ snapshots:
     optional: true
 
   '@iconify-json/carbon@1.2.8':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/circle-flags@1.2.6':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/logos@1.2.4':
     dependencies:
       '@iconify/types': 2.0.0
 
