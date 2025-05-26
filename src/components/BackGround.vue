@@ -41,7 +41,7 @@ function createEffect(effectType: number) {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
     const len = 6
-    const MIN_BRANCH = 10
+    const MIN_BRANCH = 15
 
     const step = (
       x: number, y: number, rad: number,
@@ -79,7 +79,7 @@ function createEffect(effectType: number) {
     }
 
     let lastTime = performance.now()
-    const interval = 1000 / 70
+    const interval = 1000 / 50
     const controls = useRafFn(() => {
       if (performance.now() - lastTime < interval) return
       prevSteps = steps

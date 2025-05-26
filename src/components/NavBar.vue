@@ -5,7 +5,7 @@
 <template>
   <div flex="~ gap2" text-3xl items-center px2 pt6 pb2 p3 mx-7xl>
     <h1 text-4xl font-serif op50>
-      <router-link href="/">
+      <router-link to="/">
       <span font-bold italic>el</span>
       </router-link>
     </h1>
