@@ -5,9 +5,9 @@
 <template>
   <div flex="~ gap2" text-3xl items-center px2 pt6 pb2 p3 mx-7xl>
     <h1 text-4xl font-serif op50>
-      <a href="/">
+      <router-link href="/">
       <span font-bold italic>el</span>
-      </a>
+      </router-link>
     </h1>
     <div flex-auto  />
     <router-link text-2xl font-serif op50 icon-btn i-carbon:shopping-bag to="/projects" />
