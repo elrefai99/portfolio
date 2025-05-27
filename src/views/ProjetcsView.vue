@@ -49,44 +49,45 @@ const groupedProjects = computed(() => {
     </div>
 
     <!-- Modal -->
-    <ModelView v-model="showModal">
-      <div class="space-y-6">
-        <img
-          v-if="selectedProject?.image"
-          :src="selectedProject.image"
-          alt="Project Image"
-          w-full h-full object-cover rounded-xl
-        />
+<ModelView v-model="showModal" max-w-5xl mx-auto p-6 space-y-12>
+  <div space-y-5 prose prose-invert prose-lg max-w-none>
+    
+    <img
+      v-if="selectedProject?.image"
+      :src="selectedProject.image"
+      alt="Project Image"
+      w-full h-auto object-cover rounded-xl />
 
-        <div flex flex-col md:flex-row md:items-center md:justify-between gap-2>
-          <h2 text-2xl font-bold text-white>
-            {{ selectedProject?.title }}
-          </h2>
-          <a
-            v-if="selectedProject?.github"
-            :href="selectedProject.github"
-            target="_blank"
-            rel="noopener noreferrer"
-            text-blue-400 hover:underline text-sm md:text-base
-          >
-            🔗 View on GitHub
-          </a>
-          <a
-            v-if="selectedProject?.site"
-            :href="selectedProject.site"
-            target="_blank"
-            rel="noopener noreferrer"
-            text-blue-400 hover:underline text-sm md:text-base
-          >
-            🔗 View on Site
-          </a>
-        </div>
+    <div flex flex-col md:flex-row md:items-center md:justify-between gap-4>
+      <h1 text-3xl font-extrabold leading-tight text-white m-0>
+        {{ selectedProject?.title }}
+      </h1>
 
-        <p text-gray-300 whitespace-pre-line>
-          {{ selectedProject?.description }}
-        </p>
+      <div flex gap-4 mt-2 md:mt-0>
+        <a
+          v-if="selectedProject?.github"
+          :href="selectedProject.github"
+          target="_blank"
+          rel="noopener noreferrer"
+          i-carbon-logo-github  text-3xl 
+          class="text-[#e8e8e8] w-[60px]" />
+        <a
+          i-solar:eye-bold 
+          v-if="selectedProject?.site"
+          :href="selectedProject.site"
+          target="_blank"
+          rel="noopener noreferrer"
+          icon-btn w="60px" text-3xl 
+          class="text-[#e8e8e8] w-[60px]" />
       </div>
-    </ModelView>
+    </div>
+
+    <div text-gray-300 whitespace-pre-line leading-relaxed>
+      {{ selectedProject?.description }}
+    </div>
+  </div>
+</ModelView>
+
   </section>
 </template>
 

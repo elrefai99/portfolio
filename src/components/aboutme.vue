@@ -78,10 +78,10 @@
         </li>
         <li>
           <strong>DevOps:</strong> Setting up CI/CD pipelines, Dockerized apps, and deploying to 
-                      <span font-bold inline-flex items-center gap-2>
-                      <i  font-serif opacity-70 icon-btn i-logos:aws-ec2></i>
-                      AWS EC2
-                    </span>  and Render.
+          <span font-bold inline-flex items-center gap-2>
+            <i  font-serif opacity-70 icon-btn i-logos:aws-ec2></i>
+            AWS EC2
+          </span>  and Render.
         </li>
 
         <li>
@@ -93,27 +93,74 @@
     <div>
       <h2 text-3xl font-semibold>Projects & System Design</h2>
       <p mt-4 text-base leading-relaxed>
-        I’ve built complex backend systems powering real estate and automotive listing platforms, featuring role-based dashboards, subscription models, real-time analytics, chat modules, and PDF generation. These solutions integrate tools like 
-        <strong>Socket.io</strong>, 
-        <strong>Paymob</strong>, and 
-        <strong>SendGrid</strong> to enhance user engagement and streamline platform operations.
+        As a backend-focused software engineer, 
+        I've architected and deployed scalable platforms powering real estate and automotive listing ecosystems. 
+        My work includes the design of modular RESTful APIs, real-time analytics dashboards, 
+        chat systems using 
+        <span font-bold inline-flex items-center gap-2>
+          <i font-serif opacity-70 icon-btn i-logos:socket-io></i>
+          Socket.IO
+        </span>
+        and PDF invoice automation via 
+        <span font-bold inline-flex items-center gap-2>
+          <i font-serif opacity-70 icon-btn i-logos:puppeteer></i>
+          Puppeteer
+        </span>. 
+        
+        I’ve also integrated
+        <span class="font-bold inline-flex items-center gap-2">
+          <img src="/paymob.png" alt="Puppeteer" class="w-15 h-6 opacity-70" />
+        </span>
+        for secure payments and
+        <span font-bold inline-flex items-center gap-2>
+          <i font-serif opacity-70 icon-btn i-logos:sendgrid-icon></i>
+          SendGrid
+        </span> for transactional communication, 
+        all deployed through Dockerized environments on 
+        <span font-bold inline-flex items-center gap-2>
+          <i  font-serif opacity-70 icon-btn i-logos:aws-ec2></i>
+          AWS EC2
+        </span> and <strong>Render</strong>.
       </p>
     </div>
 
     <div>
       <h2 text-3xl font-semibold>Professional Growth & Aspirations</h2>
       <p mt-4 text-base leading-relaxed>
-        I’m deeply committed to continuous learning and technical leadership. I stay current with the latest practices through industry content, tech talks, and contributions to open-source communities on platforms like 
-        <a href="https://github.com/" target="_blank" font-bold underline>GitHub</a> and 
+        I’m passionate about backend architecture, 
+        cloud infrastructure, and system optimization. 
+        Beyond my current stack—<strong>Node.js</strong>, 
+        <span font-bold inline-flex items-center gap-2>
+          <i  font-serif opacity-70 icon-btn i-logos:typescript-icon></i>
+          TypeScript
+        </span>, 
+        <span font-bold inline-flex items-center gap-2>
+          <i  font-serif opacity-70 icon-btn i-logos:mongodb-icon></i>
+          MongoDB
+        </span>, 
+        and <strong>
+          <span font-bold inline-flex items-center gap-2>
+            <i  font-serif opacity-70 icon-btn i-logos:redis></i>
+            Redis
+        </span>
+        </strong>, I’m committed to continuous learning through 
+        <span font-bold inline-flex items-center gap-2>
+            <i  font-serif opacity-70 icon-btn i-carbon-logo-github></i>
+            GitHub
+        </span>
+        contributions, exploring modern deployment strategies, and applying clean code principles across all projects.
       </p>
     </div>
 
     <div>
       <h2 text-3xl font-semibold>Mantra & Soft Skills</h2>
       <p mt-4 text-base leading-relaxed>
-        I believe in <strong>clarity, collaboration, and accountability</strong>. Whether debugging, mentoring, or architecting a new feature, I bring energy, structure, and a solutions-first mindset to every challenge I take on.
+        I believe in 
+        <strong>clarity, collaboration, and ownership</strong>. 
+        Whether designing infrastructure, debugging APIs, or mentoring team members, I bring structured thinking and a growth mindset to every challenge. I thrive in environments where reliability, innovation, and teamwork intersect.
       </p>
     </div>
+
   </section>
 </template>
 

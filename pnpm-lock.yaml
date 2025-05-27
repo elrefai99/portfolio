@@ -39,6 +39,9 @@ importers:
       '@iconify-json/skill-icons':
         specifier: ^1.2.0
         version: 1.2.0
+      '@iconify-json/solar':
+        specifier: ^1.2.2
+        version: 1.2.2
       '@tsconfig/node20':
         specifier: ^20.1.4
         version: 20.1.5
@@ -272,6 +275,9 @@ packages:
 
   '@iconify-json/skill-icons@1.2.0':
     resolution: {integrity: sha512-5zlPrzF5pelV1wut7C88zmAiYONvGxvFw11dXW1Pr1oIhUOtYhC7x3zkErSTFkyZ3m5fEgcEUrcO1W3UhNJVpw==}
+
+  '@iconify-json/solar@1.2.2':
+    resolution: {integrity: sha512-lcTb6DWL4HZObiY1W3fHfuxxuQHUc6CFHFeywKEx7Ry0k+dU6POZCMC7oVLr0F8vuf+KgaQ3oOoGO/yFzOwrNg==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -1322,6 +1328,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/skill-icons@1.2.0':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/solar@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
