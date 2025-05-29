@@ -38,7 +38,8 @@ export const projects = [
     github: "https://github.com/elrefai99/elrecord",
     site: "",
     image: '/projects/elrecord.jpeg',
-    category: 'Current Focus',
+    // category: 'Current Focus',
+    category: 'Real Time',
     description: `
       • Developed the full backend for a chat application that allows users to chat with friends in real-time.
       • Built using Express.js, TypeScript, Socket.io, MongoDB (Mongoose), and Redis for efficient session management and message broadcasting.
