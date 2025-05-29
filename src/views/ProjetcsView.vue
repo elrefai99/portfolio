@@ -59,27 +59,25 @@ const groupedProjects = computed(() => {
             {{ selectedProject?.title }}
           </h1>
 
-          <div class="flex gap-4 mt-2 md:mt-0">
-            <a
-              v-if="selectedProject?.github"
-              :href="selectedProject.github"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-white text-2xl hover:text-blue-400"
-            >
-              <i class="i-carbon-logo-github" />
-            </a>
-            <a
-              v-if="selectedProject?.site"
-              :href="selectedProject.site"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-white text-2xl hover:text-green-400"
-            >
-              <i class="i-solar:eye-bold" />
-            </a>
-          </div>
-        </div>
+
+      <div flex gap-4 mt-2 md:mt-0>
+        <a
+          v-if="selectedProject?.github"
+          :href="selectedProject.github"
+          target="_blank"
+          rel="noopener noreferrer"
+          i-carbon-logo-github  text-3xl 
+          class="text-[#e8e8e8] w-[60px]" />
+        <a
+          i-solar:eye-bold 
+          v-if="selectedProject?.site"
+          :href="selectedProject.site"
+          target="_blank"
+          rel="noopener noreferrer"
+           w="60px" text-3xl 
+          class="text-[#e8e8e8] w-[60px]" />
+      </div>
+    </div>
 
 <div v-if="selectedProject?.sections" class="space-y-6">
   <div
