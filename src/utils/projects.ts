@@ -56,7 +56,7 @@ export const projects = [
     github: "https://github.com/elrefai99/elrecord",
     site: "",
     image: '/projects/elrecord.jpeg',
-    category: 'Real Time',
+    category: 'Current Focus',
     tech: 'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Puppeteer, SendGrid, Paymob, Docker, AWS (S3, EC2, Route 53, CloudFront), Swagger',
     sections: [
       {
