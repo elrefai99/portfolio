@@ -6,7 +6,7 @@ export const projects = [
     github: "",
     site: "https://lesoll.com",
     category: "Live",
-    tech: 'Node.js, Express.js, MongoDB, Redis, Docker, AWS, TypeScript',
+    tech: 'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Puppeteer, SendGrid, Paymob, Docker, AWS (S3, EC2, Route 53, CloudFront), Swagger',
     sections: [
       {
         title: 'Backend Systems',
@@ -37,12 +37,6 @@ export const projects = [
           'Generated PDF invoices using Puppeteer.'
         ]
       },
-      {
-        title: 'Technologies',
-        points: [
-          'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Puppeteer, SendGrid, Paymob, Docker, AWS (S3, EC2, Route 53, CloudFront), Swagger'
-        ]
-      }
     ]
   },
   {
@@ -63,18 +57,49 @@ export const projects = [
     site: "",
     image: '/projects/elrecord.jpeg',
     category: 'Real Time',
-    description: `
-      • Developed the full backend for a chat application that allows users to chat with friends in real-time.
-      • Built using Express.js, TypeScript, Socket.io, MongoDB (Mongoose), and Redis for efficient session management and message broadcasting.
-      • Deployed the application backend to Render for scalability and simplicity.
-      • Implemented user authentication, message history storage, and online/offline status tracking.
-      • Tech Stack:
-          - Node.js 
-          - Express.js 
-          - TypeScript 
-          - Socket.io 
-          - MongoDB 
-          - Redis 
-          - Render`
+    tech: 'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Puppeteer, SendGrid, Paymob, Docker, AWS (S3, EC2, Route 53, CloudFront), Swagger',
+    sections: [
+      {
+        title: 'Real-Time Chat Backend System',
+        points: [
+          'DThis backend project implements a real-time chat system using modern technologies suitable for scalable and interactive communication applications. It supports:',
+          'Direct Messaging (DM)',
+          'Global Server Chat (Public Room)',
+          'Last Chats Management',
+          'User-to-User Friend Communication',
+        ]
+      },
+      {
+        title: ' Real-Time Messaging (WebSocket-based)',
+        points: [
+          'Built using Socket.IO over Express.js/Node.js.',
+          'Enables bi-directional real-time communication between users.',
+        ]
+      },
+      {
+        title: 'Direct Messaging (DM)',
+        points: [
+          'One-to-one private messaging between users.',
+          'Each conversation is uniquely identified.',
+          'Messages are stored in MongoDB with timestamps and read status.',
+          'Includes message read receipts and delivery status.',
+        ]
+      },
+      {
+        title: 'Global Server Chat (Friend Group Chat)',
+        points: [
+          'A shared room where users can talk in public.',
+          'Acts as a “general” or “friends-only” group chat room.',
+        ]
+      },
+      {
+        title: 'Integrations & Features',
+        points: [
+          'Built a subscription and point-based system for premium features.',
+          'Integrated SendGrid for email and Paymob for payment processing.',
+          'Generated PDF invoices using Puppeteer.'
+        ]
+      },
+    ],
   }
 ];
