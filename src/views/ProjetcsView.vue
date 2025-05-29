@@ -10,7 +10,6 @@ function openModal(project: typeof projects[0]) {
   showModal.value = true
 }
 
-// تجميع المشاريع حسب الفئة
 const groupedProjects = computed(() => {
   const groups: Record<string, typeof projects> = {}
   projects.forEach((project) => {
@@ -24,7 +23,7 @@ const groupedProjects = computed(() => {
 </script>
 <template>
   <NavBar />
-  <section max-w-7xl mx-auto p-6 space-y-12>
+  <section max-w-5xl mx-auto p-6 space-y-12>
     <div v-for="(group, category) in groupedProjects" :key="category" space-y-6>
       <h2 text-3xl font-bold text-white>{{ category }}</h2>
 

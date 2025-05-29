@@ -23,7 +23,7 @@
       <h2 text-3xl font-semibold>Technical Proficiency & Engineering Philosophy</h2>
       <ul list-disc ml-6 mt-4 space-y-2 text-base>
         <li>
-          <strong>Backend:</strong> Building performant APIs useing:   
+          <strong>Backend:</strong> Building performant APIs using:   
             <span font-bold inline-flex items-center gap-2>
               <i  font-serif opacity-70 icon-btn i-logos:nodejs-icon-alt></i>
               Node.js
@@ -46,8 +46,28 @@
               Nest.js
             </span> .
         </li>
+                <li>
+          <strong>Frontend:</strong> Building frontend applications using :   
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:vue></i>
+              Vue
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:vitejs></i>
+              Vite
+            </span>,
+
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:unocss></i>
+              UnoCSS
+            </span>,
+            <span font-bold inline-flex items-center gap-2>
+              <i  font-serif opacity-70 icon-btn i-logos:tailwindcss-icon></i>
+              TailwindCSS
+            </span> .
+        </li>
         <li>
-          <strong>Database:</strong> Designing normalized schemas and efficient queries useing:
+          <strong>Database:</strong> Designing normalized schemas and efficient queries using:
             <span font-bold inline-flex items-center gap-2>
               <i  font-serif opacity-70 icon-btn i-logos:mongodb-icon></i>
               MongoDB
