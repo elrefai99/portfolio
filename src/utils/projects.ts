@@ -45,7 +45,8 @@ export const projects = [
     github: "https://github.com/elrefai99/smart-parser",
     site: "",
     image: '/projects/smartparser.png',
-    category: 'Current Focus',
+    // category: 'Current Focus',
+    category: 'Backend',
     description: `
     A full-featured RESTful API built with Node.js, Express.js, and TypeScript, designed to handle file uploads, parsing, and export operations for various document formats including PDF, DOCX, and Excel. The system enables users to upload documents, instantly view extracted content, and download the data in their preferred format—PDF, XLSX, or DOCX. It leverages tools such as pdf-parse, mammoth, xlsx, exceljs, and puppeteer for accurate and flexible file handling. The API also supports large file uploads (over 50MB) and includes a pricing mechanism to manage usage limits. 
     `
@@ -56,7 +57,7 @@ export const projects = [
     github: "https://github.com/elrefai99/elrecord",
     site: "",
     image: '/projects/elrecord.png',
-    category: 'Current Focus',
+    category: 'Socket.io',
     tech: 'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Puppeteer, SendGrid, Paymob, Docker, AWS (S3, EC2, Route 53, CloudFront), Swagger',
     sections: [
       {

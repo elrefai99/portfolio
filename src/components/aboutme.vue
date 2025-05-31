@@ -126,10 +126,9 @@
           <i font-serif opacity-70 icon-btn i-logos:puppeteer></i>
           Puppeteer
         </span>. 
-        
         I’ve also integrated
-        <span class="font-bold inline-flex items-center gap-2">
-          <img src="/paymob.png" alt="Puppeteer" class="w-15 h-6 opacity-70" />
+        <span font-bold inline-flex items-center gap-2>
+          <img src="/paymob.png" alt="Paymob" w-25 h-6 opacity-70 />
         </span>
         for secure payments and
         <span font-bold inline-flex items-center gap-2>
