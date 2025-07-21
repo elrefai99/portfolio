@@ -90,10 +90,15 @@
             <span font-bold inline-flex items-center gap-2>
               <i font-serif opacity-70 icon-btn i-logos:aws-route53></i>
               Route 53
-            </span>, and 
+            </span>, 
                         <span font-bold inline-flex items-center gap-2>
               <i font-serif opacity-70 icon-btn i-logos:aws-cloudfront></i>
              CloudFront
+            </span>
+            and
+            <span font-bold inline-flex items-center ml-1 gap-2>
+              <i font-serif opacity-70 icon-btn i-logos:aws-fargate></i>
+             Fargate
             </span>.  
         </li>
         <li>
@@ -101,9 +106,12 @@
           <span font-bold inline-flex items-center gap-2>
             <i  font-serif opacity-70 icon-btn i-logos:aws-ec2></i>
             AWS EC2
+          </span>
+          <span font-bold inline-flex items-center gap-1 ml-1>
+            <i  font-serif opacity-70 icon-btn i-logos:docker-icon></i>
+            Docker
           </span>  and Render.
         </li>
-
         <li>
           <strong>Nginx & Redis:</strong> Load balancing and high-performance caching for scalable systems.
         </li>

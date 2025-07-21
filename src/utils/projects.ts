@@ -40,6 +40,46 @@ export const projects = [
     ]
   },
   {
+    id: 2,
+    title: 'Chat (Lesoll)',
+    image: '/projects/lesoll.png',
+    github: "",
+    site: "https://lesoll.com",
+    category: "Live",
+    tech: 'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Docker, AWS (ECR, FORGATE), Swagger',
+    sections: [
+      {
+        title: 'Backend Systems',
+        points: [
+          'Built and maintained three major backend systems:',
+          'Property API: Designed RESTful APIs to manage property listings, including draft, publishing, search filters and featured (Pinned and Repost Functionalities).',
+          'Car API: Developed a separate API to manage car listings, brands, models, advanced search and package-based features.',
+          'Admin Dashboard: Built a secure dashboard backend with role-based access control for managing users, listing ads, package and financial reporting.',
+          'Built Real-time analytics views to monitor traffic and user behavior.',
+          'Implemented tracking of user traffic sources by country, UTM parameters, and referral platforms (e.g., Google, Facebook, direct).',
+          'Built a real-time chat system using Socket.io, enabling admin to communicate within the platform.'
+        ]
+      },
+      {
+        title: 'Infrastructure & Deployment',
+        points: [
+          'Managed three servers for backend deployment (EC2, Render).',
+          'Configured NGINX for reverse proxying and load balancing.',
+          'Implemented Docker containers for consistent deployment and local development.',
+          'Deployed admin dashboard backend to Render.'
+        ]
+      },
+      {
+        title: 'Integrations & Features',
+        points: [
+          'Built a subscription and point-based system for premium features.',
+          'Integrated SendGrid for email and Paymob for payment processing.',
+          'Generated PDF invoices using Puppeteer.'
+        ]
+      },
+    ]
+  },
+  {
     id: 3,
     title: 'Smart Parser',
     github: "https://github.com/elrefai99/smart-parser",
