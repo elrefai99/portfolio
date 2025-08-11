@@ -10,7 +10,7 @@
       </router-link>
     </h1>
     <div flex-auto  />
-    <router-link text-2xl font-serif op50 icon-btn i-carbon:shopping-bag to="/projects" />
+    <router-link text-2xl font-serif op50 icon-btn i-codicon:project to="/projects" />
     <router-link text-2xl font-serif op50 icon-btn i-carbon:align-box-top-center to="/resume" />
 
     <div md:mx-6 />

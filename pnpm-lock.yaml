@@ -27,9 +27,15 @@ importers:
       '@iconify-json/circle-flags':
         specifier: ^1.2.6
         version: 1.2.6
+      '@iconify-json/codicon':
+        specifier: ^1.2.25
+        version: 1.2.25
       '@iconify-json/logos':
         specifier: ^1.2.4
         version: 1.2.4
+      '@iconify-json/mdi':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@iconify-json/nonicons':
         specifier: ^1.2.2
         version: 1.2.2
@@ -264,8 +270,14 @@ packages:
   '@iconify-json/circle-flags@1.2.6':
     resolution: {integrity: sha512-UR7hL1nxOFWDVlSTuAmssyAzm3U1PuE5CMVLlahuVsnm1l7Q2b29+jUaSLTDCFqrpvdeWifCmj4C6Ojkj+4uww==}
 
+  '@iconify-json/codicon@1.2.25':
+    resolution: {integrity: sha512-Kp9GIuqZ/eGjYyR2JfrjwsvkTnNgtSEYw1oxmgSuULQkAZzZdh0XBlY0mqNtY5TdfCgG5GMHKe/PltGt5tU+IQ==}
+
   '@iconify-json/logos@1.2.4':
     resolution: {integrity: sha512-XC4If5D/hbaZvUkTV8iaZuGlQCyG6CNOlaAaJaGa13V5QMYwYjgtKk3vPP8wz3wtTVNVEVk3LRx1fOJz+YnSMw==}
+
+  '@iconify-json/mdi@1.2.3':
+    resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
 
   '@iconify-json/nonicons@1.2.2':
     resolution: {integrity: sha512-W68A8EuZxQTsaLh9jI44DhGUJwhyaqUWlGjhkM9791tOV1iYiB8Eigsu63sz59M9zueaFNuOCLKdUF69ayulwA==}
@@ -1315,7 +1327,15 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
+  '@iconify-json/codicon@1.2.25':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/logos@1.2.4':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/mdi@1.2.3':
     dependencies:
       '@iconify/types': 2.0.0
 
