@@ -103,8 +103,6 @@ const groupedProjects = computed(() => {
     </li>
   </ul>
 </div>
-
-
         <div
           v-if="selectedProject?.tech"
           class="border-t border-gray-700 pt-4 text-sm text-gray-400"

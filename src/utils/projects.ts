@@ -1,4 +1,5 @@
 export const projects = [
+  // Live
   {
     id: 1,
     title: 'Lesoll',
@@ -80,8 +81,22 @@ export const projects = [
       }
 
     ]
-
   },
+
+  // Current Focus
+  {
+    id: 4,
+    title: 'Task Tracker',
+    github: "https://github.com/elrefai99/EMB",
+    site: "",
+    image: '/projects/task-tracker.png',
+    category: 'Current Focus',
+    description: `
+    A full-featured RESTful API built with Node.js, Express.js, and TypeScript, designed to handle file uploads, parsing, and export operations for various document formats including PDF, DOCX, and Excel. The system enables users to upload documents, instantly view extracted content, and download the data in their preferred format—PDF, XLSX, or DOCX. It leverages tools such as pdf-parse, mammoth, xlsx, exceljs, and puppeteer for accurate and flexible file handling. The API also supports large file uploads (over 50MB) and includes a pricing mechanism to manage usage limits. 
+    `
+  },
+
+  // Backend
   {
     id: 3,
     title: 'Smart Parser',
@@ -94,8 +109,9 @@ export const projects = [
     A full-featured RESTful API built with Node.js, Express.js, and TypeScript, designed to handle file uploads, parsing, and export operations for various document formats including PDF, DOCX, and Excel. The system enables users to upload documents, instantly view extracted content, and download the data in their preferred format—PDF, XLSX, or DOCX. It leverages tools such as pdf-parse, mammoth, xlsx, exceljs, and puppeteer for accurate and flexible file handling. The API also supports large file uploads (over 50MB) and includes a pricing mechanism to manage usage limits. 
     `
   },
+  // Socket
   {
-    id: 2,
+    id: 5,
     title: 'Elrecord',
     github: "https://github.com/elrefai99/elrecord",
     site: "",
