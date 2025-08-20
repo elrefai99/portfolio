@@ -161,5 +161,58 @@ export const projects = [
         ]
       },
     ],
+  },
+  // Packages
+  {
+    id: 6,
+    title: 'data-localizer',
+    github: "https://github.com/elrefai99/elrecord",
+    site: "",
+    image: '/projects/elrecord.png',
+    category: 'Packages',
+    tech: 'Node.js, Express.js, MongoDB (Mongoose), TypeScript, Redis, Puppeteer, SendGrid, Paymob, Docker, AWS (S3, EC2, Route 53, CloudFront), Swagger',
+    sections: [
+      {
+        title: 'Real-Time Chat Backend System',
+        points: [
+          'DThis backend project implements a real-time chat system using modern technologies suitable for scalable and interactive communication applications. It supports:',
+          'Direct Messaging (DM)',
+          'Global Server Chat (Public Room)',
+          'Last Chats Management',
+          'User-to-User Friend Communication',
+        ]
+      },
+      {
+        title: ' Real-Time Messaging (WebSocket-based)',
+        points: [
+          'Built using Socket.IO over Express.js/Node.js.',
+          'Enables bi-directional real-time communication between users.',
+        ]
+      },
+      {
+        title: 'Direct Messaging (DM)',
+        points: [
+          'One-to-one private messaging between users.',
+          'Each conversation is uniquely identified.',
+          'Messages are stored in MongoDB with timestamps and read status.',
+          'Includes message read receipts and delivery status.',
+        ]
+      },
+      {
+        title: 'Global Server Chat (Friend Group Chat)',
+        points: [
+          'A shared room where users can talk in public.',
+          'Acts as a “general” or “friends-only” group chat room.',
+        ]
+      },
+      {
+        title: 'Integrations & Features',
+        points: [
+          'Built a subscription and point-based system for premium features.',
+          'Integrated SendGrid for email and Paymob for payment processing.',
+          'Generated PDF invoices using Puppeteer.'
+        ]
+      },
+    ],
   }
 ];

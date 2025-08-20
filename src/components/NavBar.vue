@@ -12,6 +12,7 @@
     <div flex-auto  />
     <router-link text-2xl font-serif op50 icon-btn i-codicon:project to="/projects" />
     <router-link text-2xl font-serif op50 icon-btn i-carbon:align-box-top-center to="/resume" />
+    <router-link text-2xl font-serif op50 icon-btn i-carbon:package to="/packages" />
 
     <div md:mx-6 />
     <a hidden md:flex text-2xl font-serif op50 icon-btn i-carbon-logo-github href="https://github.com/elrefai99" target="_blank" title="GitHub" />

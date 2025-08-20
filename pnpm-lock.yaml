@@ -39,6 +39,9 @@ importers:
       '@iconify-json/nonicons':
         specifier: ^1.2.2
         version: 1.2.2
+      '@iconify-json/oui':
+        specifier: ^1.2.6
+        version: 1.2.6
       '@iconify-json/ri':
         specifier: ^1.2.5
         version: 1.2.5
@@ -281,6 +284,9 @@ packages:
 
   '@iconify-json/nonicons@1.2.2':
     resolution: {integrity: sha512-W68A8EuZxQTsaLh9jI44DhGUJwhyaqUWlGjhkM9791tOV1iYiB8Eigsu63sz59M9zueaFNuOCLKdUF69ayulwA==}
+
+  '@iconify-json/oui@1.2.6':
+    resolution: {integrity: sha512-dBqxbLKztTtb0Cq3kEyLeYAdyJT2un+FzIZB0ei3busps/OwNIHjqowsVqPwRtHXiXTjiwOHUPbxgcVB0SCIsQ==}
 
   '@iconify-json/ri@1.2.5':
     resolution: {integrity: sha512-kWGimOXMZrlYusjBKKXYOWcKhbOHusFsmrmRGmjS7rH0BpML5A9/fy8KHZqFOwZfC4M6amObQYbh8BqO5cMC3w==}
@@ -1340,6 +1346,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/nonicons@1.2.2':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/oui@1.2.6':
     dependencies:
       '@iconify/types': 2.0.0
 
