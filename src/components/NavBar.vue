@@ -21,7 +21,6 @@ function toggleMenu() {
     <div class="hidden md:flex items-center gap-6 text-2xl font-serif opacity-70">
       <router-link to="/projects">Projects</router-link>
       <router-link to="/resume">Resume</router-link>
-      <router-link to="/packages">Packages</router-link>
 
       <a class="hidden md:flex text-2xl font-serif op100 icon-btn i-carbon-logo-github" href="https://github.com/elrefai99" target="_blank" title="GitHub" />
       <a class="hidden md:flex text-2xl font-serif op100 icon-btn i-carbon-logo-x" href="https://x.com/elrefai99" target="_blank" title="X.com" />
