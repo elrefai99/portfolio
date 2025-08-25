@@ -109,6 +109,18 @@ export const projects = [
     A full-featured RESTful API built with Node.js, Express.js, and TypeScript, designed to handle file uploads, parsing, and export operations for various document formats including PDF, DOCX, and Excel. The system enables users to upload documents, instantly view extracted content, and download the data in their preferred format—PDF, XLSX, or DOCX. It leverages tools such as pdf-parse, mammoth, xlsx, exceljs, and puppeteer for accurate and flexible file handling. The API also supports large file uploads (over 50MB) and includes a pricing mechanism to manage usage limits. 
     `
   },
+    {
+    id: 7,
+    title: 'Wedding Orgnization',
+    github: "https://github.com/elrefai99/Wedding_Orgnization",
+    site: "",
+    image: '/projects/Wedding_Orgnization.png',
+    // category: 'Current Focus',
+    category: 'Backend',
+    description: `
+    A full-featured RESTful API built with Node.js, Express.js, and TypeScript, designed to handle file uploads, parsing, and export operations for various document formats including PDF, DOCX, and Excel. The system enables users to upload documents, instantly view extracted content, and download the data in their preferred format—PDF, XLSX, or DOCX. It leverages tools such as pdf-parse, mammoth, xlsx, exceljs, and puppeteer for accurate and flexible file handling. The API also supports large file uploads (over 50MB) and includes a pricing mechanism to manage usage limits. 
+    `
+  },
   // Socket
   {
     id: 5,
