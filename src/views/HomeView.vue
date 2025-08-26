@@ -3,9 +3,6 @@
 </script>
 
 <template>
-  <header>
-    <NavBar />
-  </header>
   <main>
     <Aboutme />
 </main>

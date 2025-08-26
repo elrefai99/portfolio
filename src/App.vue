@@ -2,8 +2,12 @@
 </script>
 
 <template>
+  <header>
+    <NavBar />
+  </header>
   <BackGround />
   <RouterView />
+  <Footer />
 </template>
 
 <style>
