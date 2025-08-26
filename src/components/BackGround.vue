@@ -40,8 +40,8 @@ function createEffect(effectType: number) {
   return (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
-    const len = 6
-    const MIN_BRANCH = 15
+    const len = 5
+    const MIN_BRANCH = 10
 
     const step = (
       x: number, y: number, rad: number,

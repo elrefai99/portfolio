@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { projects } from '../utils/projects'
+
 const timeline = [
   {
     company: "Lesoll",
@@ -23,53 +25,14 @@ const timeline = [
   }
 ]
 
-const projects: object[] = [
-  { 
-    id: 1,
-    name: "Lesoll",
-    category: "Live",
-    link: "https://lesoll.com",
-    github: "",
-    desc: 'Lesoll platform that user can sale or rent his apartment or his car, and in same time can buy and unit he want or rent it and the same in car',
-    tags: [
-      "Javascript",
-      "TypeScript",
-      "NoSQL",
-      "Paymob",
-      "Redis",
-      "Puppeteer",
-      "SendGrid",
-      "AWS",
-      "Docker"
-    ]
-  },
-  { 
-    id: 2,
-    name: "Task Tracker",
-    category: "Current Focus",
-    link: "",
-    github: "https://github.com/elrefai99/EMB",
-    desc: 'A simple Task Tracker app to organize, manage, and monitor tasks efficiently. It helps users create, update, and track progress with ease, boosting productivity and keeping projects on schedule.',
-    tags: [
-      "Javascript",
-      "TypeScript",
-      "NoSQL",
-      "Paymob",
-      "Redis",
-      "Puppeteer",
-      "SendGrid",
-      "AWS",
-      "Docker"
-    ]
-  }
-]
 </script>
 
 <template>
-  <div class="min-h-screen text-white flex justify-center items-start">
+  <div class="max-w-2xl mx-auto space-y-12 p-10 min-h-screen text-white flex justify-center items-start">
     <div class="w-full max-w-4xl p-10">
       <!-- Timeline -->
-      <h2 class="text-2xl font-bold mb-6 text-center">Timeline</h2>
+      <section>
+              <h2 class="text-2xl font-bold mb-6 text-center">Timeline</h2>
       <div class="border-l border-gray-700 pl-6 relative">
         <div v-for="(item, i) in timeline" :key="i" class="mb-8 relative">
           <!-- Dot -->
@@ -83,9 +46,11 @@ const projects: object[] = [
           </div>
         </div>
       </div>
+      </section>
 
       <!-- Projects -->
-    <h2 class="text-2xl font-bold mt-16 mb-6 text-center">Projects</h2>
+      <section>
+            <h2 class="text-2xl font-bold mt-16 mb-6 text-center">Projects</h2>
     <div class="grid md:grid-cols-2 gap-6">
       <div 
         v-for="(project, i) in projects" 
@@ -132,24 +97,7 @@ const projects: object[] = [
         </div>
       </div>
     </div>
-    
-    <div class="w-full max-w-4xl p-10">
-      <div grid md:grid-cols-2 gap-6>
-      <iframe 
-        data-testid="embed-iframe" 
-        style="border-radius:12px" 
-        src="https://open.spotify.com/embed/playlist/1wNirTC24xxOGVDAKf9sXu?utm_source=generator" 
-        width="100%" 
-        height="152" 
-        frameBorder="0" 
-        allowfullscreen="" 
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-        loading="lazy"></iframe>
-
-        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/5qGHMDEUWSn8vVRyIgGXTi?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-
-    </div>
+      </section>
     </div>
   </div>
 

@@ -5,6 +5,7 @@
 <template>
   <main>
     <Aboutme />
+    <Songs />
 </main>
 
 </template>

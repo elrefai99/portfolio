@@ -20,5 +20,6 @@ declare module 'vue' {
     ProjectModel: typeof import('./src/components/projectModel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Songs: typeof import('./src/components/songs.vue')['default']
   }
 }
