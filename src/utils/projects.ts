@@ -1,4 +1,4 @@
-export const projects: object[] = [
+export const projects: any= [
   { 
     id: 1,
     name: "Lesoll",
