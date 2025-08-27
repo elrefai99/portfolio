@@ -2,11 +2,9 @@
     <section max-w-xl mx-auto p-6 space-y-12>
       <div>
         <h1 text-2xl text-white font-bold>Hi, I'm Mohammed Mostafa</h1>
-        <span>a Software Engineer</span>
-          <div mt-4 leading-relaxed>
-            <span flex items-center text-white gap-2 w-full>
-              Working at 
-                <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" flex items-center gap-1>
+        <span flex items-center gap-2 w-full>
+          Software Engineer at 
+          <a href="https://lesoll.com" text-white target="_blank" rel="noopener noreferrer" flex items-center gap-1>
                   <img 
                     src="/public/projects/lesoll-logo.png" 
                     alt="Lesoll Logo" 
@@ -14,7 +12,8 @@
                   />
                   <span text-white-100 hover:text-gray-400 font-bold>Lesoll</span>
                 </a>
-            </span>
+        </span>
+          <div mt-4 leading-relaxed>
             <br>
               <div class="space-y-4 text-base leading-relaxed">
                 <p>
