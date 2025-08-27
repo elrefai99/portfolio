@@ -10,12 +10,14 @@ export const projects: any= [
       "Javascript",
       "TypeScript",
       "Express.js",
-      "NoSQL (MongoDB)",
+      "MongoDB (NoSQL)",
       "Paymob",
       "Redis",
       "Puppeteer",
       "SendGrid",
       "AWS",
+      "Socket.io",
+      "Swagger",
       "Docker"
     ]
   },
@@ -29,12 +31,10 @@ export const projects: any= [
     tags: [
       "Javascript",
       "TypeScript",
-      "NoSQL",
-      "Paymob",
+      "Express.js",
+      "PostgreSQL (SQL)",
       "Redis",
-      "Puppeteer",
       "SendGrid",
-      "AWS",
       "Docker"
     ]
   },
@@ -53,7 +53,7 @@ export const projects: any= [
       "mammoth",
       "Puppeteer",
       "exceljs",
-      "AWS",
+      "Docker",
     ]
   },
     { 
@@ -65,13 +65,10 @@ export const projects: any= [
     desc: 'A simple Task Tracker app to organize, manage, and monitor tasks efficiently. It helps users create, update, and track progress with ease, boosting productivity and keeping projects on schedule.',
     tags: [
       "TypeScript",
-      "NoSQL (MongoDB)",
+      "Express.js",
+      "MongoDB (NoSQL)",
       "Sprit",
-      "Redis",
-      "Puppeteer",
       "SendGrid",
-      "AWS",
-      "Docker"
     ]
   },
     { 
@@ -82,12 +79,10 @@ export const projects: any= [
     github: "https://github.com/elrefai99/elrecord",
     desc: 'This backend project implements a real-time chat system using modern technologies suitable for scalable and interactive communication applications.',
     tags: [
-      "Javascript",
       "TypeScript",
-      "NoSQL (MongoDB)",
-      "Paymob",
+      "Express.js",
+      "MongoDB (NoSQL)",
       "Redis",
-      "Puppeteer",
       "SendGrid",
       "AWS",
       "Docker"
@@ -99,18 +94,10 @@ export const projects: any= [
     category: "Package",
     link: "",
     github: "",
-    npm: "https://github.com/elrefai99/EMB",
-    desc: "",
+    npm: "https://www.npmjs.com/package/data-localizer",
+    desc: "A lightweight TypeScript utility for handling multilingual data structures.It helps you localize arrays or objects by returning values based on a given language key (e.g., ar, en). Perfect for apps that need to support multiple languages without writing repetitive localization logic.",
     tags: [
-      "Javascript",
       "TypeScript",
-      "NoSQL",
-      "Paymob",
-      "Redis",
-      "Puppeteer",
-      "SendGrid",
-      "AWS",
-      "Docker"
     ]
   }
 ]
