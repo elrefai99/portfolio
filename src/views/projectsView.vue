@@ -6,8 +6,8 @@ import { projects } from '../utils/projects'
     <div max-w-3xl mx-auto space-y-12 min-h-screen text-white flex justify-center items-start>
         <div w-full max-w-4xl p-10>
             <section>
-                <h2 class="text-2xl font-bold mb-6 text-center">Projects</h2>
-                <div class="grid md:grid-cols-2 gap-6">
+                <h2 class="" text-2xl font-bold mb-6 text-center>Projects</h2>
+                <div class="" grid md:grid-cols-2 gap-6>
                   <div 
                     v-for="(project, i) in projects" 
                     :key="project.id" 
