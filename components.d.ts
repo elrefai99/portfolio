@@ -21,5 +21,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Songs: typeof import('./src/components/songs.vue')['default']
+    Timeline: typeof import('./src/components/timeline.vue')['default']
   }
 }
