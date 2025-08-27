@@ -41,7 +41,6 @@ const isOpen = ref(false)
         <!-- <router-link to="/about" class="hover:text-white-400 transition">About</router-link> -->
         <router-link to="/projects" class="hover:text-white-400 transition">Projects</router-link>
         <a class="hover:text-white-400 transition" href="/resume.pdf">Resume</a>
-        <DarkMode />
       </div>
     </div>
 
@@ -54,7 +53,6 @@ const isOpen = ref(false)
       <!-- <router-link @click="isOpen=false" to="/about" class="hover:text-white-400 transition">About</router-link> -->
       <router-link @click="isOpen=false" to="/projects" class="hover:text-white-400 transition">Projects</router-link>
       <a @click="isOpen=false" class="hover:text-white-400 transition" href="/resume.pdf">Resume</a>
-      <DarkMode />
     </div>
   </nav>
 </template>
