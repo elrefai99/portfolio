@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import logo from "../../public/projects/lesoll-logo.png"
+</script>
+
 <template>
     <section max-w-xl mx-auto p-6 space-y-12>
       <div>
@@ -6,7 +10,7 @@
           Software Engineer at 
           <a href="https://lesoll.com" text-white target="_blank" rel="noopener noreferrer" flex items-center gap-1>
                   <img 
-                    src="/public/projects/lesoll-logo.png" 
+                    :src="logo" 
                     alt="Lesoll Logo" 
                     class="w-5 h-auto -ml2 -mr-2 mb-0.5"
                   />
