@@ -6,5 +6,4 @@
     <Aboutme />
     <Timeline />
 </main>
-
 </template>
