@@ -5,10 +5,6 @@
     <router-link to="/">Go back to Home</router-link>
   </div>
 </template>
-
-<script setup>
-</script>
-
 <style scoped>
 .not-found {
   display: flex;
