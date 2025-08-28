@@ -2,24 +2,24 @@
 const timeline = [
   {
     company: "Lesoll",
-    role: "Software Development Engineer",
+    role: "Software Engineer",
     period: "2023 - Now",
-    desc: "working on large scale lesoll systems",
-    color: "bg-blue-500"
+    desc: "Working on lesoll system",
+    color: "bg-green-400"
   },
   {
     company: "Modern Academy (CS)",
     role: "B.S. Computer Science",
     period: "2018 - 2022",
-    desc: "got my degree to make my parents proud",
+    desc: "Completed B.Sc. in Computing Web applications.",
     color: "bg-yellow-500"
   },
   {
     company: ".md",
     role: "Founder",
     period: "2019 - 2023",
-    desc: "a freelance with my friend in academy",
-    color: "bg-red-500"
+    desc: "A freelance with my friend in academy",
+    color: "bg-blue-500"
   }
 ]
 </script>
