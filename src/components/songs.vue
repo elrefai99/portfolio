@@ -11,14 +11,14 @@ const shuffledSongs = [...spotifySongs].sort(() => Math.random() - 0.5).slice(0,
 
 <template>
   <section>
-    <h2 class="text-2xl font-bold mb-6 text-center">What I’m Listening To 🎧</h2>
-    <div class="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
+    <h2 text-2xl font-bold mb-6 text-center>What I’m Listening To 🎧</h2>
+    <div max-w-3xl mx-auto grid md:grid-cols-2 gap-6>
       <div>
         <iframe
           v-bind="randomPlaylist"
         ></iframe>
       </div>
-      <div class="flex flex-col gap-4">
+      <div flex flex-col gap-4>
         <iframe
           v-for="song in shuffledSongs"
           :key="song.id"

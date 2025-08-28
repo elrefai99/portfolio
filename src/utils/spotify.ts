@@ -19,7 +19,19 @@ export const spotifyPlaylist: any = [
         frameBorder:"0", 
         allow:"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", 
         loading:"lazy",
+    },
+    // UMM KULTHUM
+    {
+        id: 3,
+        class: "rounded-xl shadow-lg",
+        src: "https://open.spotify.com/embed/artist/52lsD82iOqGtyfEMqWgk4f?utm_source=generator",
+        width:"100%", 
+        height:"352", 
+        frameBorder:"0", 
+        allow:"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", 
+        loading:"lazy",
     }
+
 ]
 
 export const spotifySongs: any = [
@@ -94,9 +106,29 @@ export const spotifySongs: any = [
         loading:"lazy",
     },
     {
-        id: 7,
+        id: 8,
         class: "rounded-xl shadow-lg",
         src: "https://open.spotify.com/embed/track/2PgDTvaEECeVZIhsuOF2Mc?utm_source=generator",
+        width:"100%", 
+        height:"152", 
+        frameBorder:"0", 
+        allow:"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", 
+        loading:"lazy",
+    },
+    {
+        id: 9,
+        class: "rounded-xl shadow-lg",
+        src: "https://open.spotify.com/embed/track/5YlkaXhh7JP80vL1eT5zvv?utm_source=generator",
+        width:"100%", 
+        height:"152", 
+        frameBorder:"0", 
+        allow:"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", 
+        loading:"lazy",
+    },
+    {
+        id: 10,
+        class: "rounded-xl shadow-lg",
+        src: "https://open.spotify.com/embed/track/32B72vNdAd1987euX9Lkgs?utm_source=generator",
         width:"100%", 
         height:"152", 
         frameBorder:"0", 

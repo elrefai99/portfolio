@@ -40,7 +40,7 @@ import { projects } from '../utils/projects'
                             :href="project.npm" 
                             target="_blank" 
                             class="i-carbon:logo-npm w-6 h-6 p-2 rounded-lg bg-white-100 hover:bg-white-500/50 backdrop-blur-sm transition"
-                            title="GitHub Repo"
+                            title="Npm Package"
                           />
                         </div>
                       </div>
