@@ -62,7 +62,7 @@ export const projects: any= [
     category: "Backend",
     link: "",
     github: "https://github.com/elrefai99/Wedding_Orgnization",
-    desc: 'A simple Task Tracker app to organize, manage, and monitor tasks efficiently. It helps users create, update, and track progress with ease, boosting productivity and keeping projects on schedule.',
+    desc: "It is my graduation project, it's like when u need become marriage and need rent wedding hall for it u can from list of famous hall with us and has section about rent car for this wedding.",
     tags: [
       "TypeScript",
       "Express.js",
@@ -77,7 +77,7 @@ export const projects: any= [
     category: "Socket.IO",
     link: "",
     github: "https://github.com/elrefai99/elrecord",
-    desc: 'This backend project implements a real-time chat system using modern technologies suitable for scalable and interactive communication applications.',
+    desc: "this like discord, user can make big room(Server) and invite friends to chat in it and can send DM's chat",
     tags: [
       "TypeScript",
       "Express.js",
