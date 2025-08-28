@@ -9,7 +9,3 @@
   <RouterView />
   <Footer />
 </template>
-
-<style>
-
-</style>
