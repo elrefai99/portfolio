@@ -11,7 +11,7 @@ import { projects } from '../utils/projects'
                   <div 
                     v-for="(project, i) in projects" 
                     :key="project.id" 
-                    class="bg-black-500/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg flex flex-col justify-between"
+                    class="bg-black-500/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg flex flex-col hover:border-white/15 justify-between"
                   >
                     <div>
                       <!-- Links -->
