@@ -40,8 +40,8 @@ function createEffect(effectType: number) {
   return (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
-    const len = 5
-    const MIN_BRANCH = 10
+    const len: number = 6
+    const MIN_BRANCH: number = 15
 
     const step = (
       x: number, y: number, rad: number,
@@ -96,7 +96,7 @@ function createEffect(effectType: number) {
     const centerX = width / 2
     const centerY = height / 2
 
-    const arms = 20
+    const arms = 25
     for (let i = 0; i < arms; i++) {
       const angle = (Math.PI * 2 * i) / arms
       steps.push(() => step(centerX, centerY, angle))
@@ -111,7 +111,7 @@ onMounted(() => {
   const ctx = initCanvas(canvas, size.width, size.height)
   ctx.ctx.clearRect(0, 0, size.width, size.height)
 
-  const effect = 4 // always grow from center
+  const effect: number = 4
   createEffect(effect)(ctx.ctx, size.width, size.height)
 })
 </script>
