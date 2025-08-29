@@ -3,11 +3,11 @@ import { projects } from '../utils/projects'
 </script>
 
 <template>
-    <div max-w-3xl mx-auto space-y-12 min-h-screen text-white flex justify-center items-start>
+    <div max-w-2xl mx-auto space-y-12 min-h-screen text-white flex justify-center items-start>
         <div w-full max-w-4xl p-10>
             <section>
                 <h2 class="" text-2xl font-bold mb-6 text-center>Projects</h2>
-                <div class="" grid md:grid-cols-2 gap-6>
+                <div class="" grid md:grid-cols-1 gap-4>
                   <div 
                     v-for="(project, i) in projects" 
                     :key="project.id" 
@@ -15,9 +15,14 @@ import { projects } from '../utils/projects'
                   >
                     <div>
                       <!-- Links -->
-                      <div class="flex items-center justify-between mb-2">
+                      <div flex items-center justify-between mb-2>
                         <!-- Project Name -->
-                        <h3 class="font-semibold text-lg">{{ project.name }}</h3>
+                        <div flex>
+                          <a :href="project.link">
+                            <h3 font-semibold text-lg>{{ project.name }}</h3>
+                          </a>
+                         <!-- <p class="text-sm mt-2.1 ml-2 text-gray-400 mb-2">{{ project.category }}</p> -->
+                        </div>
                     
                         <!-- Icons -->
                         <div class="flex gap-2">
@@ -45,7 +50,6 @@ import { projects } from '../utils/projects'
                         </div>
                       </div>
                   
-                      <p class="text-sm text-gray-400 mb-2">{{ project.category }}</p>
                       <p class="text-gray-300 mb-4">{{ project.desc }}</p>
                   
                       <div class="flex flex-wrap gap-2 mb-4">
