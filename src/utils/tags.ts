@@ -17,10 +17,10 @@ export const homeSEO = {
       property: 'og:description',
       content: "I'm a software engineer with experience in web development, specializing in backend development."
     },
-    {
-      property:"og:image",
-      content: "https://elrefai.netlify.app/og/home_og.png"
-    },
+    // {
+    //   property:"og:image",
+    //   content: "https://elrefai.netlify.app/og/home_og.png"
+    // },
     {
       name: 'twitter:title',
       content: 'Mohamed Mostafa'
