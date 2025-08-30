@@ -3,17 +3,6 @@ import { ref } from 'vue'
 
 const isOpen = ref(false)
 </script>
-
-<style scoped>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
-}
-</style>
-
 <template>
   <nav w-full bg-transparent>
     <div max-w-xl mx-auto flex items-center justify-between px-6 py-4>
@@ -45,3 +34,13 @@ const isOpen = ref(false)
     </div>
   </nav>
 </template>
+
+<style scoped>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+</style>
