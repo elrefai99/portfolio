@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { projectsSEO } from '../utils/tags';
 import { projects } from '../utils/projects'
+import { useHead } from '@vueuse/head';
+
+useHead(projectsSEO)
 </script>
 
 <template>
