@@ -19,7 +19,6 @@ import logo from "../../public/projects/lesoll-logo.png"
         </span>
           <div mt-4 leading-relaxed>
               <div space-y-4 text-base leading-relaxed>
-                <h2> About</h2>
                 <p>
                   I'm a software engineer with experience in web development, specializing in backend
                   development with  
