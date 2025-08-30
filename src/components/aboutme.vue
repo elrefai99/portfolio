@@ -18,8 +18,20 @@ import logo from "../../public/projects/lesoll-logo.png"
                 </a>
         </span>
           <div mt-4 leading-relaxed>
-            <br>
-              <div class="space-y-4 text-base leading-relaxed">
+              <div space-y-4 text-base leading-relaxed>
+                <h2> About</h2>
+                <p>
+                  I'm a software engineer with experience in web development, specializing in backend
+                  development with  
+                  <span font-bold inline-flex items-center gap-2>
+                    <i  font-serif opacity-70 icon-btn i-logos:nodejs-icon-alt></i>
+                    Node.js
+                  </span>. 
+                  I’ve recently expanded into frontend development
+                  and continuously seek to grow by exploring new technologies and working across diverse
+                  environments.
+                </p>
+
                 <p>
                   Turning ideas into real, functional systems is what drives me most. 
                   I’m passionate about building backend solutions, APIs, and tools that make life easier 

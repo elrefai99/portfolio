@@ -6,8 +6,8 @@ import { projects } from '../utils/projects'
     <div max-w-2xl mx-auto space-y-12 min-h-screen text-white flex justify-center items-start>
         <div w-full max-w-4xl p-10>
             <section>
-                <h2 class="" text-2xl font-bold mb-6 text-center>Projects</h2>
-                <div class="" grid md:grid-cols-1 gap-4>
+                <h2 text-2xl font-bold mb-6 text-center>Projects</h2>
+                <div grid md:grid-cols-1 gap-4>
                   <div 
                     v-for="(project, i) in projects" 
                     :key="project.id" 
@@ -18,14 +18,16 @@ import { projects } from '../utils/projects'
                       <div flex items-center justify-between mb-2>
                         <!-- Project Name -->
                         <div flex>
-                          <a :href="project.link">
+                          <a :href="project.github ? project.github : project.npm ? project.npm : project.link">
                             <h3 font-semibold text-lg>{{ project.name }}</h3>
                           </a>
                          <!-- <p class="text-sm mt-2.1 ml-2 text-gray-400 mb-2">{{ project.category }}</p> -->
                         </div>
                     
                         <!-- Icons -->
-                        <div class="flex gap-2">
+                        <div :class="project.link && project.github || project.link && project.npm || project.npm && project.github 
+                          ? 'grid grid-cols-3 gap-2' 
+                          : 'flex justify-end'">
                           <a 
                             v-if="project.link" 
                             :href="project.link" 
