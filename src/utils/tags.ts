@@ -19,7 +19,7 @@ export const homeSEO = {
     },
     {
       property:"og:image",
-      content: "/og/home_og.png"
+      content: "https://elrefai.netlify.app/og/home_og.png"
     },
     {
       name: 'twitter:title',
@@ -53,7 +53,7 @@ export const projectsSEO = {
     },
     {
       property:"og:image",
-      content: "/og/projects_page_og.png"
+      content: "https://elrefai.netlify.app/og/projects_page_og.png"
     },
     {
       name: 'twitter:title',
