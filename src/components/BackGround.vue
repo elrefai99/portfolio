@@ -4,24 +4,22 @@ import { useWindowSize, useRafFn } from '@vueuse/core'
 
 const el = ref<HTMLCanvasElement | null>(null)
 const size = reactive(useWindowSize())
-const start = ref(() => {})
-const stopped = ref(false)
 
-const colorPalette = [
+const colorPalette: string[] = [
   '#ffffff10'
 ]
 
 function initCanvas(canvas: HTMLCanvasElement, width = 400, height = 400, _dpi?: number) {
   const ctx: any = canvas.getContext('2d')!
   const dpr = window.devicePixelRatio || 1
-  const bsr =
+  const bsr: number =
     ctx.webkitBackingStorePixelRatio ||
     ctx.mozBackingStorePixelRatio ||
     ctx.msBackingStorePixelRatio ||
     ctx.oBackingStorePixelRatio ||
     ctx.backingStorePixelRatio ||
     1
-  const dpi = _dpi || dpr / bsr
+  const dpi: number = _dpi || dpr / bsr
   canvas.style.width = `${width}px`
   canvas.style.height = `${height}px`
   canvas.width = dpi * width
@@ -31,8 +29,8 @@ function initCanvas(canvas: HTMLCanvasElement, width = 400, height = 400, _dpi?:
 }
 
 function polar2cart(x = 0, y = 0, r = 0, theta = 0) {
-  const dx = r * Math.cos(theta)
-  const dy = r * Math.sin(theta)
+  const dx: number = r * Math.cos(theta)
+  const dy: number = r * Math.sin(theta)
   return [x + dx, y + dy]
 }
 

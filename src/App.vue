@@ -2,9 +2,7 @@
 </script>
 
 <template>
-  <header>
-    <NavBar />
-  </header>
+  <NavBar />
   <BackGround />
   <RouterView />
   <Footer />
