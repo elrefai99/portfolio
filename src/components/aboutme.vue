@@ -22,7 +22,7 @@ import logo from "../../public/projects/lesoll-logo.png"
                 <p>
                   I'm a software engineer with experience in web development, specializing in backend
                   development with  
-                  <span font-bold inline-flex items-center gap-2>
+                  <span font-bold inline-flex text-white items-center gap-2>
                     <i  font-serif opacity-70 icon-btn i-logos:nodejs-icon-alt></i>
                     Node.js
                   </span>. 
@@ -30,14 +30,12 @@ import logo from "../../public/projects/lesoll-logo.png"
                   and continuously seek to grow by exploring new technologies and working across diverse
                   environments.
                 </p>
-
                 <p>
                   Turning ideas into real, functional systems is what drives me most. 
                   I’m passionate about building backend solutions, APIs, and tools that make life easier 
                   and boost productivity—whether for myself, my projects, or the developer community. 
-                  You can explore my full list of <router-link to="/projects" class="text-white">projects</router-link>.
+                  You can explore my full list of <router-link to="/projects" text-white hover:text-gray-400 font-bold>projects</router-link>.
                 </p>
-              
                 <p>
                   Outside of coding, I enjoy photography and traveling. 
                   I’m also into anime, movies, and dramas, and I like to keep track of what I watch.
@@ -49,7 +47,6 @@ import logo from "../../public/projects/lesoll-logo.png"
 </template>
 
 <style scoped>
-/* Optional fade-in animation */
 section {
   animation: fadeIn 1s ease-in-out;
 }
