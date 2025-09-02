@@ -1,5 +1,5 @@
-export const projects: any= [
-  { 
+export const projects: any = [
+  {
     id: 1,
     name: "Lesoll",
     category: "Live",
@@ -26,7 +26,7 @@ export const projects: any= [
       "git/github",
     ]
   },
-  { 
+  {
     id: 2,
     name: "Task Tracker",
     category: "Current Focus",
@@ -43,7 +43,7 @@ export const projects: any= [
       "Docker"
     ]
   },
-    { 
+  {
     id: 3,
     name: "Smart Parser",
     category: "Current Focus",
@@ -61,7 +61,7 @@ export const projects: any= [
       "Docker",
     ]
   },
-    { 
+  {
     id: 4,
     name: 'Wedding Orgnization',
     category: "Backend",
@@ -76,7 +76,7 @@ export const projects: any= [
       "SendGrid",
     ]
   },
-    { 
+  {
     id: 5,
     name: "Elrecord",
     category: "Socket.IO",
@@ -93,12 +93,12 @@ export const projects: any= [
       "Docker"
     ]
   },
-    { 
+  {
     id: 6,
     name: "data-localizer",
     category: "Package",
-    link: "",
-    github: "",
+    // link: "https://github.com/elrefai99/data-localizer",
+    github: "https://github.com/elrefai99/data-localizer",
     npm: "https://www.npmjs.com/package/data-localizer",
     desc: "A lightweight TypeScript utility for handling multilingual data structures.It helps you localize arrays or objects by returning values based on a given language key (e.g., ar, en). Perfect for apps that need to support multiple languages without writing repetitive localization logic.",
     tags: [

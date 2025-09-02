@@ -10,12 +10,13 @@ useHead(projectsSEO)
     <div max-w-2xl mx-auto space-y-12 min-h-screen text-white flex justify-center items-start>
         <div w-full max-w-4xl p-10>
             <section>
-                <h2 text-2xl font-bold mb-6 text-center>Projects</h2>
+                <h2 text-3xl font-bold mb-6 text-left>Projects</h2>
+                <!-- <p text-xl font-bold mb-2 text-center text-gray-500 italic>Projects that I created or maintaining.</p> -->
                 <div grid md:grid-cols-1 gap-4>
                   <div 
                     v-for="(project, i) in projects" 
                     :key="project.id" 
-                    class="bg-black-500/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg flex flex-col hover:border-white/15 justify-between"
+                    class="bg-black-500/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg flex flex-col hover:border-white/20 justify-between"
                   >
                     <div>
                       <!-- Links -->
