@@ -24,7 +24,7 @@ const timeline = [
 ]
 </script>
 <template>
-    <div max-w-xl mx-auto space-y-12 p-1 min-h-screen text-white flex justify-center items-start>
+    <div max-w-xl mx-auto space-y-12 p-1 text-white flex justify-center items-start>
   <div w-full max-w-4xl p-10>
     <section>
       <h2 text-2xl font-bold mb-6 text-center>Timeline</h2>
@@ -40,7 +40,7 @@ const timeline = [
         </div>
       </div>
     </section>
-    <Songs />
+    <!-- <Songs /> -->
   </div>
 </div>
 </template>
