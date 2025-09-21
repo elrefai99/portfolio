@@ -4,6 +4,7 @@ import ResumeView from '../views/ResumeView.vue'
 import NotFound from '../views/NotFound.vue'
 // import AboutView from '../views/AboutView.vue'
 import projectsView from '../views/projectsView.vue'
+import ContactView from '../views/ContactView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,11 +19,11 @@ const router = createRouter({
       name: 'resume',
       component: ResumeView
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   component: AboutView
-    // },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView
+    },
         {
       path: '/projects',
       name: 'projects',
