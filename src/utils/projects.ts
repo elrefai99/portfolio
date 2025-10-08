@@ -1,9 +1,12 @@
+import lesoll from '../../public/projects/lesoll-logo.png'
+import egystay from "../../public/projects/egystay.png"
+
 export const projects: any = [
   {
     id: 1,
     name: "Lesoll",
     category: "Live",
-    logo: "../../public/projects/lesoll-logo.png",
+    logo: lesoll,
     link: "https://lesoll.com",
     class: "w-5 h-auto -ml2 -mr-2 mb-0.5",
     github: "",
@@ -32,7 +35,7 @@ export const projects: any = [
     id: 2,
     name: "EGYStay",
     category: "Current Focus",
-    logo: "../../public/projects/egystay.png",
+    logo: egystay,
     class: "w-10 h-auto -ml2 -mr-2",
     link: "",
     github: "",
