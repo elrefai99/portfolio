@@ -7,12 +7,12 @@ useHead(projectsSEO)
 </script>
 
 <template>
-    <div max-w-2xl mx-auto space-y-12 min-h-screen text-white flex justify-center items-start>
+    <div max-w-4xl mx-auto space-y-10 min-h-screen text-white flex justify-center items-start>
         <div w-full max-w-4xl p-10>
             <section>
                 <h2 text-3xl font-bold mb-6 text-left>Projects</h2>
                 <!-- <p text-xl font-bold mb-2 text-center text-gray-500 italic>Projects that I created or maintaining.</p> -->
-                <div grid md:grid-cols-1 gap-4>
+                <div grid md:grid-cols-2 gap-4>
                   <div 
                     v-for="(project, i) in projects" 
                     :key="project.id" 
