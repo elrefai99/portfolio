@@ -1,8 +1,5 @@
-<script setup>
-import { ref } from 'vue'
+<script setup></script>
 
-const isOpen = ref(false)
-</script>
 <template>
   <header>
     <nav w-full bg-transparent>
@@ -10,7 +7,6 @@ const isOpen = ref(false)
         <div text-md md:flex items-center gap-8 opacity-80>
           <router-link to="/" hover:text-white-400 transition active-class="border-b-2 border-current pb-1">Home</router-link>
           <router-link to="/projects" hover:text-white-400 ml4 md:-ml-4 transition active-class="border-b-2 border-current pb-1">Projects</router-link>
-          <!-- <router-link to="/contact" hover:text-white-400 ml4 md:-ml-4 transition active-class="border-b-2 border-current pb-1">Contact</router-link> -->
           <a hover:text-white-400 ml4 md:-ml-4 transition href="/resume.pdf">Resume</a>
         </div>
       </div>
