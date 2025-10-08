@@ -35,7 +35,6 @@ export const projects: any = [
     id: 2,
     name: "EGYStay",
     category: "Current Focus",
-    logo: egystay,
     class: "w-10 h-auto -ml2 -mr-2",
     link: "",
     github: "",
