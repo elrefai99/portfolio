@@ -24,7 +24,10 @@ useHead(projectsSEO)
                         <!-- Project Name -->
                         <div flex>
                           <a :href="project.github ? project.github : project.npm ? project.npm : project.link">
-                            <h3 font-semibold text-lg>{{ project.name }}</h3>
+                            <span flex items-center gap-2>
+                              <img v-if="project.logo" :src="project.logo" alt="{{ project.name }} Logo"  :class="project.class"/>
+                              <h3 font-semibold text-lg>{{ project.name }}</h3>
+                            </span>
                           </a>
                          <!-- <p class="text-sm mt-2.1 ml-2 text-gray-400 mb-2">{{ project.category }}</p> -->
                         </div>

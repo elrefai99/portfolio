@@ -3,7 +3,9 @@ export const projects: any = [
     id: 1,
     name: "Lesoll",
     category: "Live",
+    logo: "../../public/projects/lesoll-logo.png",
     link: "https://lesoll.com",
+    class: "w-5 h-auto -ml2 -mr-2 mb-0.5",
     github: "",
     desc: 'Lesoll platform that user can sale or rent his apartment or his car, and in same time can buy and unit he want or rent it and the same in car',
     tags: [
@@ -28,6 +30,35 @@ export const projects: any = [
   },
   {
     id: 2,
+    name: "EGYStay",
+    category: "Current Focus",
+    logo: "../../public/projects/egystay.png",
+    class: "w-10 h-auto -ml2 -mr-2",
+    link: "",
+    github: "",
+    desc: 'Egystay is a modern booking platform where users can reserve rental units for flexible short-term stays, whether daily or weekly.',
+    tags: [
+      "Typescript",
+      "Javascript",
+      "Express.js",
+      "MongoDB",
+      "Paymob",
+      "SendGrid",
+      "Redis",
+      "Puppeteer",
+      "Swagger",
+      "Docker",
+      "AWS",
+      "Render",
+      "Socket.IO",
+      "NGINX",
+      "pm2",
+      "pnpm",
+      "git/github",
+    ]
+  },
+  {
+    id: 3,
     name: "Task Tracker",
     category: "Current Focus",
     link: "",
@@ -44,7 +75,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 3,
+    id: 4,
     name: "Smart Parser",
     category: "Current Focus",
     link: "",
@@ -62,7 +93,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 4,
+    id: 5,
     name: 'Wedding Orgnization',
     category: "Backend",
     link: "",
@@ -77,7 +108,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     name: "Elrecord",
     category: "Socket.IO",
     link: "",
@@ -94,7 +125,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 6,
+    id: 7,
     name: "data-localizer",
     category: "Package",
     // link: "https://github.com/elrefai99/data-localizer",
