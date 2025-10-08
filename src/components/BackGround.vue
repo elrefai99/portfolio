@@ -39,7 +39,7 @@ function createEffect(effectType: number) {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
     const len: number = 5
-    const MIN_BRANCH: number = 10
+    const MIN_BRANCH: number = 8
 
     const step = (
       x: number, y: number, rad: number,
