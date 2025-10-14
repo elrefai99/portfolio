@@ -137,5 +137,17 @@ export const projects: any = [
     tags: [
       "TypeScript",
     ]
+  },
+  {
+    id: 7,
+    name: "auto-evi (beta)",
+    category: "Package",
+    // link: "https://github.com/elrefai99/data-localizer",
+    github: "https://github.com/auto-evi/auto-evi",
+    npm: "https://www.npmjs.com/package/@mohamed-elrefai/auto-evi",
+    desc: "This script automatically generates Swagger JSDoc comments (swagger.evi.ts) by scanning your Express router files. It detects all HTTP routes (get, post, put, etc.) inside your project’s module directories and produces a ready-to-use Swagger doc block for each route.",
+    tags: [
+      "TypeScript",
+    ]
   }
 ]
