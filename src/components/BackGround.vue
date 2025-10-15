@@ -39,7 +39,7 @@ function createEffect(effectType: number) {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
     const len: number = 4
-    const MIN_BRANCH: number = 6
+    const MIN_BRANCH: number = 5
 
     const step = (
       x: number, y: number, rad: number,
@@ -94,7 +94,7 @@ function createEffect(effectType: number) {
     const centerX = width / 2
     const centerY = height / 2
 
-    const arms = 25
+    const arms = 20
     for (let i = 0; i < arms; i++) {
       const angle = (Math.PI * 2 * i) / arms
       steps.push(() => step(centerX, centerY, angle))
