@@ -10,7 +10,6 @@ export default defineConfig({
      theme: {
           colors: {
                whiteMode: "#202020",
-               colorDarkModeText: rgba(235, 235, 235, 0.64)
           },
      },
 })
