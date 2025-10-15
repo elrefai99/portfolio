@@ -8,6 +8,7 @@
           <router-link to="/" hover:text-white-400 transition active-class="border-b-2 border-current pb-1">Home</router-link>
           <router-link to="/projects" hover:text-white-400 ml4 md:-ml-4 transition active-class="border-b-2 border-current pb-1">Projects</router-link>
           <a hover:text-white-400 ml4 md:-ml-4 transition href="/resume.pdf">Resume</a>
+          <darkmode />
         </div>
       </div>
     </nav>

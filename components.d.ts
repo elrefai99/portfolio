@@ -11,6 +11,7 @@ declare module 'vue' {
     AboutCV: typeof import('./src/components/cv/aboutCV.vue')['default']
     Aboutme: typeof import('./src/components/aboutme.vue')['default']
     BackGround: typeof import('./src/components/BackGround.vue')['default']
+    Darkmode: typeof import('./src/components/darkmode.vue')['default']
     Footer: typeof import('./src/components/footer.vue')['default']
     HeaderCV: typeof import('./src/components/cv/headerCV.vue')['default']
     ModelView: typeof import('./src/components/modelView.vue')['default']
