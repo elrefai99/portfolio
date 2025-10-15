@@ -38,8 +38,8 @@ function createEffect(effectType: number) {
   return (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
-    const len: number = 4
-    const MIN_BRANCH: number = 5
+    const len: number = 6
+    const MIN_BRANCH: number = 15
 
     const step = (
       x: number, y: number, rad: number,
@@ -51,8 +51,8 @@ function createEffect(effectType: number) {
       ctx.beginPath()
       if (effectType === 2) {
         ctx.quadraticCurveTo(
-          (x + nx) / 2 + Math.random() * 5,
-          (y + ny) / 2 + Math.random() * 5,
+          (x + nx) / 2 + Math.random() * 2,
+          (y + ny) / 2 + Math.random() * 2,
           nx, ny
         )
       } else {
@@ -94,7 +94,7 @@ function createEffect(effectType: number) {
     const centerX = width / 2
     const centerY = height / 2
 
-    const arms = 20
+    const arms = 10
     for (let i = 0; i < arms; i++) {
       const angle = (Math.PI * 2 * i) / arms
       steps.push(() => step(centerX, centerY, angle))
@@ -112,7 +112,7 @@ function createEffect(effectType: number) {
   const isDark = document.documentElement.classList.contains('dark')
   colorPalette = isDark ? ['#ffffff20'] : ['#00000010']
 
-  const effect: number = 40
+  const effect: number = 5
   createEffect(effect)(ctx.ctx, size.width, size.height)
 }
 
