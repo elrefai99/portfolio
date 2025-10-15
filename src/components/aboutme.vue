@@ -22,7 +22,7 @@ import logo from "../../public/projects/lesoll-logo.png"
             I'm a software engineer with experience in web development, specializing in backend
             development with  
             <span font-bold inline-flex items-center gap-2 text-black dark:text-white >
-              <i font-serif icon-btn i-logos:nodejs-icon-alt></i>
+              <i font-serif i-logos:nodejs-icon-alt></i>
               Node.js
             </span>.  I’ve recently expanded into frontend development and continuously seek to grow by exploring new technologies and working across diverse environments.
           </p>
