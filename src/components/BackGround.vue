@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useWindowSize, useRafFn } from '@vueuse/core'
 
 const el = ref<HTMLCanvasElement | null>(null)
 const size = reactive(useWindowSize())
 
-const colorPalette: string[] = [
+let colorPalette: string[] = [
   '#ffffff10'
 ]
 
@@ -38,8 +38,8 @@ function createEffect(effectType: number) {
   return (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
-    const len: number = 3
-    const MIN_BRANCH: number = 6
+    const len: number = 4
+    const MIN_BRANCH: number = 1
 
     const step = (
       x: number, y: number, rad: number,
@@ -77,7 +77,7 @@ function createEffect(effectType: number) {
     }
 
     let lastTime = performance.now()
-    const interval = 1000 / 50
+    const interval = 1000 / 20
     const controls = useRafFn(() => {
       if (performance.now() - lastTime < interval) return
       prevSteps = steps
@@ -103,14 +103,26 @@ function createEffect(effectType: number) {
     controls.resume()
   }
 }
-
-onMounted(() => {
+  function drawEffect() {
   const canvas = el.value!
+  if (!canvas) return
   const ctx = initCanvas(canvas, size.width, size.height)
   ctx.ctx.clearRect(0, 0, size.width, size.height)
 
-  const effect: number = 4
+  const isDark = document.documentElement.classList.contains('dark')
+  colorPalette = isDark ? ['#ffffff20'] : ['#00000010']
+
+  const effect: number = 40
   createEffect(effect)(ctx.ctx, size.width, size.height)
+}
+
+onMounted(() => {
+  drawEffect()
+  const observer = new MutationObserver(() => {
+    drawEffect()
+  })
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+  onUnmounted(() => observer.disconnect())
 })
 </script>
 

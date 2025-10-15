@@ -10,7 +10,7 @@
 <style>
 html.dark {
   background: #000001;
-  color: white;
+  color: var(--color-text);
   color-scheme: dark;
 }
 </style>
