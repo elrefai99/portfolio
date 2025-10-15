@@ -12,7 +12,7 @@ useHead(projectsSEO);
       <section>
         <h2 text-3xl font-bold mb-6 text-left text-black dark:text-white >Projects</h2>
         <div grid md:grid-cols-2 gap-4>
-          <div v-for="(project) in projects" :key="project.id" class="bg-black-500/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg flex flex-col hover:border-white/20 justify-between">
+          <div v-for="(project) in projects" :key="project.id" class="bg-white-500/10 dark:bg-black-500/10 backdrop-blur-md border border-black/10 dark:border-white/10 dark:border-black/10 p-6 rounded-3xl shadow-lg flex flex-col hover:border-white/20 justify-between">
             <div>
               <!-- Links -->
               <div flex items-center justify-between mb-2>
