@@ -60,23 +60,6 @@ export const projects: any = [
     ]
   },
   {
-    id: 3,
-    name: "Task Tracker",
-    category: "Current Focus",
-    link: "",
-    github: "https://github.com/elrefai99/EMB",
-    desc: 'A simple Task Tracker app to organize, manage, and monitor tasks efficiently. It helps users create, update, and track progress with ease, boosting productivity and keeping projects on schedule.',
-    tags: [
-      "Javascript",
-      "TypeScript",
-      "Express.js",
-      "PostgreSQL (SQL)",
-      "Redis",
-      "SendGrid",
-      "Docker"
-    ]
-  },
-  {
     id: 4,
     name: "Smart Parser",
     category: "Current Focus",

@@ -34,21 +34,21 @@ useHead(projectsSEO);
                     v-if="project.link" 
                     :href="project.link" 
                     target="_blank" 
-                    class="i-solar:eye-bold w-6 h-6 p-2 rounded-lg bg-white dark:bg-gray-200/50 hover:bg-white/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition"
+                    class="i-solar:eye-bold w-6 h-6 p-2 rounded-lg bg-black dark:bg-white hover:bg-white/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition"
                     title="Live Site"
                   />
                   <a 
                     v-if="project.github" 
                     :href="project.github" 
                     target="_blank" 
-                    class="i-carbon:logo-github w-6 h-6 p-2 rounded-lg bg-white dark:bg-gray-200/50 hover:bg-white/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition"
+                    class="i-carbon:logo-github w-6 h-6 p-2 rounded-lg bg-black dark:bg-white hover:bg-white/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition"
                     title="GitHub Repo"
                   />
                   <a 
                     v-if="project.npm" 
                     :href="project.npm" 
                     target="_blank" 
-                    class="i-carbon:logo-npm w-6 h-6 p-2 rounded-lg bg-white dark:bg-gray-200/50 hover:bg-white/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition"
+                    class="i-carbon:logo-npm w-6 h-6 p-2 rounded-lg bg-black dark:bg-white hover:bg-white/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition"
                     title="Npm Package"
                   />
                 </div>
