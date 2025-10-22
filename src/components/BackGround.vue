@@ -38,8 +38,8 @@ function createEffect(effectType: number) {
   return (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     let steps: (() => void)[] = []
     let prevSteps: (() => void)[] = []
-    const len: number = 6
-    const MIN_BRANCH: number = 15
+    const len: number = 4
+    const MIN_BRANCH: number = 8
 
     const step = (
       x: number, y: number, rad: number,
@@ -49,7 +49,7 @@ function createEffect(effectType: number) {
       counter.value += 1
       const [nx, ny] = polar2cart(x, y, length, rad)
       ctx.beginPath()
-      if (effectType === 2) {
+      if (effectType === 1) {
         ctx.quadraticCurveTo(
           (x + nx) / 2 + Math.random() * 2,
           (y + ny) / 2 + Math.random() * 2,
@@ -61,7 +61,7 @@ function createEffect(effectType: number) {
       }
       ctx.stroke()
 
-      if (effectType === 3 && Math.random() < 0.4) {
+      if (effectType === 2 && Math.random() < 0.4) {
         ctx.beginPath()
         ctx.arc(nx, ny, 0.5 + Math.random(), 0, Math.PI * 2)
         ctx.fill()
@@ -94,7 +94,7 @@ function createEffect(effectType: number) {
     const centerX = width / 2
     const centerY = height / 2
 
-    const arms = 10
+    const arms = 8
     for (let i = 0; i < arms; i++) {
       const angle = (Math.PI * 2 * i) / arms
       steps.push(() => step(centerX, centerY, angle))
