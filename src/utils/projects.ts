@@ -60,6 +60,23 @@ export const projects: any = [
     ]
   },
   {
+    id: 3,
+    name: "Schedule",
+    category: "Live",
+    link: "https://schedule-elrefai.netlify.app/",
+    github: "https://github.com/elrefai99/schedule",
+    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
+    tags: [
+      "TypeScript",
+      "Firebase",
+      "Vue.js",
+      "Vite",
+      "Netlify",
+      "git/github",
+      "Docker"
+    ]
+  },
+  {
     id: 4,
     name: "Smart Parser",
     category: "Backend",
@@ -93,25 +110,8 @@ export const projects: any = [
     ]
   },
   {
-    id: 6,
-    name: "Elrecord",
-    category: "Socket.IO",
-    link: "",
-    github: "https://github.com/elrefai99/elrecord",
-    desc: "this like discord, user can make big room(Server) and invite friends to chat in it and can send DM's chat",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "MongoDB (NoSQL)",
-      "Redis",
-      "SendGrid",
-      "AWS",
-      "Docker"
-    ]
-  },
-  {
     id: 7,
-    name: "data-localizer",
+    name: "Data Localizer",
     category: "Package",
     // link: "https://github.com/elrefai99/data-localizer",
     github: "https://github.com/elrefai99/data-localizer",
@@ -121,16 +121,4 @@ export const projects: any = [
       "TypeScript",
     ]
   },
-  {
-    id: 7,
-    name: "auto-evi (beta)",
-    category: "Package",
-    // link: "https://github.com/elrefai99/data-localizer",
-    github: "https://github.com/auto-evi/auto-evi",
-    npm: "https://www.npmjs.com/package/@mohamed-elrefai/auto-evi",
-    desc: "This script automatically generates Swagger JSDoc comments (swagger.evi.ts) by scanning your Express router files. It detects all HTTP routes (get, post, put, etc.) inside your project’s module directories and produces a ready-to-use Swagger doc block for each route.",
-    tags: [
-      "TypeScript",
-    ]
-  }
 ]
