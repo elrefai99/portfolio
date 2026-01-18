@@ -27,7 +27,7 @@ const timeline = [
 
 <template>
   <div max-w-xl mx-auto space-y-12 p-1 text-black dark:text-white flex justify-center items-start>
-    <div w-full max-w-4xl p-10>
+    <div w-full p-4 md:p-10>
       <section>
         <h2 text-2xl font-bold mb-6 text-center text-black dark:text-white>Timeline</h2>
         <div border-l border-gray-300 dark:border-gray-600 pl-6 relative>
@@ -37,7 +37,7 @@ const timeline = [
 
             <div>
               <!-- اسم الشركة -->
-              <h3 font-semibold>
+              <h3 font-semibold pr-0 md:pr-24>
                 <template v-if="item.link">
                   <a :href="item.link" target="_blank" 
                      class="font-bold text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300">
@@ -49,14 +49,14 @@ const timeline = [
                 </div>
               </h3>
 
+              <!-- الفترة الزمنية -->
+              <span class="block md:absolute md:right-0 md:top-0 text-sm text-gray-500 dark:text-gray-400 mb-1 md:mb-0 md:text-black md:dark:text-white">{{ item.period }}</span>
+
               <!-- الدور الوظيفي -->
               <p italic text-gray-600 dark:text-gray-400>{{ item.role }}</p>
 
               <!-- الوصف -->
               <p text-sm text-gray-700 dark:text-gray-300>{{ item.desc }}</p>
-
-              <!-- الفترة الزمنية -->
-              <span absolute right-0 top-0 text-sm text-black dark:text-white>{{ item.period }}</span>
             </div>
           </div>
         </div>

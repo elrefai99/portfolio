@@ -94,7 +94,7 @@ function createEffect(effectType: number) {
     const centerX = width / 2
     const centerY = height / 2
 
-    const arms = 8
+    const arms = 5
     for (let i = 0; i < arms; i++) {
       const angle = (Math.PI * 2 * i) / arms
       steps.push(() => step(centerX, centerY, angle))

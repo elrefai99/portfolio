@@ -8,7 +8,7 @@ useHead(projectsSEO);
 
 <template>
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
-    <div w-full max-w-4xl p-10>
+    <div w-full max-w-4xl p-4 md:p-10>
       <section>
         <h2 text-3xl font-bold mb-6 text-left text-black dark:text-white >Projects</h2>
         <div grid md:grid-cols-2 gap-4>
