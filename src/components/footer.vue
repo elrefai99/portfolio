@@ -13,7 +13,7 @@
 
     <!-- Copyright -->
     <p text-sm text-white-500>
-      &copy 2025 <a href="https://github.com/elrefai99">elrefai99</a>. All rights reserved.
+      &copy {{new Date().getFullYear()}} <a href="https://github.com/elrefai99">elrefai99</a>. All rights reserved.
     </p>
   </footer>
 </template>
