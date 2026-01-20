@@ -11,6 +11,7 @@ declare module 'vue' {
     AboutCV: typeof import('./src/components/cv/aboutCV.vue')['default']
     Aboutme: typeof import('./src/components/aboutme.vue')['default']
     BackGround: typeof import('./src/components/BackGround.vue')['default']
+    BranchBackground: typeof import('./src/components/BranchBackground.vue')['default']
     Darkmode: typeof import('./src/components/darkmode.vue')['default']
     Footer: typeof import('./src/components/footer.vue')['default']
     HeaderCV: typeof import('./src/components/cv/headerCV.vue')['default']
@@ -19,6 +20,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Songs: typeof import('./src/components/songs.vue')['default']
+    StarBackground: typeof import('./src/components/StarBackground.vue')['default']
     Timeline: typeof import('./src/components/timeline.vue')['default']
   }
 }

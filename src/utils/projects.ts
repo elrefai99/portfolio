@@ -1,6 +1,6 @@
 import lesoll from '../../public/projects/lesoll-logo.png'
-import egystay from "../../public/projects/egystay.png"
-
+import egystay from "../../public/projects/egy-stay-logo.png"
+import schedule from "../../public/projects/schedule.svg"
 export const projects: any = [
   {
     id: 1,
@@ -8,7 +8,7 @@ export const projects: any = [
     category: "Live",
     logo: lesoll,
     link: "https://lesoll.com",
-    class: "w-5 h-auto -ml2 -mr-2 mb-0.5",
+    class: "w-5 h-auto",
     github: "",
     desc: 'Lesoll platform that user can sale or rent his apartment or his car, and in same time can buy and unit he want or rent it and the same in car',
     tags: [
@@ -36,7 +36,7 @@ export const projects: any = [
     name: "EGYStay",
     category: "Live",
     logo: egystay,
-    class: "w-5 h-auto -ml2 -mr-2 mb-0.5",
+    class: "w-5 h-auto",
     link: "https://egystay.com",
     github: "",
     desc: 'Egystay is a modern booking platform where users can reserve rental units for flexible short-term stays, whether daily or weekly.',
@@ -63,6 +63,8 @@ export const projects: any = [
     id: 3,
     name: "Schedule",
     category: "Live",
+    logo: schedule,
+    class: "w-5 h-5",
     link: "https://schedule-elrefai.netlify.app/",
     github: "https://github.com/elrefai99/schedule",
     desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
