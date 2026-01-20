@@ -26,37 +26,81 @@ const timeline = [
 </script>
 
 <template>
-  <div max-w-xl mx-auto space-y-12 p-1 text-black dark:text-white flex justify-center items-start>
-    <div w-full p-4 md:p-10>
-      <section>
-        <h2 text-2xl font-bold mb-6 text-center text-black dark:text-white>Timeline</h2>
-        <div border-l border-gray-300 dark:border-gray-600 pl-6 relative>
-          <div v-for="(item, i) in timeline" :key="i" mb-8 relative>
-            <!-- النقاط الملونة -->
-            <span :class="['absolute -left-3 -ml-5.5 w-5 h-5 rounded-full', item.color]"></span>
+  <div 
+    max-w-xl mx-auto space-y-12 p-1
+    text-black dark:text-white
+    flex justify-center items-start
+  >
+    <div w-full p="4 md:10">
+      <section class="animate-fade-in">
+        <h2 
+          text-2xl font-bold mb-6 text-center
+          text-black dark:text-white
+        >
+          Timeline
+        </h2>
+        
+        <div 
+          border="l-2 gray-300 dark:gray-600" 
+          pl-6 relative
+        >
+          <div 
+            v-for="(item, i) in timeline" 
+            :key="i" 
+            mb-8 relative
+            class="timeline-item group"
+          >
+            <!-- Colored dots with pulse -->
+            <span 
+              :class="['absolute -left-3 -ml-5.5 w-5 h-5 rounded-full transition-all duration-300 group-hover:scale-125', item.color]"
+            >
+              <span 
+                :class="['absolute inset-0 rounded-full pulse-animation opacity-75', item.color]"
+              ></span>
+            </span>
 
-            <div>
-              <!-- اسم الشركة -->
-              <h3 font-semibold pr-0 md:pr-24>
+            <div 
+              class="timeline-content"
+              transition-transform duration-300
+            >
+              <!-- Company name -->
+              <h3 font-semibold pr="0 md:24">
                 <template v-if="item.link">
-                  <a :href="item.link" target="_blank" 
-                     class="font-bold text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300">
+                  <a 
+                    :href="item.link" 
+                    target="_blank" 
+                    font-bold
+                    text-black dark:text-white
+                    transition-colors duration-200
+                    hover="text-gray-600 dark:text-gray-300"
+                  >
                     {{ item.company }}
                   </a>
                 </template>
-                <div v-else class="font-bold text-black dark:text-white">
+                <div v-else font-bold text-black dark:text-white>
                   {{ item.company }}
                 </div>
               </h3>
 
-              <!-- الفترة الزمنية -->
-              <span class="block md:absolute md:right-0 md:top-0 text-sm text-gray-500 dark:text-gray-400 mb-1 md:mb-0 md:text-black md:dark:text-white">{{ item.period }}</span>
+              <!-- Period -->
+              <span 
+                block md:absolute md:right-0 md:top-0
+                text-sm font-medium
+                text="gray-500 dark:gray-400 md:black md:dark:white"
+                mb="1 md:0"
+              >
+                {{ item.period }}
+              </span>
 
-              <!-- الدور الوظيفي -->
-              <p italic text-gray-600 dark:text-gray-400>{{ item.role }}</p>
+              <!-- Role -->
+              <p italic text-gray-600 dark:text-gray-400 mt-1>
+                {{ item.role }}
+              </p>
 
-              <!-- الوصف -->
-              <p text-sm text-gray-700 dark:text-gray-300>{{ item.desc }}</p>
+              <!-- Description -->
+              <p text-sm text-gray-700 dark:text-gray-300 mt-2 leading-relaxed>
+                {{ item.desc }}
+              </p>
             </div>
           </div>
         </div>
@@ -66,11 +110,46 @@ const timeline = [
 </template>
 
 <style scoped>
-section {
+.animate-fade-in {
   animation: fadeIn 1s ease-in-out;
 }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.timeline-item {
+  animation: slideInLeft 0.6s ease-out backwards;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.1s; }
+.timeline-item:nth-child(2) { animation-delay: 0.2s; }
+.timeline-item:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.timeline-item:hover .timeline-content {
+  transform: translateX(8px);
+}
+
+.pulse-animation {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 </style>

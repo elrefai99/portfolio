@@ -1,43 +1,276 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import logo from "../../public/projects/lesoll-logo.png"
+
+// Optional: Set to null or empty string to hide profile photo
+const profilePhoto = ref<string | null>(null) // Change to your photo path like: "/profile.jpg"
+
+// Typing animation
+const displayedText = ref('')
+const fullText = "Mohammed Mostafa"
+const typingSpeed = 100
+
+onMounted(() => {
+  let index = 0
+  const typeText = () => {
+    if (index < fullText.length) {
+      displayedText.value += fullText.charAt(index)
+      index++
+      setTimeout(typeText, typingSpeed)
+    }
+  }
+  typeText()
+})
+
+// Tech stack
+const techStack = [
+  { name: 'Node.js', icon: 'i-logos:nodejs-icon-alt' },
+  { name: 'TypeScript', icon: 'i-logos:typescript-icon' },
+  { name: 'Vue.js', icon: 'i-logos:vue' },
+  { name: 'Express', icon: 'dark:i-skill-icons:expressjs-light i-skill-icons:expressjs-dark' },
+  { name: 'MongoDB', icon: 'i-logos:mongodb-icon' },
+  { name: 'Docker', icon: 'i-logos:docker-icon' },
+  { name: 'Git', icon: 'i-logos:git-icon' },
+  { name: 'AWS', icon: 'i-logos:aws' },
+]
 </script>
 
 <template>
-  <section max-w-xl mx-auto p-6 space-y-10>
-    <div>
-      <h1 text-2xl font-bold text-black dark:text-gray-100>
-        Hi, I'm Mohammed Mostafa
-      </h1>
-      <span flex items-center gap-2 w-full text-black dark:text-gray-300>
-        Software Engineer at 
-        <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" flex items-center gap-1 text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 >
-          <img :src="logo" alt="Lesoll Logo" class="w-5 h-auto -ml2 -mr-2 mb-0.5"/>
-          <span font-bold>Lesoll</span>
+  <section 
+    max-w-4xl mx-auto p-6 md:p-10 space-y-16
+    class="animate-fade-in"
+  >
+    <!-- Hero Section -->
+    <div text-center py-12>
+      <div max-w-700px mx-auto>
+        <!-- Optional Profile Photo -->
+        <div 
+          v-if="profilePhoto" 
+          flex justify-center mb-8
+          class="animate-slide-down"
+        >
+          <img 
+            :src="profilePhoto" 
+            alt="Mohammed Mostafa" 
+            w-35 h-35 rounded-full object-cover
+            border="4 black/10 dark:white/10"
+            shadow-lg
+            transition-transform duration-300
+            hover:scale-105
+          />
+        </div>
+
+        <!-- Main Heading with Typing Effect -->
+        <div mb-8>
+          <p 
+            text-xl font-medium text-gray-600 dark:text-gray-400 mb-2
+            class="animate-slide-down-delay-1"
+          >
+            Hi, I'm
+          </p>
+          
+          <h1 
+            text="5xl md:6xl lg:7xl" 
+            font-extrabold 
+            leading-tight
+            text-black dark:text-white
+            tracking-tight
+            my-2
+            class="animate-slide-down-delay-2"
+          >
+            {{ displayedText }}<span class="cursor-blink" text-gray-600 dark:text-gray-400 font-light>|</span>
+          </h1>
+          
+          <div 
+            inline-flex items-center gap-3 
+            px-6 py-3 mt-6
+            bg="black/3 dark:white/3"
+            border="1 black/8 dark:white/8"
+            rounded-full
+            class="animate-slide-down-delay-3"
+          >
+            <span text-sm text-gray-600 dark:text-gray-400 font-medium>
+              Software Engineer at
+            </span>
+            <a 
+              href="https://lesoll.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              flex items-center gap-2
+              transition-transform duration-200
+              hover:scale-105
+            >
+              <img :src="logo" alt="Lesoll Logo" w-5 h-auto/>
+              <span font-bold text-black dark:text-white>Lesoll</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div 
+          flex gap-4 justify-center flex-wrap
+          class="animate-slide-down-delay-4"
+        >
+          <a 
+            href="mailto:elrefai99@gmail.com" 
+            inline-flex items-center gap-2
+            px-8 py-4 rounded-xl
+            bg-black dark:bg-white
+            text-white dark:text-black
+            font-semibold
+            shadow-lg
+            transition-all duration-300
+            hover="translate-y--2 shadow-2xl"
+          >
+            <i class="i-carbon:email"></i>
+            <span>Get in Touch</span>
+          </a>
+          <a 
+            href="/resume.pdf"
+            inline-flex items-center gap-2
+            px-8 py-4 rounded-xl
+            bg-transparent
+            text-black dark:text-white
+            border="2 black/20 dark:white/20"
+            font-semibold
+            transition-all duration-300
+            hover="translate-y--2 bg-black/5 dark:bg-white/5 border-black/30 dark:border-white/30"
+          >
+            <i class="i-carbon:document"></i>
+            <span>View Resume</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="animate-slide-up-delay-5">
+      <h2 
+        text-2xl font-bold mb-8
+        text-black dark:text-white
+        tracking-tight
+      >
+        About
+      </h2>
+      <div max-w-700px mx-auto space-y-6>
+        <p 
+          text-lg leading-relaxed
+          text-gray-700 dark:text-gray-300
+          text-left
+        >
+          I'm a software engineer with expertise in web development, specializing in backend
+          development with 
+          <span inline-flex items-center gap-1.5 font-semibold text-black dark:text-white>
+            <i class="i-logos:nodejs-icon-alt"></i>Node.js
+          </span>. 
+          I've recently expanded into frontend development and continuously seek to grow by exploring 
+          new technologies and working across diverse environments.
+        </p>
+
+        <p 
+          text-lg leading-relaxed
+          text-gray-700 dark:text-gray-300
+          text-left
+        >
+          Turning ideas into real, functional systems is what drives me most. 
+          I'm passionate about building backend solutions, APIs, and tools that make life easier 
+          and boost productivity—whether for myself, my projects, or the developer community. 
+          You can explore my full list of 
+          <router-link 
+            to="/projects" 
+            font-semibold text-black dark:text-white
+            underline 
+            underline-offset-3
+            transition-all duration-200
+            class="decoration-black/30 dark:decoration-white/30 hover:decoration-black/80 dark:hover:decoration-white/80 "
+          >
+            projects
+          </router-link>.
+        </p>
+        
+        <p 
+          text-lg leading-relaxed
+          text-gray-700 dark:text-gray-300
+          text-left
+        >
+          Outside of coding, I enjoy photography and traveling. 
+          I'm also into anime, movies, and dramas, and I like to keep track of what I watch.
+        </p>
+      </div>
+    </div>
+    <!-- GitHub Contributions -->
+    <div class="animate-slide-up-delay-7">
+      <h2 
+        text-2xl font-bold mb-8
+        text-black dark:text-white
+        tracking-tight
+      >
+        GitHub Activity
+      </h2>
+      <div 
+        max-w-700px mx-auto
+        p-6
+        bg="black/2 dark:white/2"
+        border="1 black/6 dark:white/6"
+        rounded-2xl
+      >
+        <a 
+          href="https://github.com/elrefai99" 
+          target="_blank"
+          block
+        >
+          <img 
+            src="https://ghchart.rshah.org/elrefai99" 
+            alt="GitHub Contribution Graph"
+            w-full h-auto
+            class="github-chart bg-black/2 dark:bg-white/2"
+          />
         </a>
-      </span>
-
-      <div mt-4 leading-relaxed text-black dark:text-gray-300>
-        <div space-y-4 text-base leading-relaxed>
-          <p>
-            I'm a software engineer with experience in web development, specializing in backend
-            development with  
-            <span font-bold inline-flex items-center gap-2 text-black dark:text-white >
-              <i font-serif i-logos:nodejs-icon-alt></i>
-              Node.js
-            </span>.  I’ve recently expanded into frontend development and continuously seek to grow by exploring new technologies and working across diverse environments.
-          </p>
-
-          <p>
-            Turning ideas into real, functional systems is what drives me most. 
-            I’m passionate about building backend solutions, APIs, and tools that make life easier 
-            and boost productivity—whether for myself, my projects, or the developer community. 
-            You can explore my full list of 
-            <router-link to="/projects" font-bold text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300>projects</router-link>.
-          </p>
-          <p>
-            Outside of coding, I enjoy photography and traveling. 
-            I’m also into anime, movies, and dramas, and I like to keep track of what I watch.
-          </p>
+        <div flex items-center justify-between mt-4>
+          <a 
+            href="https://github.com/elrefai99" 
+            target="_blank"
+            inline-flex items-center gap-2
+            text-sm font-medium
+            text-gray-600 dark:text-gray-400
+            transition-colors duration-200
+            hover="text-black dark:text-white"
+          >
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Tech Stack Section -->
+    <div class="animate-slide-up-delay-6">
+      <h2 
+        text-2xl font-bold mb-8
+        text-black dark:text-white
+        tracking-tight
+      >
+        Technical Expertise
+      </h2>
+      <div 
+        grid="~ cols-2 md:cols-4"
+        gap-4
+        max-w-700px mx-auto
+      >
+        <div 
+          v-for="tech in techStack" 
+          :key="tech.name"
+          flex="~ col" items-center gap-3
+          p-6
+          bg="black/2 dark:white/2"
+          border="1 black/6 dark:white/6"
+          rounded-2xl
+          transition-all duration-300
+          cursor-pointer
+          hover="bg-black/4 dark:bg-white/4 border-black/12 dark:border-white/12 translate-y--1 shadow-lg"
+          :title="tech.name"
+        >
+          <i :class="tech.icon" text-4xl></i>
+          <span text-sm font-semibold text-gray-800 dark:text-gray-300 text-center>
+            {{ tech.name }}
+          </span>
         </div>
       </div>
     </div>
@@ -45,11 +278,73 @@ import logo from "../../public/projects/lesoll-logo.png"
 </template>
 
 <style scoped>
-section {
-  animation: fadeIn 1s ease-in-out;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-in-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.8s ease-out;
+}
+
+.animate-slide-down-delay-1 {
+  animation: slide-down 0.6s ease-out 0.2s backwards;
+}
+
+.animate-slide-down-delay-2 {
+  animation: slide-down 0.6s ease-out 0.3s backwards;
+}
+
+.animate-slide-down-delay-3 {
+  animation: slide-down 0.6s ease-out 0.4s backwards;
+}
+
+.animate-slide-down-delay-4 {
+  animation: slide-down 0.6s ease-out 0.6s backwards;
+}
+
+.animate-slide-up-delay-5 {
+  animation: slide-up 0.8s ease-out 0.7s backwards;
+}
+
+.animate-slide-up-delay-6 {
+  animation: slide-up 0.8s ease-out 0.8s backwards;
+}
+
+.animate-slide-up-delay-7 {
+  animation: slide-up 0.8s ease-out 0.9s backwards;
+}
+
+.cursor-blink {
+  animation: blink 1s infinite;
+}
+
+.github-chart {
+  border-radius: 8px;
+  filter: brightness(1.1);
+}
+
+.dark .github-chart {
+  filter: brightness(0.9) invert(1) hue-rotate(180deg);
 }
 </style>

@@ -123,4 +123,28 @@ export const projects: any = [
       "TypeScript",
     ]
   },
+  {
+    id: 6,
+    name: "Doc-Station - Orthopedic Surgery Platform",
+    category: "Backend",
+    link: "",
+    github: "https://github.com/elrefai99/doc-station",
+    desc: "A comprehensive healthcare platform connecting patients with orthopedic surgeons and providing a marketplace for surgical instruments. The platform enables seamless appointment booking, medical consultations, and equipment rental services.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "Prisma",
+      "PostgreSQL",
+      "SendGrid",
+      "Stripe",
+      "Docker",
+      "AWS (S3, EKS)",
+      "Payment (Paymob, Amazon Payment Service)",
+      "Socket.IO",
+      "NGINX",
+      "pm2",
+      "pnpm",
+      "git/github",
+    ]
+  }
 ]

@@ -1,13 +1,66 @@
-<script setup></script>
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const isScrolled = ref(false)
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 20
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+</script>
 
 <template>
-  <header>
-    <nav w-full bg-transparent>
+  <header 
+    sticky top-0 z-50
+    transition-all duration-300
+    :class="isScrolled 
+      ? 'backdrop-blur-md bg-white/80 dark:bg-black/80 shadow-lg' 
+      : 'bg-transparent'"
+  >
+    <nav w-full>
       <div max-w-xl mx-auto flex items-center justify-center px-6 py-4>
-        <div text-sm md:text-md flex flex-wrap justify-center items-center gap-4 md:gap-8 opacity-80>
-          <router-link to="/" hover:text-gray-500 dark:hover:text-white-400 transition active-class="border-b-2 border-current pb-1">Home</router-link>
-          <router-link to="/projects" hover:text-gray-400 dark:hover:text-white-400 transition active-class="border-b-2 border-current pb-1">Projects</router-link>
-          <a hover:text-gray-500 dark:hover:text-white-400 transition href="/resume.pdf">Resume</a>
+        <div 
+          text="sm md:md" 
+          flex flex-wrap justify-center items-center 
+          gap="4 md:8" 
+          opacity-80
+        >
+          <router-link 
+            to="/" 
+            class="nav-link"
+            text-black dark:text-white
+            transition-all duration-200
+            hover="text-gray-600 dark:text-gray-300"
+            active-class="border-b-2 border-current pb-1"
+          >
+            Home
+          </router-link>
+          <router-link 
+            to="/projects" 
+            class="nav-link"
+            text-black dark:text-white
+            transition-all duration-200
+            hover="text-gray-600 dark:text-gray-300"
+            active-class="border-b-2 border-current pb-1"
+          >
+            Projects
+          </router-link>
+          <a 
+            class="nav-link"
+            href="/resume.pdf"
+            text-black dark:text-white
+            transition-all duration-200
+            hover="text-gray-600 dark:text-gray-300"
+          >
+            Resume
+          </a>
           <darkmode />
         </div>
       </div>
@@ -16,11 +69,22 @@
 </template>
 
 <style scoped>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.nav-link {
+  position: relative;
 }
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
 }
 </style>
