@@ -10,7 +10,7 @@ export const projects: any = [
     link: "https://lesoll.com",
     class: "w-5 h-auto",
     github: "",
-    desc: 'Lesoll platform that user can sale or rent his apartment or his car, and in same time can buy and unit he want or rent it and the same in car',
+    desc: "Lesoll is Egypt leading platform for property and car sales and rentals with ease and transparency.",
     tags: [
       "Typescript",
       "Javascript",
@@ -39,7 +39,7 @@ export const projects: any = [
     class: "w-5 h-auto",
     link: "https://egystay.com",
     github: "",
-    desc: 'Egystay is a modern booking platform where users can reserve rental units for flexible short-term stays, whether daily or weekly.',
+    desc: 'EGYStay is a full-featured, enterprise-grade web platform for property rental and booking. It delivers a complete experience for users, property owners, and administrators, covering property discovery, real-time availability, bookings, payments, and communication.The platform is built with scalability and performance as core principles, using a modern architecture based on Node.js, TypeScript, MongoDB, Redis, and Socket.io to support high-traffic usage, real-time interactions, and secure, reliable transactions across the entire site.',
     tags: [
       "Typescript",
       "Express.js",
@@ -80,6 +80,32 @@ export const projects: any = [
   },
   {
     id: 4,
+    name: "Doc-Station - Orthopedic Surgery Platform",
+    category: "Backend",
+    link: "",
+    github: "https://github.com/elrefai99/doc-station",
+    desc: "A comprehensive healthcare platform connecting patients with orthopedic surgeons and providing a marketplace for surgical instruments. The platform enables seamless appointment booking, medical consultations, and equipment rental services.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "Redis",
+      "BullMQ",
+      "Prisma",
+      "PostgreSQL",
+      "SendGrid",
+      "Docker",
+      "AWS (S3, EKS, EC2, ECR)",
+      "Payment (Paymob, Amazon Payment Service)",
+      "Socket.IO",
+      "NGINX",
+      "pm2",
+      "pnpm",
+      "K8s (Kubernetes, AWS EKS)",
+      "git/github",
+    ]
+  },
+  {
+    id: 5,
     name: "Smart Parser",
     category: "Backend",
     link: "",
@@ -97,7 +123,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     name: 'Wedding Orgnization',
     category: "Backend",
     link: "",
@@ -123,30 +149,4 @@ export const projects: any = [
       "TypeScript",
     ]
   },
-  {
-    id: 6,
-    name: "Doc-Station - Orthopedic Surgery Platform",
-    category: "Backend",
-    link: "",
-    github: "https://github.com/elrefai99/doc-station",
-    desc: "A comprehensive healthcare platform connecting patients with orthopedic surgeons and providing a marketplace for surgical instruments. The platform enables seamless appointment booking, medical consultations, and equipment rental services.",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "Redis",
-      "BullMQ",
-      "Prisma",
-      "PostgreSQL",
-      "SendGrid",
-      "Docker",
-      "AWS (S3, EKS, EC2, ECR)",
-      "Payment (Paymob, Amazon Payment Service)",
-      "Socket.IO",
-      "NGINX",
-      "pm2",
-      "pnpm",
-      "K8s (Kubernetes, AWS EKS)",
-      "git/github",
-    ]
-  }
 ]

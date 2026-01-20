@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { projectsSEO } from '../utils/tags';
 import { projects } from '../utils/projects';
 import { useHead } from '@vueuse/head';
@@ -10,8 +10,8 @@ useHead(projectsSEO);
 const selectedCategory = ref<string>('All')
 const categories = ['All', 'Live', 'Backend', 'Package']
 
-// Track currently expanded project (only one at a time)
-const expandedProjectId = ref<number | null>(null)
+// Track which project descriptions are expanded
+const expandedDescriptions = ref<Set<number>>(new Set())
 
 const filteredProjects = computed(() => {
   if (selectedCategory.value === 'All') {
@@ -20,24 +20,15 @@ const filteredProjects = computed(() => {
   return projects.filter((p: any) => p.category === selectedCategory.value)
 })
 
-const toggleProject = (id: number) => {
-  // If clicking the already open project, close it
-  if (expandedProjectId.value === id) {
-    expandedProjectId.value = null
+const toggleDescription = (id: number) => {
+  if (expandedDescriptions.value.has(id)) {
+    expandedDescriptions.value.delete(id)
   } else {
-    // Otherwise, open the clicked project (closes any other open project)
-    expandedProjectId.value = id
+    expandedDescriptions.value.add(id)
   }
 }
 
-const isExpanded = (id: number) => expandedProjectId.value === id
-
-// Open first project by default
-onMounted(() => {
-  if (projects.length > 0) {
-    expandedProjectId.value = projects[0].id
-  }
-})
+const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
 </script>
 
 <template>
@@ -68,91 +59,86 @@ onMounted(() => {
             v-for="(project, index) in filteredProjects" 
             :key="project.id" 
             class="project-card bg-white-500/10 dark:bg-black-500/10 backdrop-blur-sm border border-black/10 dark:border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl overflow-hidden"
-            :class="isExpanded(project.id) ? 'border-black/30 dark:border-white/20' : 'hover:border-black/20 dark:hover:border-white/15'"
             :style="{ animationDelay: `${(index as number) * 0.1}s` }"
           >
-            <div 
-              p-6 cursor-pointer
-              @click="toggleProject(project.id)"
-              class="project-header"
-            >
-              <div flex items-center justify-between>
+            <!-- Header with Project Name and Icons -->
+            <div p-6>
+              <div flex items-center justify-between mb-4>
                 <!-- Project Name -->
                 <div flex items-center gap-2 flex-1>
                   <img v-if="project.logo" :src="project.logo" alt="{{ project.name }} Logo" :class="project.class"/>
                   <h3 font-semibold text-lg text-black dark:text-white>{{ project.name }}</h3>
                 </div>
 
-                <!-- Icons and Expand Button -->
-                <div flex items-center gap-2>
-                  <!-- Action Icons -->
-                  <div flex gap-2>
-                    <a 
-                      v-if="project.link" 
-                      :href="project.link" 
-                      target="_blank"
-                      @click.stop
-                      class="i-solar:eye-bold w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
-                      title="Live Site"
-                    />
-                    <a 
-                      v-if="project.github" 
-                      :href="project.github" 
-                      target="_blank"
-                      @click.stop
-                      class="i-carbon:logo-github w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
-                      title="GitHub Repo"
-                    />
-                    <a 
-                      v-if="project.npm" 
-                      :href="project.npm" 
-                      target="_blank"
-                      @click.stop
-                      class="i-carbon:logo-npm w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
-                      title="Npm Package"
-                    />
-                  </div>
-
-                  <!-- Expand/Collapse Icon -->
-                  <button
-                    class="expand-icon"
-                    :class="isExpanded(project.id) ? 'rotate-180' : ''"
-                    w-6 h-6 flex items-center justify-center
-                    text-gray-600 dark:text-gray-400
-                    transition-transform duration-300
-                  >
-                    <i class="i-carbon:chevron-down text-xl"></i>
-                  </button>
+                <!-- Action Icons -->
+                <div flex gap-2>
+                  <a 
+                    v-if="project.link" 
+                    :href="project.link" 
+                    target="_blank"
+                    class="i-solar:eye-bold w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
+                    title="Live Site"
+                  />
+                  <a 
+                    v-if="project.github" 
+                    :href="project.github" 
+                    target="_blank"
+                    class="i-carbon:logo-github w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
+                    title="GitHub Repo"
+                  />
+                  <a 
+                    v-if="project.npm" 
+                    :href="project.npm" 
+                    target="_blank"
+                    class="i-carbon:logo-npm w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
+                    title="Npm Package"
+                  />
                 </div>
               </div>
-            </div>
 
-            <!-- Expandable Content -->
-            <div 
-              class="expandable-content"
-              :class="isExpanded(project.id) ? 'expanded' : ''"
-            >
-              <div px-6 pb-6>
-                <!-- Description -->
-                <p text-gray-700 dark:text-gray-300 mb-4 leading-relaxed>
+              <!-- Technologies (Always Visible) -->
+              <div>
+                <p text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wide>
+                  Technologies
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <span 
+                    v-for="tag in project.tags" 
+                    :key="tag" 
+                    class="px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-gray-800/50 border border-gray-300/20 dark:border-gray-600/50 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-gray-700/60 transition-colors duration-200"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Description Toggle Button -->
+              <button
+                @click="toggleDescription(project.id)"
+                flex items-center gap-2
+                text-sm font-medium
+                text-gray-600 dark:text-gray-400
+                transition-colors duration-200
+                hover="text-black dark:text-white"
+                mt-4
+              >
+                <i 
+                  class="transition-transform duration-300"
+                  :class="[
+                    isDescriptionExpanded(project.id) ? 'i-carbon:chevron-up' : 'i-carbon:chevron-down'
+                  ]"
+                ></i>
+                <span>{{ isDescriptionExpanded(project.id) ? 'Hide' : 'Show' }} Description</span>
+              </button>
+
+              <!-- Description (Expandable) -->
+              <div 
+                class="description-content"
+                :class="isDescriptionExpanded(project.id) ? 'expanded' : ''"
+              >
+                <p text-gray-700 dark:text-gray-300 leading-relaxed mt-3>
                   {{ project.desc }}
                 </p>
-            
-                <!-- Tags -->
-                <div>
-                  <p text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide>
-                    Technologies
-                  </p>
-                  <div class="flex flex-wrap gap-2">
-                    <span 
-                      v-for="tag in project.tags" 
-                      :key="tag" 
-                      class="px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-gray-800/50 border border-gray-300/20 dark:border-gray-600/50 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-gray-700/60 transition-colors duration-200"
-                    >
-                      {{ tag }}
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -198,31 +184,15 @@ onMounted(() => {
   }
 }
 
-/* Expandable Content */
-.expandable-content {
+/* Description Content */
+.description-content {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-out;
 }
 
-.expandable-content.expanded {
-  max-height: 1000px;
-  transition: max-height 0.5s ease-in;
-}
-
-.project-header {
-  transition: background-color 0.2s ease;
-}
-
-.project-header:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-.dark .project-header:hover {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-.expand-icon {
-  transition: transform 0.3s ease;
+.description-content.expanded {
+  max-height: 500px;
+  transition: max-height 0.4s ease-in;
 }
 </style>
