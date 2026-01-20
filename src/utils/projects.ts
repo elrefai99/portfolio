@@ -10,25 +10,33 @@ export const projects: any = [
     link: "https://lesoll.com",
     class: "w-5 h-auto",
     github: "",
-    desc: "Lesoll is Egypt leading platform for property and car sales and rentals with ease and transparency.",
+    desc: [
+      "Developed a B2C and B2B marketplace for real estate and automotive",
+      "Developed key features: Payment system (use paymob as payment gateway), admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
+      "Deployed and managed a service using Docker and AWS EC2"
+    ],
     tags: [
       "Typescript",
       "Javascript",
       "Express.js",
       "MongoDB",
       "Paymob",
+      "Amazon Payment Service (APS)",
       "SendGrid",
+      "Message Queue (BullMQ, AWS SQS)",
       "Redis",
       "Puppeteer",
       "Swagger",
       "Docker",
-      "AWS",
+      "AWS (S3, EC2, CloudFront, Route 53, SQS)",
       "Render",
       "Socket.IO",
+      "Axios",
       "NGINX",
       "pm2",
       "pnpm",
       "git/github",
+      "Github Actions"
     ]
   },
   {
@@ -39,24 +47,31 @@ export const projects: any = [
     class: "w-5 h-auto",
     link: "https://egystay.com",
     github: "",
-    desc: 'EGYStay is a full-featured, enterprise-grade web platform for property rental and booking. It delivers a complete experience for users, property owners, and administrators, covering property discovery, real-time availability, bookings, payments, and communication.The platform is built with scalability and performance as core principles, using a modern architecture based on Node.js, TypeScript, MongoDB, Redis, and Socket.io to support high-traffic usage, real-time interactions, and secure, reliable transactions across the entire site.',
+    desc: [
+      "Developed a B2C marketplace for and mobile application property rental and booking",
+      "Developed key features: Payment system (use Amazon Payment Service (APS) as payment gateway), CoHost system (allow users to host their properties), Cancellation policy system, booking system, admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
+      "Deployed and managed a service using Docker, AWS EKS (Elastic Kubernetes Service) and render"
+    ],
     tags: [
       "Typescript",
       "Express.js",
       "MongoDB",
+      "Paymob",
       "Amazon Payment Service (APS)",
       "SendGrid",
-      "Message Queue (BullMQ)",
+      "Message Queue (BullMQ, AWS SQS)",
       "Redis",
       "Swagger",
       "Docker",
-      "AWS",
+      "AWS (S3, EC2, CloudFront, Route 53, SQS)",
       "Render",
       "Socket.IO",
+      "Axios",
       "NGINX",
       "pm2",
       "pnpm",
       "git/github",
+      "Github Actions"
     ]
   },
   {

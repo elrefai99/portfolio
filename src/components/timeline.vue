@@ -4,7 +4,11 @@ const timeline = [
     company: "Lesoll",
     role: "Software Engineer",
     period: "2023 - Now",
-    desc: "Working on lesoll large scale system",
+    desc: [
+            "Developed a B2C and B2B marketplace for real estate and automotive",
+      "Developed key features: Payment system (use paymob as payment gateway), admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
+      "Deployed and managed a service using Docker and AWS EC2"
+    ],
     link: "https://lesoll.com",
     color: "bg-green-400 dark:bg-green-500"
   },
@@ -98,9 +102,28 @@ const timeline = [
               </p>
 
               <!-- Description -->
-              <p text-sm text-gray-700 dark:text-gray-300 mt-2 leading-relaxed>
-                {{ item.desc }}
-              </p>
+              <div 
+                class="description-content"
+              >
+                <!-- If description is an array, show as bullet points -->
+                <ul 
+                  v-if="Array.isArray(item.desc)"
+                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
+                  list-disc pl-5 space-y-2
+                >
+                  <li v-for="(point, idx) in item.desc" :key="idx">
+                    {{ point }}
+                  </li>
+                </ul>
+                
+                <!-- If description is a string, show as paragraph -->
+                <p 
+                  v-else
+                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
+                >
+                  {{ item.desc }}
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -136,7 +136,22 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
                 class="description-content"
                 :class="isDescriptionExpanded(project.id) ? 'expanded' : ''"
               >
-                <p text-gray-700 dark:text-gray-300 leading-relaxed mt-3>
+                <!-- If description is an array, show as bullet points -->
+                <ul 
+                  v-if="Array.isArray(project.desc)"
+                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
+                  list-disc pl-5 space-y-2
+                >
+                  <li v-for="(point, idx) in project.desc" :key="idx">
+                    {{ point }}
+                  </li>
+                </ul>
+                
+                <!-- If description is a string, show as paragraph -->
+                <p 
+                  v-else
+                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
+                >
                   {{ project.desc }}
                 </p>
               </div>
@@ -192,7 +207,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
 }
 
 .description-content.expanded {
-  max-height: 500px;
+  max-height: 800px;
   transition: max-height 0.4s ease-in;
 }
 </style>
