@@ -133,17 +133,19 @@ export const projects: any = [
     tags: [
       "TypeScript",
       "Express.js",
+      "Redis",
+      "BullMQ",
       "Prisma",
       "PostgreSQL",
       "SendGrid",
-      "Stripe",
       "Docker",
-      "AWS (S3, EKS)",
+      "AWS (S3, EKS, EC2, ECR)",
       "Payment (Paymob, Amazon Payment Service)",
       "Socket.IO",
       "NGINX",
       "pm2",
       "pnpm",
+      "K8s (Kubernetes, AWS EKS)",
       "git/github",
     ]
   }

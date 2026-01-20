@@ -24,14 +24,14 @@ onMounted(() => {
 
 // Tech stack
 const techStack = [
-  { name: 'Node.js', icon: 'i-logos:nodejs-icon-alt' },
   { name: 'TypeScript', icon: 'i-logos:typescript-icon' },
-  { name: 'Vue.js', icon: 'i-logos:vue' },
+  { name: 'Node.js', icon: 'i-logos:nodejs-icon-alt' },
   { name: 'Express', icon: 'dark:i-skill-icons:expressjs-light i-skill-icons:expressjs-dark' },
   { name: 'MongoDB', icon: 'i-logos:mongodb-icon' },
   { name: 'Docker', icon: 'i-logos:docker-icon' },
   { name: 'Git', icon: 'i-logos:git-icon' },
   { name: 'AWS', icon: 'i-logos:aws' },
+  { name: 'Vue.js', icon: 'i-logos:vue' },
 ]
 </script>
 
@@ -43,30 +43,13 @@ const techStack = [
     <!-- Hero Section -->
     <div text-center py-12>
       <div max-w-700px mx-auto>
-        <!-- Optional Profile Photo -->
-        <div 
-          v-if="profilePhoto" 
-          flex justify-center mb-8
-          class="animate-slide-down"
-        >
-          <img 
-            :src="profilePhoto" 
-            alt="Mohammed Mostafa" 
-            w-35 h-35 rounded-full object-cover
-            border="4 black/10 dark:white/10"
-            shadow-lg
-            transition-transform duration-300
-            hover:scale-105
-          />
-        </div>
-
         <!-- Main Heading with Typing Effect -->
         <div mb-8>
           <p 
             text-xl font-medium text-gray-600 dark:text-gray-400 mb-2
             class="animate-slide-down-delay-1"
           >
-            Hi, I'm
+            Hello, I'm
           </p>
           
           <h1 
@@ -198,15 +181,7 @@ const techStack = [
         </p>
       </div>
     </div>
-    <!-- GitHub Contributions -->
     <div class="animate-slide-up-delay-7">
-      <h2 
-        text-2xl font-bold mb-8
-        text-black dark:text-white
-        tracking-tight
-      >
-        GitHub Activity
-      </h2>
       <div 
         max-w-700px mx-auto
         p-6
