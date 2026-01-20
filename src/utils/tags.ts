@@ -1,71 +1,119 @@
 export const homeSEO = {
-  title: 'Mohamed Mostafa | Software Engineer',
+  title: 'Mohammed Mostafa | Software Engineer',
   meta: [
     {
       name: 'author',
-      content: 'elrefai99'
+      content: 'Mohammed Mostafa (elrefai99)'
     },
     {
       name: 'description',
-      content: "I'm a software engineer with experience in web development, specializing in backend development."
+      content: "Software Engineer specializing in backend development with Node.js and TypeScript. Building scalable enterprise solutions with Express.js, MongoDB, Redis, and AWS. Currently at Lesoll."
     },
     {
       property: 'og:title',
-      content: 'Mohamed Mostafa'
+      content: 'Mohammed Mostafa | Software Engineer'
     },
     {
       property: 'og:description',
-      content: "I'm a software engineer with experience in web development, specializing in backend development."
+      content: "Software Engineer specializing in backend development with Node.js and TypeScript. Building scalable enterprise solutions with Express.js, MongoDB, Redis, and AWS."
     },
-    // {
-    //   property:"og:image",
-    //   content: "https://elrefai.netlify.app/og/home_og.png"
-    // },
+    {
+      property: 'og:image',
+      content: 'https://elrefai.netlify.app/og-image.png'
+    },
+    {
+      property: 'og:image:width',
+      content: '1200'
+    },
+    {
+      property: 'og:image:height',
+      content: '630'
+    },
+    {
+      property: 'og:image:alt',
+      content: 'Mohammed Mostafa - Software Engineer Portfolio'
+    },
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
     {
       name: 'twitter:title',
-      content: 'Mohamed Mostafa'
+      content: 'Mohammed Mostafa | Software Engineer'
     },
-        {
+    {
       name: 'twitter:description',
-      content: "I'm a software engineer with experience in web development, specializing in backend development."
+      content: "Software Engineer specializing in backend development with Node.js and TypeScript. Building scalable enterprise solutions."
     },
+    {
+      name: 'twitter:image',
+      content: 'https://elrefai.netlify.app/og-image.png'
+    },
+    {
+      name: 'twitter:image:alt',
+      content: 'Mohammed Mostafa - Software Engineer Portfolio'
+    }
   ]
 }
 
 export const projectsSEO = {
-  title: 'Mohamed Mostafa | Projects',
+  title: 'Mohammed Mostafa | Projects',
   meta: [
     {
       name: 'author',
-      content: 'elrefai99'
+      content: 'Mohammed Mostafa (elrefai99)'
     },
     {
       name: 'description',
-      content: "Mohamed's Projects."
+      content: "Explore my portfolio of enterprise-grade projects including real estate marketplaces, booking platforms, and open-source packages built with Node.js, TypeScript, and modern web technologies."
     },
     {
       property: 'og:title',
-      title: 'Mohamed Mostafa | Projects',
+      content: 'Mohammed Mostafa | Projects'
     },
     {
       property: 'og:description',
-      content: "Mohamed's Projects."
+      content: "Explore my portfolio of enterprise-grade projects including real estate marketplaces, booking platforms, and open-source packages."
     },
     {
-      property:"og:image",
-      content: "https://elrefai.netlify.app/og/projects_page_og.png"
+      property: 'og:image',
+      content: 'https://elrefai.netlify.app/og-image.png'
+    },
+    {
+      property: 'og:image:width',
+      content: '1200'
+    },
+    {
+      property: 'og:image:height',
+      content: '630'
+    },
+    {
+      property: 'og:image:alt',
+      content: 'Mohammed Mostafa - Projects Portfolio'
+    },
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
     },
     {
       name: 'twitter:title',
-      title: 'Mohamed Mostafa | Projects',
+      content: 'Mohammed Mostafa | Projects'
     },
     {
       name: 'twitter:description',
-      content: "Mohamed's Projects."
+      content: "Explore my portfolio of enterprise-grade projects including real estate marketplaces, booking platforms, and open-source packages."
     },
     {
-      name: "publisher",
-      content: "elrefai99"
+      name: 'twitter:image',
+      content: 'https://elrefai.netlify.app/og-image.png'
+    },
+    {
+      name: 'twitter:image:alt',
+      content: 'Mohammed Mostafa - Projects Portfolio'
+    },
+    {
+      name: 'publisher',
+      content: 'elrefai99'
     }
   ]
 }
