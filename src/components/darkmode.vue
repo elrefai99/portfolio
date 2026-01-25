@@ -1,6 +1,21 @@
 <script setup lang="ts">
 import { useDark, useToggle } from '@vueuse/core';
-const isDark = useDark()
+
+// useDark with options to respect system preference
+// By default, it will use system preference and allow user override
+const isDark = useDark({
+  selector: 'html',
+  attribute: 'class',
+  valueDark: 'dark',
+  valueLight: '',
+  // This will make it respect system preference initially
+  initialValue: 'auto',
+  // Store user preference in localStorage
+  storageKey: 'theme-preference',
+  // Listen to system preference changes
+  listenToStorageChanges: true,
+})
+
 const toggleDark = useToggle(isDark)
 </script>
 
@@ -8,5 +23,7 @@ const toggleDark = useToggle(isDark)
   <button
     i-carbon-sun dark:i-carbon-moon
     @click="toggleDark()"
+    title="Toggle theme"
+    aria-label="Toggle dark mode"
   />
 </template>
