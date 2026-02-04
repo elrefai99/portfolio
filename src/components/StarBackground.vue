@@ -13,6 +13,8 @@ interface Star {
   opacity: number
   twinkleSpeed: number
   twinklePhase: number
+  vx: number
+  vy: number
 }
 
 interface ShootingStar {
@@ -50,7 +52,7 @@ function createStarryEffect(ctx: CanvasRenderingContext2D, width: number, height
   
   // Create stars
   const stars: Star[] = []
-  const starCount = Math.floor((width * height) / 3000) // Density based on screen size
+  const starCount = Math.floor((width * height) / 3000)
   
   for (let i = 0; i < starCount; i++) {
     stars.push({
@@ -59,7 +61,9 @@ function createStarryEffect(ctx: CanvasRenderingContext2D, width: number, height
       radius: Math.random() * 1.5 + 0.5,
       opacity: Math.random() * 0.5 + 0.3,
       twinkleSpeed: Math.random() * 0.02 + 0.01,
-      twinklePhase: Math.random() * Math.PI * 2
+      twinklePhase: Math.random() * Math.PI * 2,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: (Math.random() - 0.5) * 0.1
     })
   }
 
@@ -73,7 +77,7 @@ function createStarryEffect(ctx: CanvasRenderingContext2D, width: number, height
         y: Math.random() * height * 0.5,
         length: Math.random() * 80 + 40,
         speed: Math.random() * 3 + 2,
-        angle: Math.random() * Math.PI / 6 + Math.PI / 4, // 45-75 degrees
+        angle: Math.random() * Math.PI / 6 + Math.PI / 4,
         opacity: 1
       })
     }
@@ -82,8 +86,19 @@ function createStarryEffect(ctx: CanvasRenderingContext2D, width: number, height
   const controls = useRafFn(() => {
     ctx.clearRect(0, 0, width, height)
     
-    // Draw stars with twinkling effect
+    // Draw stars with twinkling effect and movement
     stars.forEach(star => {
+      // Update position
+      star.x += star.vx
+      star.y += star.vy
+      
+      // Wrap around screen edges
+      if (star.x < 0) star.x = width
+      if (star.x > width) star.x = 0
+      if (star.y < 0) star.y = height
+      if (star.y > height) star.y = 0
+      
+      // Twinkling effect
       star.twinklePhase += star.twinkleSpeed
       const twinkle = Math.sin(star.twinklePhase) * 0.3 + 0.7
       
