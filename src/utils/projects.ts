@@ -164,4 +164,28 @@ export const projects: any = [
       "TypeScript",
     ]
   },
+  {
+    id: 8,
+    name: "Elrecord",
+    category: "Backend",
+    github: "https://github.com/elrefai99/elrecord",
+    desc: "Elrecord is a powerful, scalable backend for a real-time chat application inspired by Discord. It supports direct messaging, group chats, and server-based communities with voice/video call capabilities.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "PostgreSQL",
+      "Prisma",
+      "Amazon Payment Service (APS)",
+      "Message Queue (BullMQ)",
+      "Swagger",
+      "Redis",
+      "Socket.IO",
+      "Docker",
+      "AWS S3",
+      "NGINX",
+      "pm2",
+      "pnpm",
+      "git/github",
+    ]
+  },
 ]
