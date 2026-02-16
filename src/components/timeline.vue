@@ -3,7 +3,7 @@ const timeline = [
   {
     company: "Lesoll",
     role: "Software Engineer",
-    period: "2023 - Now",
+    period: "2023 - Present",
     desc: [
             "Developed a B2C and B2B marketplace for real estate and automotive",
       "Developed key features: Payment system (use paymob as payment gateway), admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
@@ -22,7 +22,7 @@ const timeline = [
   {
     company: ".md",
     role: "Founder",
-    period: "2019 - 2023",
+    period: "2019 - Present",
     desc: "A freelance with my friend in academy",
     color: "bg-blue-500 dark:bg-blue-400"
   }
