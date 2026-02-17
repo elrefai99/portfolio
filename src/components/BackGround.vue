@@ -8,7 +8,7 @@ const backgroundType = ref<'stars' | 'branches'>(Math.random() > 0.5 ? 'stars' :
 </script>
 
 <template>
-  <StarBackground v-if="backgroundType === 'stars'" />
+  <StarBackground />
   <!-- <BranchBackground v-else /> -->
 </template>
 
