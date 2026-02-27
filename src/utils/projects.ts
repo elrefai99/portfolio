@@ -76,12 +76,12 @@ export const projects: any = [
   },
   {
     id: 3,
-    name: "Schedule",
+    name: "KeepITs",
     category: "Live",
     logo: schedule,
     class: "w-5 h-5",
-    link: "https://schedule-elrefai.netlify.app/",
-    github: "https://github.com/elrefai99/schedule",
+    link: "https://keepits.netlify.app/",
+    github: "https://github.com/elrefai99/keepits",
     desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
     tags: [
       "TypeScript",
