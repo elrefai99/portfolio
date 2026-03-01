@@ -1,6 +1,6 @@
 import lesoll from '../../public/projects/lesoll-logo.png'
 import egystay from "../../public/projects/egy-stay-logo.png"
-import schedule from "../../public/projects/schedule.svg"
+import keepits from "../../public/projects/keepits.png"
 export const projects: any = [
   {
     id: 1,
@@ -78,7 +78,7 @@ export const projects: any = [
     id: 3,
     name: "KeepITs",
     category: "Live",
-    logo: schedule,
+    logo: keepits,
     class: "w-5 h-5",
     link: "https://keepits.netlify.app/",
     github: "https://github.com/elrefai99/keepits",
