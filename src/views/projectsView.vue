@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { projectsSEO } from '../utils/tags';
 import { projects } from '../utils/projects';
 import { useHead } from '@vueuse/head';
+import { getTagIcon } from '../utils/icons';
 
 useHead(projectsSEO);
 
@@ -54,108 +55,56 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
           </button>
         </div>
 
-        <div grid md:grid-cols-1 gap-4>
-          <div 
-            v-for="(project, index) in filteredProjects" 
-            :key="project.id" 
+        <div class="grid grid-cols-1 gap-4">
+          <div
+            v-for="(project, index) in filteredProjects"
+            :key="project.id"
             class="project-card bg-white-500/10 dark:bg-black-500/10 backdrop-blur-sm border border-black/10 dark:border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl overflow-hidden"
             :style="{ animationDelay: `${(index as number) * 0.1}s` }"
           >
-            <!-- Header with Project Name and Icons -->
-            <div p-6>
-              <div flex items-center justify-between mb-4>
-                <!-- Project Name -->
-                <div flex items-center gap-2 flex-1>
-                  <img v-if="project.logo" :src="project.logo" alt="{{ project.name }} Logo" :class="project.class"/>
-                  <h3 font-semibold text-lg text-black dark:text-white>{{ project.name }}</h3>
+              <div p-6>
+                <!-- Header -->
+                <div flex items-center justify-between mb-4>
+                  <div flex items-center gap-2 flex-1>
+                    <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class"/>
+                    <h3 font-semibold text-lg text-black dark:text-white>{{ project.name }}</h3>
+                  </div>
+                  <div flex gap-2>
+                    <a v-if="project.link" :href="project.link" target="_blank" class="i-solar:eye-bold w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110" title="Live Site" />
+                    <a v-if="project.github" :href="project.github" target="_blank" class="i-carbon:logo-github w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110" title="GitHub Repo" />
+                    <a v-if="project.npm" :href="project.npm" target="_blank" class="i-carbon:logo-npm w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110" title="Npm Package" />
+                  </div>
                 </div>
 
-                <!-- Action Icons -->
-                <div flex gap-2>
-                  <a 
-                    v-if="project.link" 
-                    :href="project.link" 
-                    target="_blank"
-                    class="i-solar:eye-bold w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
-                    title="Live Site"
-                  />
-                  <a 
-                    v-if="project.github" 
-                    :href="project.github" 
-                    target="_blank"
-                    class="i-carbon:logo-github w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
-                    title="GitHub Repo"
-                  />
-                  <a 
-                    v-if="project.npm" 
-                    :href="project.npm" 
-                    target="_blank"
-                    class="i-carbon:logo-npm w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110"
-                    title="Npm Package"
-                  />
+                <!-- Technologies -->
+                <div>
+                  <p text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wide>Technologies</p>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="tag in project.tags"
+                      :key="tag"
+                      class="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-gray-800/50 border border-gray-300/20 dark:border-gray-600/50 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-gray-700/60 transition-colors duration-200"
+                    >
+                      <i v-if="getTagIcon(tag)" :class="getTagIcon(tag)!" class="w-3.5 h-3.5 shrink-0" />
+                      {{ tag }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Description Toggle -->
+                <button @click="toggleDescription(project.id)" flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors duration-200 hover="text-black dark:text-white" mt-4>
+                  <i class="transition-transform duration-300" :class="isDescriptionExpanded(project.id) ? 'i-carbon:chevron-up' : 'i-carbon:chevron-down'"></i>
+                  <span>{{ isDescriptionExpanded(project.id) ? 'Hide' : 'Show' }} Description</span>
+                </button>
+
+                <!-- Description (Expandable) -->
+                <div class="description-content" :class="isDescriptionExpanded(project.id) ? 'expanded' : ''">
+                  <ul v-if="Array.isArray(project.desc)" text-gray-700 dark:text-gray-300 leading-relaxed mt-3 list-disc pl-5 space-y-2>
+                    <li v-for="(point, idx) in project.desc" :key="idx">{{ point }}</li>
+                  </ul>
+                  <p v-else text-gray-700 dark:text-gray-300 leading-relaxed mt-3>{{ project.desc }}</p>
                 </div>
               </div>
-
-              <!-- Technologies (Always Visible) -->
-              <div>
-                <p text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wide>
-                  Technologies
-                </p>
-                <div class="flex flex-wrap gap-2">
-                  <span 
-                    v-for="tag in project.tags" 
-                    :key="tag" 
-                    class="px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-gray-800/50 border border-gray-300/20 dark:border-gray-600/50 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-gray-700/60 transition-colors duration-200"
-                  >
-                    {{ tag }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- Description Toggle Button -->
-              <button
-                @click="toggleDescription(project.id)"
-                flex items-center gap-2
-                text-sm font-medium
-                text-gray-600 dark:text-gray-400
-                transition-colors duration-200
-                hover="text-black dark:text-white"
-                mt-4
-              >
-                <i 
-                  class="transition-transform duration-300"
-                  :class="[
-                    isDescriptionExpanded(project.id) ? 'i-carbon:chevron-up' : 'i-carbon:chevron-down'
-                  ]"
-                ></i>
-                <span>{{ isDescriptionExpanded(project.id) ? 'Hide' : 'Show' }} Description</span>
-              </button>
-
-              <!-- Description (Expandable) -->
-              <div 
-                class="description-content"
-                :class="isDescriptionExpanded(project.id) ? 'expanded' : ''"
-              >
-                <!-- If description is an array, show as bullet points -->
-                <ul 
-                  v-if="Array.isArray(project.desc)"
-                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
-                  list-disc pl-5 space-y-2
-                >
-                  <li v-for="(point, idx) in project.desc" :key="idx">
-                    {{ point }}
-                  </li>
-                </ul>
-                
-                <!-- If description is a string, show as paragraph -->
-                <p 
-                  v-else
-                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
-                >
-                  {{ project.desc }}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>

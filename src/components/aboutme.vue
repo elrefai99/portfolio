@@ -87,6 +87,34 @@ const techStack = [
               <span font-bold text-black dark:text-white>Lesoll</span>
             </a>
           </div>
+
+          <!-- Location -->
+          <div
+            inline-flex items-center gap-3
+            px-6 py-3 mt-3
+            bg="black/3 dark:white/3"
+            border="1 black/8 dark:white/8"
+            rounded-full
+            class="animate-slide-down-delay-3"
+          >
+            <i class="i-carbon:location" text-sm text-gray-600 dark:text-gray-400></i>
+            <span text-sm text-gray-600 dark:text-gray-400 font-medium>Based in</span>
+            <span font-bold text-black dark:text-white>Cairo, Egypt</span>
+          </div>
+
+          <!-- Experience
+          <div
+            inline-flex items-center gap-3
+            px-6 py-3 mt-3
+            bg="black/3 dark:white/3"
+            border="1 black/8 dark:white/8"
+            rounded-full
+            class="animate-slide-down-delay-3"
+          >
+            <i class="i-carbon:time" text-sm text-gray-600 dark:text-gray-400></i>
+            <span text-sm text-gray-600 dark:text-gray-400 font-medium>Experience</span>
+            <span font-bold text-black dark:text-white>2+ Years</span>
+          </div> -->
         </div>
 
         <!-- CTA Buttons -->

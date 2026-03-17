@@ -5,9 +5,10 @@ const timeline = [
     role: "Software Engineer",
     period: "2023 - Present",
     desc: [
-            "Developed a B2C and B2B marketplace for real estate and automotive",
+      "At Lesoll, I led the backend development of a real estate marketing platform.",
+      "Involved in building scalable B2C and B2B marketplace platforms for real estate and automotive domains.",
       "Developed key features: Payment system (use paymob as payment gateway), admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
-      "Deployed and managed a service using Docker and AWS EC2"
+      "Managed a service using Docker and AWS EC2"
     ],
     link: "https://lesoll.com",
     color: "bg-green-400 dark:bg-green-500"
@@ -44,86 +45,38 @@ const timeline = [
           Timeline
         </h2>
         
-        <div 
-          border="l-2 gray-300 dark:gray-600" 
-          pl-6 relative
-        >
-          <div 
-            v-for="(item, i) in timeline" 
-            :key="i" 
-            mb-8 relative
-            class="timeline-item group"
+        <div class="flex flex-col gap-4">
+          <div
+            v-for="(item, i) in timeline"
+            :key="i"
+            class="timeline-item group relative flex gap-4"
           >
-            <!-- Colored dots with pulse -->
-            <span 
-              :class="['absolute -left-3 -ml-5.5 w-5 h-5 rounded-full transition-all duration-300 group-hover:scale-125', item.color]"
-            >
-              <span 
-                :class="['absolute inset-0 rounded-full pulse-animation opacity-75', item.color]"
-              ></span>
-            </span>
-
-            <div 
-              class="timeline-content"
-              transition-transform duration-300
-            >
-              <!-- Company name -->
-              <h3 font-semibold pr="0 md:24">
-                <template v-if="item.link">
-                  <a 
-                    :href="item.link" 
-                    target="_blank" 
-                    font-bold
-                    text-black dark:text-white
-                    transition-colors duration-200
-                    hover="text-gray-600 dark:text-gray-300"
-                  >
-                    {{ item.company }}
-                  </a>
-                </template>
-                <div v-else font-bold text-black dark:text-white>
-                  {{ item.company }}
-                </div>
-              </h3>
-
-              <!-- Period -->
-              <span 
-                block md:absolute md:right-0 md:top-0
-                text-sm font-medium
-                text="gray-500 dark:gray-400 md:black md:dark:white"
-                mb="1 md:0"
-              >
-                {{ item.period }}
+            <!-- Dot -->
+            <div class="flex flex-col items-center">
+              <span :class="['w-4 h-4 rounded-full mt-1 shrink-0 transition-all duration-300 group-hover:scale-125', item.color]">
+                <span :class="['absolute inset-0 w-4 h-4 rounded-full pulse-animation opacity-75', item.color]"></span>
               </span>
+              <div v-if="i < timeline.length - 1" class="w-px flex-1 bg-gray-300 dark:bg-gray-600 mt-2"></div>
+            </div>
 
-              <!-- Role -->
-              <p italic text-gray-600 dark:text-gray-400 mt-1>
-                {{ item.role }}
-              </p>
-
-              <!-- Description -->
-              <div 
-                class="description-content"
-              >
-                <!-- If description is an array, show as bullet points -->
-                <ul 
-                  v-if="Array.isArray(item.desc)"
-                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
-                  list-disc pl-5 space-y-2
-                >
-                  <li v-for="(point, idx) in item.desc" :key="idx">
-                    {{ point }}
-                  </li>
-                </ul>
-                
-                <!-- If description is a string, show as paragraph -->
-                <p 
-                  v-else
-                  text-gray-700 dark:text-gray-300 leading-relaxed mt-3
-                >
-                  {{ item.desc }}
-                </p>
+            <!-- Box card -->
+            <div
+              class="timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/10 dark:bg-black/10 border border-black/10 dark:border-white/10 shadow-md transition-all duration-300 group-hover:shadow-xl"
+            >
+              <div class="flex flex-wrap items-start justify-between gap-1 mb-1">
+                <h3 font-bold text-black dark:text-white>
+                  <a v-if="item.link" :href="item.link" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">{{ item.company }}</a>
+                  <span v-else>{{ item.company }}</span>
+                </h3>
+                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ item.period }}</span>
               </div>
+
+              <p italic text-sm text-gray-600 dark:text-gray-400 mb-2>{{ item.role }}</p>
+
+              <ul v-if="Array.isArray(item.desc)" class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                <li v-for="(point, idx) in item.desc" :key="idx">{{ point }}</li>
+              </ul>
+              <p v-else class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ item.desc }}</p>
             </div>
           </div>
         </div>
