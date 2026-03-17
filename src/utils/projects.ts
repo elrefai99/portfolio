@@ -21,7 +21,6 @@ export const projects: any = [
       "Express.js",
       "MongoDB",
       "Paymob",
-      "Amazon Payment Service (APS)",
       "SendGrid",
       "Message Queue (BullMQ, AWS SQS)",
       "Redis",
@@ -56,7 +55,6 @@ export const projects: any = [
       "Typescript",
       "Express.js",
       "MongoDB",
-      "Paymob",
       "Amazon Payment Service (APS)",
       "SendGrid",
       "Message Queue (BullMQ, AWS SQS)",
@@ -91,6 +89,30 @@ export const projects: any = [
       "Netlify",
       "git/github",
       "Docker"
+    ]
+  },
+  {
+    id: 3,
+    name: "KeepITs-API",
+    category: "Backend",
+    logo: keepits,
+    class: "w-5 h-5",
+    link: "",
+    github: "https://github.com/elrefai99/KeepITs-API",
+    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "Paymob",
+      "Amazon Payment Service (APS)",
+      "SendGrid",
+      "Agenda",
+      "Swagger",
+      "Docker",
+      "MongoDB",
+      "pnpm",
+      "git/github",
+      "Github Actions"
     ]
   },
   {
