@@ -92,31 +92,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 3,
-    name: "KeepITs-API",
-    category: "Backend",
-    logo: keepits,
-    class: "w-5 h-5",
-    link: "",
-    github: "https://github.com/elrefai99/KeepITs-API",
-    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "Paymob",
-      "Amazon Payment Service (APS)",
-      "SendGrid",
-      "Agenda",
-      "Swagger",
-      "Docker",
-      "MongoDB",
-      "pnpm",
-      "git/github",
-      "Github Actions"
-    ]
-  },
-  {
-    id: 4,
+    id: 5,
     name: "Doc-Station - Orthopedic Surgery Platform",
     category: "Backend",
     link: "",
@@ -142,7 +118,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     name: "Smart Parser",
     category: "Backend",
     link: "",
@@ -160,7 +136,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 6,
+    id: 7,
     name: 'Wedding Orgnization',
     category: "Backend",
     link: "",
@@ -175,7 +151,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 7,
+    id: 8,
     name: "Data Localizer",
     category: "Package",
     // link: "https://github.com/elrefai99/data-localizer",
@@ -187,7 +163,7 @@ export const projects: any = [
     ]
   },
   {
-    id: 8,
+    id: 9,
     name: "Elrecord",
     category: "Backend",
     github: "https://github.com/elrefai99/elrecord",
@@ -208,6 +184,27 @@ export const projects: any = [
       "pm2",
       "pnpm",
       "git/github",
+    ]
+  },
+  {
+    id: 10,
+    name: "Tasks-Day",
+    category: "Backend",
+    github: "https://github.com/elrefai99/Tasks-Day",
+    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "Paymob",
+      "Amazon Payment Service (APS)",
+      "SendGrid",
+      "Agenda",
+      "Swagger",
+      "Docker",
+      "MongoDB",
+      "pnpm",
+      "git/github",
+      "Github Actions"
     ]
   },
 ]
