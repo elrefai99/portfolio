@@ -7,7 +7,7 @@ export const homeSEO = {
     },
     {
       name: 'description',
-      content: "Software Engineer specializing in backend development with Node.js and TypeScript. Building scalable enterprise solutions with Express.js, MongoDB, Redis, and AWS. Currently at Lesoll."
+      content: "Mohammed Mostafa Portfolio"
     },
     {
       property: 'og:title',
@@ -15,7 +15,7 @@ export const homeSEO = {
     },
     {
       property: 'og:description',
-      content: "Software Engineer specializing in backend development with Node.js and TypeScript. Building scalable enterprise solutions with Express.js, MongoDB, Redis, and AWS."
+      content: "Mohammed Mostafa Portfolio"
     },
     {
       property: 'og:image',
@@ -43,7 +43,7 @@ export const homeSEO = {
     },
     {
       name: 'twitter:description',
-      content: "Software Engineer specializing in backend development with Node.js and TypeScript. Building scalable enterprise solutions."
+      content: "Mohammed Mostafa Portfolio"
     },
     {
       name: 'twitter:image',
@@ -65,7 +65,7 @@ export const projectsSEO = {
     },
     {
       name: 'description',
-      content: "Explore my portfolio of enterprise-grade projects including real estate marketplaces, booking platforms, and open-source packages built with Node.js, TypeScript, and modern web technologies."
+      content: "List of projects that I created or maintaining."
     },
     {
       property: 'og:title',
@@ -73,7 +73,7 @@ export const projectsSEO = {
     },
     {
       property: 'og:description',
-      content: "Explore my portfolio of enterprise-grade projects including real estate marketplaces, booking platforms, and open-source packages."
+      content: "List of projects that I created or maintaining."
     },
     {
       property: 'og:image',
@@ -101,7 +101,7 @@ export const projectsSEO = {
     },
     {
       name: 'twitter:description',
-      content: "Explore my portfolio of enterprise-grade projects including real estate marketplaces, booking platforms, and open-source packages."
+      content: "List of projects that I created or maintaining."
     },
     {
       name: 'twitter:image',

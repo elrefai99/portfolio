@@ -36,8 +36,19 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
     <div w-full max-w-4xl p-4 md:p-10>
       <section>
-        <h2 text-3xl font-bold mb-6 text-left text-black dark:text-white>Projects</h2>
-        
+        <div class="flex flex-col items-center text-center mb-6">
+          <h1 text-5xl font-bold mb-2 text-black dark:text-white>Projects</h1>
+          <p text-sm text-gray-500 dark:text-gray-400 mb-4>Projects that I created or maintaining.</p>
+          <a
+            href="https://github.com/elrefai99"
+            target="_blank"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 text-black dark:text-white text-sm font-medium hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-200"
+          >
+            <i class="i-carbon:logo-github w-4 h-4" />
+            GitHub
+          </a>
+        </div>
+
         <!-- Category Filter Tabs -->
         <div class="category-tabs" flex gap-3 mb-8 flex-wrap>
           <button
