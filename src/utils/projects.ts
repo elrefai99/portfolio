@@ -207,4 +207,17 @@ export const projects: any = [
       "Github Actions"
     ]
   },
+  {
+    id: 11,
+    name: "Gen Import",
+    category: "Package",
+    // link: "https://github.com/elrefai99/data-localizer",
+    github: "https://github.com/0G0sha/gen-import",
+    npm: "https://www.npmjs.com/package/gen-import",
+    desc: "Generate a TypeScript barrel file for your Express/Node project using the TypeScript compiler API.",
+    tags: [
+      "TypeScript",
+      "fs"
+    ]
+  },
 ]
