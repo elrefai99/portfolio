@@ -1,6 +1,8 @@
 import lesoll from '../../public/projects/lesoll-logo.png'
 import egystay from "../../public/projects/egy-stay-logo.png"
 import keepits from "../../public/projects/keepits.png"
+import Gosha0 from "../../public/projects/0Gosha.png"
+
 export const projects: any = [
   {
     id: 1,
@@ -89,6 +91,33 @@ export const projects: any = [
       "Netlify",
       "git/github",
       "Docker"
+    ]
+  },
+  {
+    id: 4,
+    name: "0Gosha",
+    category: "Backend",
+    logo: Gosha0,
+    class: "w-5 h-5",
+    github: "https://github.com/elrefai99/0G0sha",
+    desc: "Pure AI agent engine that optimizes prompts - learns from user feedback.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "Swagger",
+      "Docker",
+      "Vitest",
+      "Zod",
+      "cloudinary",
+      "Axios",
+      "NGINX",
+      "pm2",
+      "pnpm",
+      "git/github",
+      "Github Actions"
     ]
   },
   {
