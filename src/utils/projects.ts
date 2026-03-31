@@ -76,6 +76,36 @@ export const projects: any = [
   },
   {
     id: 3,
+    name: "0Gosha",
+    category: "Backend",
+    logo: Gosha0,
+    class: "w-5 h-5",
+    github: "https://github.com/elrefai99/0G0sha",
+    desc: "Pure AI agent engine that optimizes prompts - learns from user feedback.",
+    tags: [
+      "TypeScript",
+      "Express.js",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "nodemailer",
+      "Swagger",
+      "Docker",
+      "Vitest",
+      "Zod",
+      "cloudinary",
+      "Axios",
+      "NGINX",
+      "pm2",
+      "Socket.IO",
+      "Gen-Import",
+      "pnpm",
+      "git/github",
+      "Github Actions"
+    ]
+  },
+  {
+    id: 4,
     name: "KeepITs",
     category: "Live",
     logo: keepits,
@@ -91,33 +121,6 @@ export const projects: any = [
       "Netlify",
       "git/github",
       "Docker"
-    ]
-  },
-  {
-    id: 4,
-    name: "0Gosha",
-    category: "Backend",
-    logo: Gosha0,
-    class: "w-5 h-5",
-    github: "https://github.com/elrefai99/0G0sha",
-    desc: "Pure AI agent engine that optimizes prompts - learns from user feedback.",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "MongoDB",
-      "Redis",
-      "BullMQ",
-      "Swagger",
-      "Docker",
-      "Vitest",
-      "Zod",
-      "cloudinary",
-      "Axios",
-      "NGINX",
-      "pm2",
-      "pnpm",
-      "git/github",
-      "Github Actions"
     ]
   },
   {
