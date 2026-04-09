@@ -2,6 +2,7 @@ import lesoll from '../../public/projects/lesoll-logo.png'
 import egystay from "../../public/projects/egy-stay-logo.png"
 import keepits from "../../public/projects/keepits.png"
 import Gosha0 from "../../public/projects/0Gosha.png"
+import GenImport from '../../public/projects/Gen-Import.jpg'
 
 export const projects: any = [
   {
@@ -81,7 +82,12 @@ export const projects: any = [
     logo: Gosha0,
     class: "w-5 h-5",
     github: "https://github.com/elrefai99/0G0sha",
-    desc: "Pure AI agent engine that optimizes prompts - learns from user feedback.",
+    desc: [
+      "Pure AI agent engine that optimizes prompts - learns from user feedback.",
+      "No AI API calls. No OpenAI. No Claude API.",
+      "0Gosha is a self-contained rule-based engine that rewrites raw user text into professional, structured prompts optimized for Claude, GPT, or any LLM.",
+      "It gets smarter over time by learning which transformation rules produce the highest-rated results."
+    ],
     tags: [
       "TypeScript",
       "Express.js",
@@ -106,6 +112,28 @@ export const projects: any = [
   },
   {
     id: 4,
+    name: "Gen Import",
+    category: "Package",
+    logo: GenImport,
+    class: "w-5 h-5",
+    github: "https://github.com/0G0sha/gen-import",
+    npm: "https://www.npmjs.com/package/gen-import",
+    desc: [
+      "Generate a TypeScript barrel file for your Express/Node project using the TypeScript compiler API.",
+      "Automatically generate TypeScript/JavaScript barrel files using the TypeScript compiler API",
+      "Cycle detection · topological sort · globals mode · rich console output."
+    ],
+    tags: [
+      "TypeScript",
+      "Express",
+      "pnpm",
+      "git/github",
+      "Github Actions",
+      "fs"
+    ]
+  },
+  {
+    id: 5,
     name: "KeepITs",
     category: "Live",
     logo: keepits,
@@ -186,7 +214,6 @@ export const projects: any = [
     id: 8,
     name: "Data Localizer",
     category: "Package",
-    // link: "https://github.com/elrefai99/data-localizer",
     github: "https://github.com/elrefai99/data-localizer",
     npm: "https://www.npmjs.com/package/data-localizer",
     desc: "A lightweight TypeScript utility for handling multilingual data structures.It helps you localize arrays or objects by returning values based on a given language key (e.g., ar, en). Perfect for apps that need to support multiple languages without writing repetitive localization logic.",
@@ -237,19 +264,6 @@ export const projects: any = [
       "pnpm",
       "git/github",
       "Github Actions"
-    ]
-  },
-  {
-    id: 11,
-    name: "Gen Import",
-    category: "Package",
-    // link: "https://github.com/elrefai99/data-localizer",
-    github: "https://github.com/0G0sha/gen-import",
-    npm: "https://www.npmjs.com/package/gen-import",
-    desc: "Generate a TypeScript barrel file for your Express/Node project using the TypeScript compiler API.",
-    tags: [
-      "TypeScript",
-      "fs"
     ]
   },
 ]
