@@ -27,7 +27,7 @@ onUnmounted(() => {
     <nav w-full>
       <div max-w-xl mx-auto flex items-center justify-center px-6 py-4>
         <div 
-          text="sm md:md" 
+          text="lg md:md" 
           flex flex-wrap justify-center items-center 
           gap="4 md:8" 
           opacity-80
@@ -52,15 +52,16 @@ onUnmounted(() => {
           >
             Projects
           </router-link>
-          <a 
+          <router-link
+            to="/resume"
             class="nav-link"
-            href="/resume.pdf"
             text-black dark:text-white
             transition-all duration-200
             hover="text-gray-600 dark:text-gray-300"
+            active-class="border-b-2 border-current pb-1"
           >
             Resume
-          </a>
+          </router-link>
           <darkmode />
         </div>
       </div>

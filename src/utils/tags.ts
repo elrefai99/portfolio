@@ -56,6 +56,17 @@ export const homeSEO = {
   ]
 }
 
+export const resumeSEO = {
+  title: 'Mohammed Mostafa | Resume',
+  meta: [
+    { name: 'author', content: 'Mohammed Mostafa (elrefai99)' },
+    { name: 'description', content: 'Resume of Mohammed Mostafa – Software Engineer.' },
+    { property: 'og:title', content: 'Mohammed Mostafa | Resume' },
+    { property: 'og:description', content: 'Resume of Mohammed Mostafa – Software Engineer.' },
+    { property: 'og:image', content: 'https://elrefai.netlify.app/og-image.png' },
+  ]
+}
+
 export const projectsSEO = {
   title: 'Mohammed Mostafa | Projects',
   meta: [

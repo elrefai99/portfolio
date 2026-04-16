@@ -90,7 +90,7 @@ const techStack = [
 
           <!-- Location -->
           <div
-            inline-flex items-center gap-3
+            inline-flex items-center gap-3 ml-2
             px-6 py-3 mt-3
             bg="black/3 dark:white/3"
             border="1 black/8 dark:white/8"
@@ -131,7 +131,7 @@ const techStack = [
             font-semibold
             shadow-lg
             transition-all duration-300
-            hover="translate-y--2 shadow-2xl"
+            hover=" shadow-2xl"
           >
             <i class="i-carbon:email"></i>
             <span>Get in Touch</span>
@@ -145,7 +145,7 @@ const techStack = [
             border="2 black/20 dark:white/20"
             font-semibold
             transition-all duration-300
-            hover="translate-y--2 bg-black/5 dark:bg-white/5 border-black/30 dark:border-white/30"
+            hover=" bg-black/5 dark:bg-white/5 border-black/30 dark:border-white/30"
           >
             <i class="i-carbon:document"></i>
             <span>View Resume</span>
@@ -267,7 +267,7 @@ const techStack = [
           rounded-2xl
           transition-all duration-300
           cursor-pointer
-          hover="bg-black/4 dark:bg-white/4 border-black/12 dark:border-white/12 translate-y--1 shadow-lg"
+          hover="bg-black/4 dark:bg-white/4 border-black/12 dark:border-white/12 shadow-lg"
           :title="tech.name"
         >
           <i :class="tech.icon" text-4xl></i>
