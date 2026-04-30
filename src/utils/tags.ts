@@ -19,7 +19,7 @@ export const homeSEO = {
     },
     {
       property: 'og:image',
-      content: 'https://elrefai.netlify.app/og-image.png'
+      content: 'https://elrefai.me/og-image.png'
     },
     {
       property: 'og:image:width',
@@ -47,7 +47,7 @@ export const homeSEO = {
     },
     {
       name: 'twitter:image',
-      content: 'https://elrefai.netlify.app/og-image.png'
+      content: 'https://elrefai.me/og-image.png'
     },
     {
       name: 'twitter:image:alt',
@@ -63,7 +63,7 @@ export const resumeSEO = {
     { name: 'description', content: 'Resume of Mohammed Mostafa – Software Engineer.' },
     { property: 'og:title', content: 'Mohammed Mostafa | Resume' },
     { property: 'og:description', content: 'Resume of Mohammed Mostafa – Software Engineer.' },
-    { property: 'og:image', content: 'https://elrefai.netlify.app/og-image.png' },
+    { property: 'og:image', content: 'https://elrefai.me/og-image.png' },
   ]
 }
 
@@ -88,7 +88,7 @@ export const projectsSEO = {
     },
     {
       property: 'og:image',
-      content: 'https://elrefai.netlify.app/og-image.png'
+      content: 'https://elrefai.me/og-image.png'
     },
     {
       property: 'og:image:width',
@@ -116,7 +116,7 @@ export const projectsSEO = {
     },
     {
       name: 'twitter:image',
-      content: 'https://elrefai.netlify.app/og-image.png'
+      content: 'https://elrefai.me/og-image.png'
     },
     {
       name: 'twitter:image:alt',
