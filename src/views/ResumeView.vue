@@ -47,7 +47,7 @@ const downloadResume = () => {
             <span class="text-gray-300 dark:text-gray-600">·</span>
             <a href="https://www.linkedin.com/in/elrefai99/" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">LinkedIn</a>
             <span class="text-gray-300 dark:text-gray-600">·</span>
-            <a href="https://elrefai.netlify.app" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">Portfolio</a>
+            <a href="https://elrefai.me" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">Portfolio</a>
             <span class="text-gray-300 dark:text-gray-600">·</span>
             <a href="https://github.com/elrefai99" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">GitHub</a>
           </div>
