@@ -9,6 +9,9 @@ import { createHead } from '@vueuse/head'
 import { createI18n } from 'vue-i18n'
 import messages from './locales'
 
+document.documentElement.classList.add('dark')
+localStorage.setItem('theme-preference', 'dark')
+
 const app = createApp(App)
 const head = createHead()
 

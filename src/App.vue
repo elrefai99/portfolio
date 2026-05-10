@@ -9,14 +9,8 @@
 </template>
 <style>
 html {
-  background: #ffffff;
-  color: var(--color-text);
-  color-scheme: light;
-}
-
-html.dark {
   background: #000001;
-  color: var(--color-text);
+  color: var(--vt-c-text-dark-2);
   color-scheme: dark;
 }
 </style>
