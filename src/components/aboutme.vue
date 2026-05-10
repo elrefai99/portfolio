@@ -67,8 +67,8 @@ const techStack = [
           <div 
             inline-flex items-center gap-3 
             px-6 py-3 mt-6
-            bg="black/3 dark:white/3"
-            border="1 black/8 dark:white/8"
+            bg="black/3 dark:white/8"
+            border="1 black/8 dark:white/14"
             rounded-full
             class="animate-slide-down-delay-3"
           >
@@ -92,8 +92,8 @@ const techStack = [
           <div
             inline-flex items-center gap-3 ml-2
             px-6 py-3 mt-3
-            bg="black/3 dark:white/3"
-            border="1 black/8 dark:white/8"
+            bg="black/3 dark:white/8"
+            border="1 black/8 dark:white/14"
             rounded-full
             class="animate-slide-down-delay-3"
           >
@@ -213,8 +213,8 @@ const techStack = [
       <div 
         max-w-700px mx-auto
         p-6
-        bg="black/2 dark:white/2"
-        border="1 black/6 dark:white/6"
+        bg="black/2 dark:white/8"
+        border="1 black/6 dark:white/14"
         rounded-2xl
       >
         <a 
@@ -226,7 +226,7 @@ const techStack = [
             src="https://ghchart.rshah.org/elrefai99" 
             alt="GitHub Contribution Graph"
             w-full h-auto
-            class="github-chart bg-black/2 dark:bg-white/2"
+            class="github-chart bg-black/2 dark:bg-white/6"
           />
         </a>
         <div flex items-center justify-between mt-4>
@@ -262,12 +262,12 @@ const techStack = [
           :key="tech.name"
           flex="~ col" items-center gap-3
           p-6
-          bg="black/2 dark:white/2"
-          border="1 black/6 dark:white/6"
+          bg="black/2 dark:white/8"
+          border="1 black/6 dark:white/14"
           rounded-2xl
           transition-all duration-300
           cursor-pointer
-          hover="bg-black/4 dark:bg-white/4 border-black/12 dark:border-white/12 shadow-lg"
+          hover="bg-black/4 dark:bg-white/12 border-black/12 dark:border-white/20 shadow-lg"
           :title="tech.name"
         >
           <i :class="tech.icon" text-4xl></i>

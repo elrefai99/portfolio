@@ -42,7 +42,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
           <a
             href="https://github.com/elrefai99"
             target="_blank"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 text-black dark:text-white text-sm font-medium hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-200"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 dark:bg-white/8 backdrop-blur-md border border-black/10 dark:border-white/14 text-black dark:text-white text-sm font-medium hover:bg-white/20 dark:hover:bg-white/12 transition-all duration-200"
           >
             <i class="i-carbon:logo-github w-4 h-4" />
             GitHub
@@ -59,7 +59,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
               'px-4 py-2 rounded-lg font-semibold transition-all duration-300',
               selectedCategory === category
                 ? 'bg-black dark:bg-white text-white dark:text-black shadow-lg scale-105'
-                : 'bg-gray-200/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:bg-gray-300/70 dark:hover:bg-gray-700/70 hover:scale-105'
+                : 'bg-gray-200/50 dark:bg-white/8 text-gray-700 dark:text-gray-200 border border-transparent dark:border-white/12 hover:bg-gray-300/70 dark:hover:bg-white/12 hover:scale-105'
             ]"
           >
             {{ category }}
@@ -70,7 +70,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
           <div
             v-for="(project, index) in filteredProjects"
             :key="project.id"
-            class="project-card bg-white-500/10 dark:bg-black-500/10 backdrop-blur-sm border border-black/10 dark:border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl overflow-hidden"
+            class="project-card bg-white/10 dark:bg-white/8 backdrop-blur-sm border border-black/10 dark:border-white/14 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl overflow-hidden"
             :style="{ animationDelay: `${(index as number) * 0.1}s` }"
           >
               <div p-6>
@@ -94,7 +94,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
                     <span
                       v-for="tag in project.tags"
                       :key="tag"
-                      class="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-gray-800/50 border border-gray-300/20 dark:border-gray-600/50 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-gray-700/60 transition-colors duration-200"
+                      class="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-white/8 border border-gray-300/20 dark:border-white/12 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-white/12 transition-colors duration-200"
                     >
                       <i v-if="getTagIcon(tag)" :class="getTagIcon(tag)!" class="w-3.5 h-3.5 shrink-0" />
                       {{ tag }}

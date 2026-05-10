@@ -8,8 +8,8 @@ const isDark = useDark({
   attribute: 'class',
   valueDark: 'dark',
   valueLight: '',
-  // This will make it respect system preference initially
-  initialValue: 'auto',
+  // Start in dark mode so the global black background matches the content contrast.
+  initialValue: 'dark',
   // Store user preference in localStorage
   storageKey: 'theme-preference',
   // Listen to system preference changes

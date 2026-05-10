@@ -27,7 +27,7 @@ const downloadResume = () => {
     </div>
 
     <!-- Resume Card -->
-    <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-4xl rounded-2xl shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden">
+    <div class="bg-white/70 dark:bg-white/8 backdrop-blur-4xl rounded-2xl shadow-2xl border border-black/10 dark:border-white/14 overflow-hidden">
       <div p-8 md:p-12>
 
         <!-- Header -->

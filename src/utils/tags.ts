@@ -128,3 +128,19 @@ export const projectsSEO = {
     }
   ]
 }
+
+export const notFoundSEO = {
+  title: 'Mohammed Mostafa | 404',
+  meta: [
+    { name: 'author', content: 'Mohammed Mostafa (elrefai99)' },
+    { name: 'description', content: 'The requested page could not be found on Mohammed Mostafa’s portfolio.' },
+    { name: 'robots', content: 'noindex, follow' },
+    { property: 'og:title', content: 'Mohammed Mostafa | 404' },
+    { property: 'og:description', content: 'The requested page could not be found on Mohammed Mostafa’s portfolio.' },
+    { property: 'og:image', content: 'https://elrefai.me/og-image.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Mohammed Mostafa | 404' },
+    { name: 'twitter:description', content: 'The requested page could not be found on Mohammed Mostafa’s portfolio.' },
+    { name: 'twitter:image', content: 'https://elrefai.me/og-image.png' },
+  ]
+}
