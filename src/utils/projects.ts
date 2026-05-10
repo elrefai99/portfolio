@@ -138,7 +138,7 @@ export const projects: any = [
     category: "Live",
     logo: keepits,
     class: "w-5 h-5",
-    link: "https://keepits.netlify.app/",
+    link: "https://keepit.elrefai.me/",
     github: "https://github.com/elrefai99/keepits",
     desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
     tags: [
