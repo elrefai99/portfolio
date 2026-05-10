@@ -30,6 +30,14 @@ const toggleDescription = (id: number) => {
 }
 
 const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
+
+const heroLinkClass = 'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-black transition-all duration-200 border border-slate-300/30 bg-white/74 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
+const categoryChipClass = 'animate-project-tab rounded-lg px-4 py-2 font-semibold transition-all duration-300 border border-slate-300/30 bg-white/74 text-gray-700 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:scale-105 hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:text-gray-200 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
+const categoryChipActiveClass = 'border-slate-900 bg-slate-900 text-white shadow-lg scale-105 dark:border-white/92 dark:bg-white/92 dark:text-black'
+const projectCardClass = 'animate-project-rise relative overflow-hidden rounded-xl border border-slate-300/30 bg-white/74 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] transition-all duration-300 hover:border-slate-500/32 hover:bg-white/92 hover:shadow-2xl dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
+const projectOverlayClass = 'pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.55),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.24),transparent_65%)] opacity-90 dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_65%)] dark:opacity-75'
+const actionIconClass = 'inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300/30 bg-white/74 text-inherit backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
+const tagChipClass = 'flex items-center gap-1 rounded-full border border-slate-300/30 bg-white/82 px-2 py-1 text-xs text-black backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] transition-colors duration-200 hover:border-slate-500/32 hover:bg-white/92 dark:border-white/12 dark:bg-white/9 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
 </script>
 
 <template>
@@ -42,7 +50,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
           <a
             href="https://github.com/elrefai99"
             target="_blank"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 dark:bg-white/8 backdrop-blur-md border border-black/10 dark:border-white/14 text-black dark:text-white text-sm font-medium hover:bg-white/20 dark:hover:bg-white/12 transition-all duration-200"
+            :class="heroLinkClass"
           >
             <i class="i-carbon:logo-github w-4 h-4" />
             GitHub
@@ -52,15 +60,16 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
         <!-- Category Filter Tabs -->
         <div class="category-tabs" flex gap-3 mb-8 flex-wrap>
           <button
-            v-for="category in categories"
+            v-for="(category, index) in categories"
             :key="category"
             @click="selectedCategory = category"
             :class="[
-              'px-4 py-2 rounded-lg font-semibold transition-all duration-300',
+              categoryChipClass,
               selectedCategory === category
-                ? 'bg-black dark:bg-white text-white dark:text-black shadow-lg scale-105'
-                : 'bg-gray-200/50 dark:bg-white/8 text-gray-700 dark:text-gray-200 border border-transparent dark:border-white/12 hover:bg-gray-300/70 dark:hover:bg-white/12 hover:scale-105'
+                ? categoryChipActiveClass
+                : ''
             ]"
+            :style="{ animationDelay: `${index * 0.1}s` }"
           >
             {{ category }}
           </button>
@@ -70,9 +79,10 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
           <div
             v-for="(project, index) in filteredProjects"
             :key="project.id"
-            class="project-card bg-white/10 dark:bg-white/8 backdrop-blur-sm border border-black/10 dark:border-white/14 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl overflow-hidden"
+            :class="projectCardClass"
             :style="{ animationDelay: `${(index as number) * 0.1}s` }"
           >
+              <div :class="projectOverlayClass"></div>
               <div p-6>
                 <!-- Header -->
                 <div flex items-center justify-between mb-4>
@@ -81,9 +91,9 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
                     <h3 font-semibold text-lg text-black dark:text-white>{{ project.name }}</h3>
                   </div>
                   <div flex gap-2>
-                    <a v-if="project.link" :href="project.link" target="_blank" class="i-solar:eye-bold w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110" title="Live Site" />
-                    <a v-if="project.github" :href="project.github" target="_blank" class="i-carbon:logo-github w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110" title="GitHub Repo" />
-                    <a v-if="project.npm" :href="project.npm" target="_blank" class="i-carbon:logo-npm w-6 h-6 p-1.5 rounded-lg bg-black dark:bg-white hover:bg-black/50 dark:hover:bg-gray-300/50 backdrop-blur-sm transition hover:scale-110" title="Npm Package" />
+                    <a v-if="project.link" :href="project.link" target="_blank" :class="`${actionIconClass} i-solar:eye-bold`" title="Live Site" />
+                    <a v-if="project.github" :href="project.github" target="_blank" :class="`${actionIconClass} i-carbon:logo-github`" title="GitHub Repo" />
+                    <a v-if="project.npm" :href="project.npm" target="_blank" :class="`${actionIconClass} i-carbon:logo-npm`" title="Npm Package" />
                   </div>
                 </div>
 
@@ -94,7 +104,7 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
                     <span
                       v-for="tag in project.tags"
                       :key="tag"
-                      class="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-gray-200/20 dark:bg-white/8 border border-gray-300/20 dark:border-white/12 backdrop-blur-sm text-black dark:text-white hover:bg-gray-300/30 dark:hover:bg-white/12 transition-colors duration-200"
+                      :class="tagChipClass"
                     >
                       <i v-if="getTagIcon(tag)" :class="getTagIcon(tag)!" class="w-3.5 h-3.5 shrink-0" />
                       {{ tag }}
@@ -109,7 +119,10 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
                 </button>
 
                 <!-- Description (Expandable) -->
-                <div class="description-content" :class="isDescriptionExpanded(project.id) ? 'expanded' : ''">
+                <div
+                  overflow-hidden transition-all duration-300 ease-out
+                  :style="{ maxHeight: isDescriptionExpanded(project.id) ? '800px' : '0px' }"
+                >
                   <ul v-if="Array.isArray(project.desc)" text-gray-700 dark:text-gray-300 leading-relaxed mt-3 list-disc pl-5 space-y-2>
                     <li v-for="(point, idx) in project.desc" :key="idx">{{ point }}</li>
                   </ul>
@@ -122,52 +135,3 @@ const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
     </div>
   </div>
 </template>
-
-<style scoped>
-.project-card {
-  animation: slideUp 0.6s ease-out backwards;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.category-tabs button {
-  animation: fadeIn 0.5s ease-out backwards;
-}
-
-.category-tabs button:nth-child(1) { animation-delay: 0.1s; }
-.category-tabs button:nth-child(2) { animation-delay: 0.2s; }
-.category-tabs button:nth-child(3) { animation-delay: 0.3s; }
-.category-tabs button:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Description Content */
-.description-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.description-content.expanded {
-  max-height: 800px;
-  transition: max-height 0.4s ease-in;
-}
-</style>

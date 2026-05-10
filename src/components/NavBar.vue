@@ -21,7 +21,7 @@ onUnmounted(() => {
     sticky top-0 z-50
     transition-all duration-300
     :class="isScrolled 
-      ? 'backdrop-blur-md bg-white/80 dark:bg-black/80 shadow-lg' 
+      ? 'backdrop-blur-md bg-white/80 dark:bg-black/60 shadow-lg border-b border-black/8 dark:border-white/10' 
       : 'bg-transparent'"
   >
     <nav w-full>
@@ -62,7 +62,7 @@ onUnmounted(() => {
           >
             Resume
           </router-link>
-          <darkmode />
+          <!-- <darkmode /> -->
         </div>
       </div>
     </nav>

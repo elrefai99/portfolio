@@ -1,8 +1,8 @@
 <template> 
   <footer 
     py-12 px-6 mt-24
-    border="t-1 black/8 dark:white/8"
-    bg="black/1 dark:white/1"
+    border="t-1 black/8 dark:white/10"
+    bg="black/1 dark:white/3"
   >
     <div max-w-1200px mx-auto text-center relative>
       <!-- Social Links -->
@@ -16,11 +16,11 @@
           w-10 h-10
           flex items-center justify-center
           text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/50"
-          border="1 black/6 dark:white/6"
+          bg="black/50 dark:white/8"
+          border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white border-black/12 dark:border-white/12 translate-y--1"
+          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
         />
         <a 
           class="i-carbon-logo-linkedin" 
@@ -31,11 +31,11 @@
           w-10 h-10
           flex items-center justify-center
           text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/50"
-          border="1 black/6 dark:white/6"
+          bg="black/50 dark:white/8"
+          border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white border-black/12 dark:border-white/12 translate-y--1"
+          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
         />
         <a 
           class="i-carbon-logo-x" 
@@ -46,11 +46,11 @@
           w-10 h-10
           flex items-center justify-center
           text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/50"
-          border="1 black/6 dark:white/6"
+          bg="black/50 dark:white/8"
+          border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white border-black/12 dark:border-white/12 translate-y--1"
+          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
         />
         <a 
           class="i-ri:bluesky-fill" 
@@ -61,11 +61,11 @@
           w-10 h-10
           flex items-center justify-center
           text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/50"
-          border="1 black/6 dark:white/6"
+          bg="black/50 dark:white/8"
+          border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white border-black/12 dark:border-white/12 translate-y--1"
+          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
         />
         <a 
           class="i-mdi:email-outline" 
@@ -75,11 +75,11 @@
           w-10 h-10
           flex items-center justify-center
           text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/50"
-          border="1 black/6 dark:white/6"
+          bg="black/50 dark:white/8"
+          border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white border-black/12 dark:border-white/12 translate-y--1"
+          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
         />
       </div>
 
