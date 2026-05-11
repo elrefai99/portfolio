@@ -46,7 +46,9 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-slate-3
       <section>
         <div class="flex flex-col items-center text-center mb-6">
           <h1 text-5xl font-bold mb-2 text-black dark:text-white>Projects</h1>
-          <p text-sm text-gray-500 dark:text-gray-400 mb-4>Projects that I created or maintaining.</p>
+          <p text-sm text-gray-500 dark:text-gray-400 mb-4>
+            Backend, API, payment, and developer tooling projects built with Node.js, TypeScript, AWS, Docker, Redis, and PostgreSQL.
+          </p>
           <a
             href="https://github.com/elrefai99"
             target="_blank"

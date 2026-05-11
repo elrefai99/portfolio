@@ -73,7 +73,7 @@ const techStack = [
             class="animate-slide-down-delay-3"
           >
             <span text-sm text-gray-600 dark:text-gray-400 font-medium>
-              Software Engineer at
+              Backend Software Engineer at
             </span>
             <a 
               href="https://lesoll.com" 
@@ -169,13 +169,13 @@ const techStack = [
           text-gray-700 dark:text-gray-300
           text-left
         >
-          I'm a software engineer with expertise in web development, specializing in backend
-          development with 
+          I'm a Cairo-based software engineer specializing in backend development, scalable APIs,
+          payment integrations, and production systems with
           <span inline-flex items-center gap-1.5 font-semibold text-black dark:text-white>
             <i class="i-logos:nodejs-icon-alt"></i>Node.js
           </span>. 
-          I've recently expanded into frontend development and continuously seek to grow by exploring 
-          new technologies and working across diverse environments.
+          I work across TypeScript, Express.js, MongoDB, PostgreSQL, Redis, Docker, and AWS, and
+          I recently expanded into frontend development with Vue.js.
         </p>
 
         <p 

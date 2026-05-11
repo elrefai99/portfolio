@@ -33,7 +33,7 @@ const downloadResume = () => {
         <!-- Header -->
         <div text-center mb-8>
           <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-1">Mohamed Mostafa</h1>
-          <p class="text-base font-semibold text-gray-600 dark:text-gray-400 mb-3">Software Engineer</p>
+          <p class="text-base font-semibold text-gray-600 dark:text-gray-400 mb-3">Backend Software Engineer</p>
           <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-400">
             <span>Banha, Al Qalyubia</span>
             <span class="text-gray-300 dark:text-gray-600">·</span>
@@ -58,9 +58,9 @@ const downloadResume = () => {
           <h2 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-widest">Summary</h2>
           <hr class="border-gray-200 dark:border-gray-900 mb-3" />
           <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-            Software Engineer with 2+ years of experience building production-grade backend systems using Node.js
-            and TypeScript. Proven track record in developing scalable APIs, payment integrations, and monolithic
-            architectures.
+            Backend Software Engineer with 2+ years of experience building production-grade systems using Node.js
+            and TypeScript. Proven track record developing scalable APIs, payment integrations, real-time features,
+            and cloud deployments across AWS, Docker, MongoDB, PostgreSQL, Redis, and message queues.
           </p>
         </section>
 
