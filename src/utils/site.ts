@@ -1,3 +1,5 @@
+import { blogs } from './blogs'
+
 export const siteUrl = 'https://elrefai.me'
 
 export const sitePaths = {
@@ -28,4 +30,9 @@ export const sitemapEntries = [
     changefreq: 'monthly',
     priority: '0.7',
   },
+  ...blogs.map((blog) => ({
+    path: `${sitePaths.blogs}/${blog.slug}`,
+    changefreq: 'monthly',
+    priority: '0.7',
+  })),
 ] as const

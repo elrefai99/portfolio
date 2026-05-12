@@ -31,6 +31,21 @@ const coreKeywords = [
   'Vue.js Portfolio',
 ]
 
+const blogTopicKeywords = [
+  'Backend engineering articles',
+  'Software engineering blog',
+  'Node.js backend blog',
+  'TypeScript backend blog',
+  'Express.js backend blog',
+  'API architecture blog',
+  'Authentication security',
+  'Payment token security',
+  'Redis queues',
+  'BullMQ queues',
+  'Production backend systems',
+  'Backend architecture notes',
+]
+
 const sameAs = [
   'https://github.com/elrefai99',
   'https://www.linkedin.com/in/elrefai99/',
@@ -92,6 +107,10 @@ const createJsonLd = (schema: Record<string, unknown> | Record<string, unknown>[
   children: JSON.stringify(schema),
 })
 
+type SeoMeta = ({ name: string } | { property: string }) & { content: string }
+
+const uniqueKeywords = (keywords: string[]) => [...new Set(keywords.filter(Boolean))]
+
 const createSeo = ({
   title,
   description,
@@ -99,7 +118,9 @@ const createSeo = ({
   keywords = [],
   image = defaultImage,
   imageAlt,
+  ogType = 'website',
   robots = 'index, follow, max-image-preview:large',
+  extraMeta = [],
   schema,
 }: {
   title: string
@@ -108,11 +129,13 @@ const createSeo = ({
   keywords?: string[]
   image?: string
   imageAlt: string
+  ogType?: 'website' | 'article'
   robots?: string
+  extraMeta?: SeoMeta[]
   schema?: Record<string, unknown> | Record<string, unknown>[]
 }) => {
   const url = new URL(path, siteUrl).toString()
-  const keywordContent = [...coreKeywords, ...keywords].join(', ')
+  const keywordContent = uniqueKeywords([...coreKeywords, ...keywords]).join(', ')
 
   return {
     title,
@@ -131,7 +154,7 @@ const createSeo = ({
       { name: 'description', content: description },
       { name: 'keywords', content: keywordContent },
       { name: 'robots', content: robots },
-      { property: 'og:type', content: 'website' },
+      { property: 'og:type', content: ogType },
       { property: 'og:url', content: url },
       { property: 'og:site_name', content: siteName },
       { property: 'og:title', content: title },
@@ -150,6 +173,7 @@ const createSeo = ({
       { name: 'twitter:image', content: image },
       { name: 'twitter:image:alt', content: imageAlt },
       { name: 'publisher', content: 'elrefai99' },
+      ...extraMeta,
     ],
     script: schema ? [createJsonLd(schema)] : undefined,
   }
@@ -241,51 +265,110 @@ export const projectsSEO = createSeo({
 })
 
 export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa Blog | Backend, TypeScript, APIs, and Queues',
+  title: 'Mohammed Mostafa Blog | Backend Engineering, TypeScript, APIs',
   description:
-    'Technical notes by Mohammed Mostafa about backend engineering, TypeScript, Express.js, API design, queues, Redis, and production systems.',
+    'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, authentication, payment tokens, and production systems.',
   path: sitePaths.blogs,
-  keywords: [
+  keywords: uniqueKeywords([
     'Mohammed Mostafa blog',
+    'Mohamed Mostafa blog',
     'elrefai99 blog',
+    'Mohammed Mostafa articles',
     'Backend engineering blog',
-    'TypeScript blog',
-    'Express.js API design',
+    'Backend software engineering articles',
+    'Node.js backend articles',
+    'TypeScript backend articles',
+    'Express.js API architecture',
+    'REST API design blog',
+    'Authentication security blog',
+    'JWT PASETO blog',
+    'Payment token security blog',
     'BullMQ Redis queues',
-  ],
+    'Production systems blog',
+    ...blogTopicKeywords,
+  ]),
   imageAlt: 'Mohammed Mostafa - Backend Engineering Blog',
   schema: {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'Mohammed Mostafa Blog',
+    description:
+      'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
     url: new URL(sitePaths.blogs, siteUrl).toString(),
     author: personSchema,
-    about: 'Backend engineering, TypeScript, APIs, queues, and production architecture.',
+    inLanguage: 'en',
+    keywords: blogTopicKeywords,
+    about: [
+      'Backend engineering',
+      'Node.js',
+      'TypeScript',
+      'Express.js',
+      'API architecture',
+      'Authentication security',
+      'Payment token security',
+      'Redis queues',
+      'Production architecture',
+    ],
   },
 })
 
-export const createBlogPostSEO = (blog: BlogPost) => createSeo({
-  title: `${blog.title} | Mohammed Mostafa Blog`,
-  description: blog.excerpt,
-  path: `${sitePaths.blogs}/${blog.slug}`,
-  keywords: [
+export const createBlogPostSEO = (blog: BlogPost) => {
+  const path = `${sitePaths.blogs}/${blog.slug}`
+  const url = new URL(path, siteUrl).toString()
+  const keywords = uniqueKeywords([
     blog.title,
     blog.category,
+    `${blog.title} Mohammed Mostafa`,
+    `${blog.title} elrefai99`,
+    `${blog.category} blog`,
+    `${blog.category} article`,
+    'Backend engineering blog',
+    'Node.js security',
+    'TypeScript security',
+    'API security',
+    'Authentication tokens',
+    'Payment tokens',
     ...blog.tags,
-  ],
-  imageAlt: `${blog.title} - Mohammed Mostafa Blog`,
-  schema: {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: blog.title,
+    ...blog.tags.map((tag) => `${tag} blog`),
+    ...blog.tags.map((tag) => `${tag} article`),
+  ])
+
+  return createSeo({
+    title: `${blog.title} | Mohammed Mostafa Blog`,
     description: blog.excerpt,
-    datePublished: blog.date,
-    dateModified: blog.date,
-    url: new URL(`${sitePaths.blogs}/${blog.slug}`, siteUrl).toString(),
-    author: personSchema,
-    keywords: blog.tags,
-  },
-})
+    path,
+    keywords,
+    ogType: 'article',
+    imageAlt: `${blog.title} - Mohammed Mostafa Blog`,
+    extraMeta: [
+      { property: 'article:published_time', content: blog.date },
+      { property: 'article:modified_time', content: blog.date },
+      { property: 'article:author', content: author },
+      { property: 'article:section', content: blog.category },
+      ...blog.tags.map((tag) => ({ property: 'article:tag', content: tag })),
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': url,
+      },
+      headline: blog.title,
+      name: blog.title,
+      description: blog.excerpt,
+      image: defaultImage,
+      datePublished: blog.date,
+      dateModified: blog.date,
+      url,
+      author: personSchema,
+      publisher: personSchema,
+      articleSection: blog.category,
+      inLanguage: 'en',
+      keywords,
+    },
+  })
+}
 
 export const notFoundSEO = createSeo({
   title: 'Mohammed Mostafa | 404',

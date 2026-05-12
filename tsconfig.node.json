@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
   "include": [
+    "src/utils/blogs.ts",
     "src/utils/site.ts",
     "vite.config.*",
     "vitest.config.*",

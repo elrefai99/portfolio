@@ -137,7 +137,7 @@ const techStack = [
             <span>Get in Touch</span>
           </a>
           <a 
-            href="/resume.pdf"
+            href="/resume"
             inline-flex items-center gap-2
             px-8 py-4 rounded-xl
             bg-transparent

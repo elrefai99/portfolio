@@ -52,7 +52,7 @@ onUnmounted(() => {
           >
             Projects
           </router-link>
-          <!-- <router-link
+          <router-link
             to="/blogs"
             class="nav-link"
             text-black dark:text-white
@@ -61,8 +61,8 @@ onUnmounted(() => {
             active-class="border-b-2 border-current pb-1"
           >
             Blogs
-          </router-link> -->
-          <router-link
+          </router-link>
+          <!-- <router-link
             to="/resume"
             class="nav-link"
             text-black dark:text-white
@@ -71,7 +71,7 @@ onUnmounted(() => {
             active-class="border-b-2 border-current pb-1"
           >
             Resume
-          </router-link>
+          </router-link> -->
         </div>
       </div>
     </nav>

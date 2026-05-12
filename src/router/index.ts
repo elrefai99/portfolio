@@ -20,16 +20,16 @@ const router = createRouter({
       name: 'projects',
       component: projectsView
     },
-    // {
-    //   path: sitePaths.blogs,
-    //   name: 'blogs',
-    //   component: BlogsView
-    // },
-    // {
-    //   path: `${sitePaths.blogs}/:slug`,
-    //   name: 'blog',
-    //   component: BlogPostView
-    // },
+    {
+      path: sitePaths.blogs,
+      name: 'blogs',
+      component: BlogsView
+    },
+    {
+      path: `${sitePaths.blogs}/:slug`,
+      name: 'blog',
+      component: BlogPostView
+    },
     {
       path: sitePaths.resume,
       name: 'resume',
