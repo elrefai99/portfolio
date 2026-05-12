@@ -182,7 +182,7 @@ const createSeo = ({
 export const homeSEO = createSeo({
   title: 'Mohammed Mostafa | Backend Software Engineer in Cairo',
   description:
-    'Mohammed Mostafa is a Cairo-based Software Engineer specializing in Node.js, TypeScript, Express.js, scalable APIs, payments, Redis, Docker, and AWS systems.',
+    'Mohammed Mostafa is a  Software Engineer specializing in Node.js, TypeScript, Express.js, scalable APIs, payments, Redis, Docker, and AWS systems.',
   path: sitePaths.home,
   keywords: [
     'Mohammed Mostafa portfolio',

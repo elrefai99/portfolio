@@ -169,7 +169,7 @@ const techStack = [
           text-gray-700 dark:text-gray-300
           text-left
         >
-          I'm a Cairo-based software engineer specializing in backend development, scalable APIs,
+          I'm a  software engineer specializing in backend development, scalable APIs,
           payment integrations, and production systems with
           <span inline-flex items-center gap-1.5 font-semibold text-black dark:text-white>
             <i class="i-logos:nodejs-icon-alt"></i>Node.js
