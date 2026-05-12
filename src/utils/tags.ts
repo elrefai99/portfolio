@@ -265,9 +265,9 @@ export const projectsSEO = createSeo({
 })
 
 export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa Blog | Backend Engineering, TypeScript, APIs',
+  title: 'Mohammed Mostafa Blog | Backend Engineering',
   description:
-    'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, authentication, payment tokens, and production systems.',
+    'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
   keywords: uniqueKeywords([
     'Mohammed Mostafa blog',

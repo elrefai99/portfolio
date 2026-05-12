@@ -34,9 +34,9 @@ export const blogs: BlogPost[] = [
   {
     id: 1,
     slug: 'jwt-vs-paseto-tokens',
-    title: 'JWT vs PASETO: Stop Using the Same Token for Everything',
+    title: 'JWT vs PASETO',
     excerpt:
-      'I have shipped JWT in production, gotten burned by it, switched to PASETO for auth and payments, and learned that most teams never question the default. Here is my honest take — and where I think the industry gets it wrong.',
+      'I have shipped JWT in production, gotten burned by it, switched to PASETO for auth and payments, and learned that most teams never question the default.',
     category: 'Backend Security',
     date: '2026-05-12',
     readTime: '14 min read',
