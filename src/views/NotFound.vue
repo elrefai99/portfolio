@@ -24,6 +24,12 @@ const quickLinks = [
     icon: 'i-carbon:folder-open',
   },
   {
+    title: 'Blogs',
+    description: 'Read technical notes with code examples and backend patterns.',
+    to: sitePaths.blogs,
+    icon: 'i-carbon:blog',
+  },
+  {
     title: 'Resume',
     description: 'Open the experience summary and resume view.',
     to: sitePaths.resume,

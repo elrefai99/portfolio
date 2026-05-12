@@ -32,8 +32,9 @@ const toggleDescription = (id: number) => {
 const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
 
 const heroLinkClass = 'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-black transition-all duration-200 border border-slate-300/30 bg-white/74 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
-const categoryChipClass = 'animate-project-tab rounded-lg px-4 py-2 font-semibold transition-all duration-300 border border-slate-300/30 bg-white/74 text-gray-700 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:scale-105 hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:text-gray-200 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
-const categoryChipActiveClass = 'border-slate-900 bg-slate-900 text-white shadow-lg scale-105 dark:border-white/92 dark:bg-white/92 dark:text-black'
+const categoryChipClass = 'animate-project-tab rounded-lg px-4 py-2 font-semibold transition-all duration-300 border backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:scale-105 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]'
+const categoryChipInactiveClass = 'border-slate-300/30 bg-white/74 text-gray-700 hover:border-slate-900 hover:bg-slate-900 hover:text-white dark:border-white/14 dark:bg-white/8 dark:text-gray-200 dark:hover:border-white/92 dark:hover:bg-white/92 dark:hover:text-black'
+const categoryChipActiveClass = 'border-slate-900 bg-slate-900 text-white shadow-lg scale-105 hover:border-slate-900 hover:bg-slate-900 hover:text-white dark:border-white/92 dark:bg-white/92 dark:text-black dark:hover:border-white/92 dark:hover:bg-white/92 dark:hover:text-black'
 const projectCardClass = 'animate-project-rise relative overflow-hidden rounded-xl border border-slate-300/30 bg-white/74 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] transition-all duration-300 hover:border-slate-500/32 hover:bg-white/92 hover:shadow-2xl dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
 const projectOverlayClass = 'pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.55),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.24),transparent_65%)] opacity-90 dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_65%)] dark:opacity-75'
 const actionIconClass = 'inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300/30 bg-white/74 text-inherit backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
@@ -69,7 +70,7 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-slate-3
               categoryChipClass,
               selectedCategory === category
                 ? categoryChipActiveClass
-                : ''
+                : categoryChipInactiveClass
             ]"
             :style="{ animationDelay: `${index * 0.1}s` }"
           >

@@ -1,7 +1,7 @@
 <template> 
   <footer 
     py-12 px-6 mt-24
-    border="t-1 black/8 dark:white/10"
+    border="t-1 black/5 dark:white/10"
     bg="black/1 dark:white/3"
   >
     <div max-w-1200px mx-auto text-center relative>
@@ -15,12 +15,12 @@
           aria-label="GitHub"
           w-10 h-10
           flex items-center justify-center
-          text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/8"
+          text-xl text-gray-500 dark:text-gray-200
+          bg="black/4 dark:white/75"
           border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
+          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
         />
         <a 
           class="i-carbon-logo-linkedin" 
@@ -30,12 +30,12 @@
           aria-label="LinkedIn"
           w-10 h-10
           flex items-center justify-center
-          text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/8"
+          text-xl text-gray-500 dark:text-gray-200
+          bg="black/4 dark:white/75"
           border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
+          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
         />
         <a 
           class="i-carbon-logo-x" 
@@ -45,12 +45,12 @@
           aria-label="X"
           w-10 h-10
           flex items-center justify-center
-          text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/8"
+          text-xl text-gray-500 dark:text-gray-200
+          bg="black/4 dark:white/75"
           border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
+          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
         />
         <a 
           class="i-ri:bluesky-fill" 
@@ -60,12 +60,12 @@
           aria-label="Bluesky"
           w-10 h-10
           flex items-center justify-center
-          text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/8"
+          text-xl text-gray-500 dark:text-gray-200
+          bg="black/4 dark:white/75"
           border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
+          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
         />
         <a 
           class="i-mdi:email-outline" 
@@ -74,12 +74,12 @@
           aria-label="Email"
           w-10 h-10
           flex items-center justify-center
-          text-xl text-gray-600 dark:text-gray-400
-          bg="black/50 dark:white/8"
+          text-xl text-gray-500 dark:text-gray-200
+          bg="black/4 dark:white/75"
           border="1 black/6 dark:white/12"
           rounded-xl
           transition-all duration-300
-          hover="text-black dark:text-white bg-black dark:bg-white/14 border-black/12 dark:border-white/18 translate-y--1"
+          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
         />
       </div>
 
@@ -98,7 +98,7 @@
           transition-colors duration-200
           hover="text-gray-600 dark:text-gray-300"
         >
-          Mohammed Mostafa
+          elrefai99
         </a>. 
         All rights reserved.
       </p>

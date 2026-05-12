@@ -1,4 +1,5 @@
 import { sitePaths, siteUrl } from './site'
+import type { BlogPost } from './blogs'
 
 const author = 'Mohammed Mostafa (elrefai99)'
 const siteName = 'Mohammed Mostafa Portfolio'
@@ -236,6 +237,53 @@ export const projectsSEO = createSeo({
         name,
       })),
     },
+  },
+})
+
+export const blogsSEO = createSeo({
+  title: 'Mohammed Mostafa Blog | Backend, TypeScript, APIs, and Queues',
+  description:
+    'Technical notes by Mohammed Mostafa about backend engineering, TypeScript, Express.js, API design, queues, Redis, and production systems.',
+  path: sitePaths.blogs,
+  keywords: [
+    'Mohammed Mostafa blog',
+    'elrefai99 blog',
+    'Backend engineering blog',
+    'TypeScript blog',
+    'Express.js API design',
+    'BullMQ Redis queues',
+  ],
+  imageAlt: 'Mohammed Mostafa - Backend Engineering Blog',
+  schema: {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Mohammed Mostafa Blog',
+    url: new URL(sitePaths.blogs, siteUrl).toString(),
+    author: personSchema,
+    about: 'Backend engineering, TypeScript, APIs, queues, and production architecture.',
+  },
+})
+
+export const createBlogPostSEO = (blog: BlogPost) => createSeo({
+  title: `${blog.title} | Mohammed Mostafa Blog`,
+  description: blog.excerpt,
+  path: `${sitePaths.blogs}/${blog.slug}`,
+  keywords: [
+    blog.title,
+    blog.category,
+    ...blog.tags,
+  ],
+  imageAlt: `${blog.title} - Mohammed Mostafa Blog`,
+  schema: {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description: blog.excerpt,
+    datePublished: blog.date,
+    dateModified: blog.date,
+    url: new URL(`${sitePaths.blogs}/${blog.slug}`, siteUrl).toString(),
+    author: personSchema,
+    keywords: blog.tags,
   },
 })
 

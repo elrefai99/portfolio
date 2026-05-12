@@ -21,7 +21,7 @@ onUnmounted(() => {
     sticky top-0 z-50
     transition-all duration-300
     :class="isScrolled 
-      ? 'backdrop-blur-md bg-black/60 shadow-lg border-b border-white/10' 
+      ? 'backdrop-blur-md bg-black/60 shadow-lg' 
       : 'bg-transparent'"
   >
     <nav w-full>
@@ -52,6 +52,16 @@ onUnmounted(() => {
           >
             Projects
           </router-link>
+          <!-- <router-link
+            to="/blogs"
+            class="nav-link"
+            text-black dark:text-white
+            transition-all duration-200
+            hover="text-gray-600 dark:text-gray-300"
+            active-class="border-b-2 border-current pb-1"
+          >
+            Blogs
+          </router-link> -->
           <router-link
             to="/resume"
             class="nav-link"
