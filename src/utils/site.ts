@@ -32,7 +32,7 @@ export const sitemapEntries = [
   },
   ...blogs.map((blog) => ({
     path: `${sitePaths.blogs}/${blog.slug}`,
-    changefreq: 'monthly',
+    changefreq: 'weekly',
     priority: '0.7',
   })),
 ] as const
