@@ -221,9 +221,9 @@ export const resumeSEO = createSeo({
 })
 
 export const projectsSEO = createSeo({
-  title: 'Mohammed Mostafa Projects | Node.js, TypeScript, AWS Portfolio',
+  title: 'Mohammed Mostafa Projects',
   description:
-    'Explore Mohammed Mostafa projects including Lesoll, EGYStay, 0Gosha, gen-import, Smart Parser, and real-time backend systems built with Node.js, TypeScript, AWS, Docker, Redis, and PostgreSQL.',
+    'Explore Mohammed Mostafa projects including Lesoll, EGYStay, 0Gosha, gen-import, Smart Parser.',
   path: sitePaths.projects,
   keywords: [
     'Mohammed Mostafa projects',
