@@ -82,6 +82,7 @@ export const projects: any = [
     logo: Gosha0,
     class: "w-5 h-5",
     github: "https://github.com/elrefai99/0G0sha",
+    link: "https://0gosha.elrefai.me",
     desc: [
       "Pure AI agent engine that optimizes prompts - learns from user feedback.",
       "No AI API calls. No OpenAI. No Claude API.",
