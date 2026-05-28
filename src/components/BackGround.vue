@@ -1,3 +1,3 @@
 <template>
-  <GridGlowBackground />
+  <StarBackground />
 </template>
