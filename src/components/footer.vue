@@ -1,6 +1,6 @@
 <template> 
   <footer 
-    py-12 px-6 mt-24
+    class="mt-16 px-6 pb-6 pt-8 sm:mt-24 sm:py-12"
     border="t-1 black/5 dark:white/10"
     bg="black/1 dark:white/3"
   >
@@ -8,85 +8,54 @@
       <!-- Social Links -->
       <div flex gap-4 justify-center mb-8>
         <a 
-          class="i-carbon-logo-github" 
+          class="social-link" 
           href="https://github.com/elrefai99" 
           target="_blank" 
           title="GitHub"
           aria-label="GitHub"
-          w-10 h-10
-          flex items-center justify-center
-          text-xl text-gray-500 dark:text-gray-200
-          bg="black/4 dark:white/75"
-          border="1 black/6 dark:white/12"
-          rounded-xl
-          transition-all duration-300
-          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
-        />
+        >
+          <i class="i-carbon-logo-github social-icon" aria-hidden="true"></i>
+        </a>
         <a 
-          class="i-carbon-logo-linkedin" 
+          class="social-link" 
           href="https://www.linkedin.com/in/elrefai99/" 
           target="_blank" 
           title="LinkedIn"
           aria-label="LinkedIn"
-          w-10 h-10
-          flex items-center justify-center
-          text-xl text-gray-500 dark:text-gray-200
-          bg="black/4 dark:white/75"
-          border="1 black/6 dark:white/12"
-          rounded-xl
-          transition-all duration-300
-          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
-        />
+        >
+          <i class="i-carbon-logo-linkedin social-icon" aria-hidden="true"></i>
+        </a>
         <a 
-          class="i-carbon-logo-x" 
+          class="social-link" 
           href="https://x.com/elrefai99" 
           target="_blank" 
           title="X (Twitter)"
           aria-label="X"
-          w-10 h-10
-          flex items-center justify-center
-          text-xl text-gray-500 dark:text-gray-200
-          bg="black/4 dark:white/75"
-          border="1 black/6 dark:white/12"
-          rounded-xl
-          transition-all duration-300
-          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
-        />
+        >
+          <i class="i-carbon-logo-x social-icon" aria-hidden="true"></i>
+        </a>
         <a 
-          class="i-ri:bluesky-fill" 
+          class="social-link" 
           href="https://bsky.app/profile/elrefai99.bsky.social" 
           target="_blank" 
           title="Bluesky"
           aria-label="Bluesky"
-          w-10 h-10
-          flex items-center justify-center
-          text-xl text-gray-500 dark:text-gray-200
-          bg="black/4 dark:white/75"
-          border="1 black/6 dark:white/12"
-          rounded-xl
-          transition-all duration-300
-          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
-        />
+        >
+          <i class="i-ri:bluesky-fill social-icon" aria-hidden="true"></i>
+        </a>
         <a 
-          class="i-mdi:email-outline" 
+          class="social-link" 
           href="mailto:elrefai99@gmail.com"
           title="Email"
           aria-label="Email"
-          w-10 h-10
-          flex items-center justify-center
-          text-xl text-gray-500 dark:text-gray-200
-          bg="black/4 dark:white/75"
-          border="1 black/6 dark:white/12"
-          rounded-xl
-          transition-all duration-300
-          hover="text-gray-900 dark:text-white bg-black/8 dark:bg-white/50 border-black/12 dark:border-white/14 translate-y--1"
-        />
+        >
+          <i class="i-mdi:email-outline social-icon" aria-hidden="true"></i>
+        </a>
       </div>
 
       <!-- Divider -->
       <div 
-        h-px my-8 mx-auto max-w-300px
-        class="footer-divider"
+        class="mx-auto my-8 h-px max-w-300px bg-gradient-to-r from-transparent via-black/10 to-transparent dark:via-white/10"
       ></div>
 
       <!-- Copyright -->
@@ -136,31 +105,3 @@ const scrollToTop = () => {
   })
 }
 </script>
-
-<style scoped>
-.footer-divider {
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(0, 0, 0, 0.1),
-    transparent
-  );
-}
-
-.dark .footer-divider {
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-}
-
-@media (max-width: 640px) {
-  footer {
-    padding-top: 2rem;
-    padding-bottom: 1.5rem;
-    margin-top: 4rem;
-  }
-}
-</style>

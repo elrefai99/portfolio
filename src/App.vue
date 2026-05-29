@@ -8,9 +8,9 @@
   <Footer />
 </template>
 <style>
-html {
+html.dark {
   background: #000001;
-  color: var(--vt-c-text-dark-2);
+  color: var(--color-text);
   color-scheme: dark;
 }
 </style>

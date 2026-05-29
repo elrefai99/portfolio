@@ -21,11 +21,11 @@ onUnmounted(() => {
     sticky top-0 z-50
     transition-all duration-300
     :class="isScrolled 
-      ? 'backdrop-blur-md bg-black/60 shadow-lg' 
+      ? 'backdrop-blur-md bg-white/75 dark:bg-black/60 shadow-lg shadow-black/10 dark:shadow-black/40' 
       : 'bg-transparent'"
   >
     <nav w-full>
-      <div max-w-xl mx-auto flex items-center justify-center px-6 py-4>
+      <div max-w-3xl mx-auto flex items-center justify-center px-6 py-4 relative>
         <div 
           text="lg md:md" 
           flex flex-wrap justify-center items-center 
@@ -73,6 +73,15 @@ onUnmounted(() => {
             Resume
           </router-link> -->
         </div>
+        <Darkmode 
+          ml-8
+          p3
+          class="nav-link "
+          text-black dark:text-white
+          transition-all duration-200
+          hover="text-gray-600 dark:text-gray-300"
+          active-class="border-b-2 border-current pb-1"
+             />
       </div>
     </nav>
   </header>
