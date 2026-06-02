@@ -214,7 +214,6 @@ const techStack = [
         max-w-700px mx-auto
         p-6
         bg="black/2 dark:white/8"
-        border="1 black/6 dark:white/14"
         rounded-2xl
       >
         <a 
@@ -223,7 +222,7 @@ const techStack = [
           block
         >
           <img 
-            src="https://ghchart.rshah.org/elrefai99" 
+            src="https://ghchart.rshah.org/6e7681/elrefai99" 
             alt="GitHub Contribution Graph"
             w-full h-auto
             class="github-chart bg-black/2 dark:bg-white/6"
