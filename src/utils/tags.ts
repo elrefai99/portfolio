@@ -68,11 +68,19 @@ const personSchema = {
   name: 'Mohammed Mostafa',
   alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
   url: siteUrl,
-  jobTitle: 'Software Engineer',
+  jobTitle: 'Backend Software Engineer',
   worksFor: {
     '@type': 'Organization',
     name: 'Lesoll',
     url: 'https://lesoll.com',
+  },
+  hasOccupation: {
+    '@type': 'Occupation',
+    name: 'Backend Software Engineer',
+    occupationLocation: {
+      '@type': 'City',
+      name: 'Cairo',
+    },
   },
   address: {
     '@type': 'PostalAddress',
@@ -192,7 +200,7 @@ const createSeo = ({
 export const homeSEO = createSeo({
   title: 'Elrefai — Mohammed Mostafa | Software Engineer in Cairo',
   description:
-    'Elrefai (Mohammed Mostafa, elrefai99) — Backend Software Engineer in Cairo building scalable APIs, payments, and cloud systems with Node.js, TypeScript & AWS.',
+    'Elrefai (Mohammed Mostafa, elrefai99) — Backend Software Engineer at Lesoll building scalable APIs, payments, and cloud systems with Node.js, TypeScript & AWS.',
   path: sitePaths.home,
   keywords: [
     'Elrefai',
