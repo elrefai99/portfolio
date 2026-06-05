@@ -185,6 +185,10 @@ const techStack = [
           </span>. 
           I work across TypeScript, Express.js, MongoDB, PostgreSQL, Redis, Docker, and AWS, and
           I recently expanded into frontend development with Vue.js.
+          As a backend developer, I built and shipped the systems behind production platforms like
+          <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" font-semibold text-black dark:text-white class="underline underline-offset-3">Lesoll</a>
+          and
+          <a href="https://egystay.com" target="_blank" rel="noopener noreferrer" font-semibold text-black dark:text-white class="underline underline-offset-3">EGYStay</a>.
         </p>
 
         <p 
