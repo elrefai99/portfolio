@@ -1,14 +1,22 @@
 import { sitePaths, siteUrl } from './site'
+import { projects } from './projects'
 import type { BlogPost } from './blogs'
 
-const author = 'Mohammed Mostafa (elrefai99)'
-const siteName = 'Mohammed Mostafa Portfolio'
+const author = 'Mohammed Mostafa (Elrefai)'
+const siteName = 'Elrefai — Mohammed Mostafa Portfolio'
 const defaultImage = `${siteUrl}/og-image.png`
 
 const coreKeywords = [
+  'Elrefai',
+  'elrefai',
+  'elrefai99',
+  'elrefai.me',
+  'Elrefai developer',
+  'Elrefai portfolio',
+  'Elrefai backend engineer',
+  'Mohammed Elrefai',
   'Mohammed Mostafa',
   'Mohamed Mostafa',
-  'elrefai99',
   'Software Engineer',
   'Backend Engineer',
   'Backend Developer Egypt',
@@ -58,7 +66,7 @@ const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Mohammed Mostafa',
-  alternateName: ['Mohamed Mostafa', 'elrefai99'],
+  alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
   url: siteUrl,
   jobTitle: 'Software Engineer',
   worksFor: {
@@ -94,10 +102,12 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: siteName,
+  alternateName: ['Elrefai', 'elrefai99', 'Mohammed Mostafa Portfolio'],
   url: siteUrl,
   author: {
     '@type': 'Person',
     name: 'Mohammed Mostafa',
+    alternateName: 'Elrefai',
   },
   inLanguage: 'en',
 }
@@ -180,11 +190,15 @@ const createSeo = ({
 }
 
 export const homeSEO = createSeo({
-  title: 'Mohammed Mostafa | Backend Software Engineer in Cairo',
+  title: 'Elrefai — Mohammed Mostafa | Software Engineer in Cairo',
   description:
-    'Mohammed Mostafa is a  Software Engineer specializing in Node.js, TypeScript, Express.js, scalable APIs, payments, Redis, Docker, and AWS systems.',
+    'Elrefai (Mohammed Mostafa, elrefai99) — Backend Software Engineer in Cairo building scalable APIs, payments, and cloud systems with Node.js, TypeScript & AWS.',
   path: sitePaths.home,
   keywords: [
+    'Elrefai',
+    'Elrefai portfolio',
+    'Elrefai backend engineer',
+    'Elrefai Mohammed Mostafa',
     'Mohammed Mostafa portfolio',
     'Mohamed Mostafa portfolio',
     'Software Engineer Cairo',
@@ -220,46 +234,80 @@ export const resumeSEO = createSeo({
   ],
 })
 
+type ProjectShape = {
+  name: string
+  slug?: string
+  category?: string
+  link?: string
+  github?: string
+  npm?: string
+  desc: string | string[]
+  tags: string[]
+}
+
+const projectDescriptionText = (desc: string | string[]) =>
+  Array.isArray(desc) ? desc.join(' ') : desc
+
+const projectListItems = (projects as ProjectShape[]).map((project, index) => {
+  const projectUrl = project.link || project.github || project.npm
+  const anchorUrl = project.slug
+    ? `${new URL(sitePaths.projects, siteUrl).toString()}#${project.slug}`
+    : undefined
+  return {
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': project.npm ? 'SoftwareSourceCode' : 'SoftwareApplication',
+      name: project.name,
+      description: projectDescriptionText(project.desc),
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Web',
+      ...(anchorUrl ? { url: anchorUrl } : {}),
+      ...(projectUrl ? { sameAs: projectUrl } : {}),
+      ...(project.github ? { codeRepository: project.github } : {}),
+      keywords: project.tags,
+      author: personSchema,
+      creator: personSchema,
+    },
+  }
+})
+
+// Per-project name searches (e.g. "Lesoll developer", "who built EGYStay").
+const projectNameKeywords = (projects as ProjectShape[]).flatMap((project) => [
+  project.name,
+  `${project.name} developer`,
+  `${project.name} backend`,
+  `${project.name} Elrefai`,
+  `who built ${project.name}`,
+])
+
 export const projectsSEO = createSeo({
-  title: 'Mohammed Mostafa Projects',
+  title: 'Elrefai — Mohammed Mostafa | Projects',
   description:
-    'Explore Mohammed Mostafa projects including Lesoll, EGYStay, 0Gosha, gen-import, Smart Parser.',
+    'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
-  keywords: [
+  keywords: uniqueKeywords([
+    'Elrefai projects',
+    'Elrefai portfolio projects',
     'Mohammed Mostafa projects',
     'elrefai99 projects',
     'Node.js portfolio projects',
     'TypeScript backend portfolio',
-    'Lesoll',
-    'EGYStay',
-    '0Gosha',
-    'gen-import',
-    'Smart Parser',
-    'Elrecord',
-  ],
+    ...projectNameKeywords,
+  ]),
   image: `${siteUrl}/og/projects_page_og.png`,
-  imageAlt: 'Mohammed Mostafa - Node.js and TypeScript Projects Portfolio',
+  imageAlt: 'Elrefai (Mohammed Mostafa) - Node.js and TypeScript Projects Portfolio',
   schema: {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Mohammed Mostafa Projects',
+    name: 'Elrefai — Mohammed Mostafa Projects',
     url: new URL(sitePaths.projects, siteUrl).toString(),
-    about: 'Backend, API, cloud, payment, and developer tooling projects by Mohammed Mostafa.',
+    about: 'Backend, API, cloud, payment, and developer tooling projects by Elrefai (Mohammed Mostafa).',
+    author: personSchema,
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: [
-        'Lesoll',
-        'EGYStay',
-        '0Gosha',
-        'gen-import',
-        'Doc-Station',
-        'Smart Parser',
-        'Elrecord',
-      ].map((name, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        name,
-      })),
+      numberOfItems: projectListItems.length,
+      itemListElement: projectListItems,
     },
   },
 })

@@ -80,8 +80,10 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/1
         <div class="grid grid-cols-1 gap-4">
           <div
             v-for="(project, index) in filteredProjects"
-            :key="project.id"
+            :id="project.slug"
+            :key="project.slug"
             :class="projectCardClass"
+            class="scroll-mt-24"
             :style="{ animationDelay: `${(index as number) * 0.1}s` }"
           >
               <div p-6>

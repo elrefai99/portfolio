@@ -8,6 +8,7 @@ export const projects: any = [
   {
     id: 1,
     name: "Lesoll",
+    slug: "lesoll",
     category: "Live",
     logo: lesoll,
     link: "https://lesoll.com",
@@ -44,6 +45,7 @@ export const projects: any = [
   {
     id: 2,
     name: "EGYStay",
+    slug: "egystay",
     category: "Live",
     logo: egystay,
     class: "w-5 h-auto",
@@ -78,6 +80,7 @@ export const projects: any = [
   {
     id: 3,
     name: "0Gosha",
+    slug: "0gosha",
     category: "Backend",
     logo: Gosha0,
     class: "w-5 h-5",
@@ -114,6 +117,7 @@ export const projects: any = [
   {
     id: 4,
     name: "Gen Import",
+    slug: "gen-import",
     category: "Package",
     logo: GenImport,
     class: "w-5 h-5",
@@ -136,6 +140,7 @@ export const projects: any = [
   {
     id: 5,
     name: "KeepITs",
+    slug: "keepits",
     category: "Live",
     logo: keepits,
     class: "w-5 h-5",
@@ -153,8 +158,9 @@ export const projects: any = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     name: "Doc-Station - Orthopedic Surgery Platform",
+    slug: "doc-station",
     category: "Backend",
     link: "",
     github: "https://github.com/elrefai99/doc-station",
@@ -179,8 +185,9 @@ export const projects: any = [
     ]
   },
   {
-    id: 6,
+    id: 7,
     name: "Smart Parser",
+    slug: "smart-parser",
     category: "Backend",
     link: "",
     github: "https://github.com/elrefai99/smart-parser",
@@ -197,8 +204,9 @@ export const projects: any = [
     ]
   },
   {
-    id: 7,
+    id: 8,
     name: 'Wedding Orgnization',
+    slug: "wedding-organization",
     category: "Backend",
     link: "",
     github: "https://github.com/elrefai99/Wedding_Orgnization",
@@ -212,8 +220,9 @@ export const projects: any = [
     ]
   },
   {
-    id: 8,
+    id: 9,
     name: "Data Localizer",
+    slug: "data-localizer",
     category: "Package",
     github: "https://github.com/elrefai99/data-localizer",
     npm: "https://www.npmjs.com/package/data-localizer",
@@ -223,8 +232,9 @@ export const projects: any = [
     ]
   },
   {
-    id: 9,
+    id: 10,
     name: "Elrecord",
+    slug: "elrecord",
     category: "Backend",
     github: "https://github.com/elrefai99/elrecord",
     desc: "Elrecord is a powerful, scalable backend for a real-time chat application inspired by Discord. It supports direct messaging, group chats, and server-based communities with voice/video call capabilities.",
@@ -247,8 +257,9 @@ export const projects: any = [
     ]
   },
   {
-    id: 10,
+    id: 11,
     name: "Tasks-Day",
+    slug: "tasks-day",
     category: "Backend",
     github: "https://github.com/elrefai99/Tasks-Day",
     desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
