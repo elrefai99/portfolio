@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import logo from "../../public/projects/lesoll-logo.png"
+import egystayLogo from "../../public/projects/egy-stay-logo.png"
 
 // Optional: Set to null or empty string to hide profile photo
 const profilePhoto = ref<string | null>(null) // Change to your photo path like: "/profile.jpg"
@@ -186,9 +187,13 @@ const techStack = [
           I work across TypeScript, Express.js, MongoDB, PostgreSQL, Redis, Docker, and AWS, and
           I recently expanded into frontend development with Vue.js.
           As a backend developer, I built and shipped the systems behind production platforms like
-          <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" font-semibold text-black dark:text-white class="underline underline-offset-3">Lesoll</a>
+          <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
+            <img :src="logo" alt="Lesoll logo" class="inline-block h-4 w-auto" />Lesoll
+          </a>
           and
-          <a href="https://egystay.com" target="_blank" rel="noopener noreferrer" font-semibold text-black dark:text-white class="underline underline-offset-3">EGYStay</a>.
+          <a href="https://egystay.com" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
+            <img :src="egystayLogo" alt="EGYStay logo" class="inline-block h-4 w-auto" />
+          </a>.
         </p>
 
         <p 
