@@ -438,3 +438,28 @@ export const notFoundSEO = createSeo({
   imageAlt: 'Mohammed Mostafa - Software Engineer Portfolio',
   robots: 'noindex, follow',
 })
+
+export const contactSEO = createSeo({
+  title: 'Contact Mohammed Mostafa | Backend Software Engineer',
+  description:
+    'Get in touch with Mohammed Mostafa (Elrefai), a Backend Software Engineer. Send a message about backend, API, payment, or cloud engineering work and collaborations.',
+  path: sitePaths.contact,
+  keywords: [
+    'Contact Mohammed Mostafa',
+    'Contact Elrefai',
+    'Hire backend engineer',
+    'Hire Node.js developer',
+    'Contact backend developer Egypt',
+  ],
+  imageAlt: 'Contact Mohammed Mostafa - Software Engineer',
+  schema: [
+    personSchema,
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ContactPage',
+      name: 'Contact Mohammed Mostafa',
+      url: new URL(sitePaths.contact, siteUrl).toString(),
+      about: personSchema,
+    },
+  ],
+})

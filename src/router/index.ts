@@ -5,6 +5,7 @@ import projectsView from '../views/projectsView.vue'
 import ResumeView from '../views/ResumeView.vue'
 import BlogsView from '../views/BlogsView.vue'
 import BlogPostView from '../views/BlogPostView.vue'
+import ContactView from '../views/ContactView.vue'
 import { sitePaths } from '../utils/site'
 
 const router = createRouter({
@@ -34,6 +35,11 @@ const router = createRouter({
       path: sitePaths.resume,
       name: 'resume',
       component: ResumeView
+    },
+    {
+      path: sitePaths.contact,
+      name: 'contact',
+      component: ContactView
     },
     {
       path: '/:pathMatch(.*)*',

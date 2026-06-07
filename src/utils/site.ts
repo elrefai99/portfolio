@@ -7,6 +7,7 @@ export const sitePaths = {
   projects: '/projects',
   blogs: '/blogs',
   resume: '/resume',
+  contact: '/contact',
 } as const
 
 export const sitemapEntries = [
@@ -29,6 +30,11 @@ export const sitemapEntries = [
     path: sitePaths.resume,
     changefreq: 'monthly',
     priority: '0.7',
+  },
+  {
+    path: sitePaths.contact,
+    changefreq: 'yearly',
+    priority: '0.6',
   },
   ...blogs.map((blog) => ({
     path: `${sitePaths.blogs}/${blog.slug}`,

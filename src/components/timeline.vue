@@ -1,14 +1,20 @@
 <script setup lang="ts">
+import lesollLogo from '../../public/projects/lesoll-logo.png'
+import modernAcademyLogo from '../../public/projects/modern-academy.png'
+
 const timeline = [
   {
     company: "Lesoll",
     role: "Software Engineer",
     period: "2023 - Present",
+    logo: lesollLogo,
     desc: [
-      "At Lesoll, I led the backend development of a real estate marketing platform.",
-      "Involved in building scalable B2C and B2B marketplace platforms for real estate and automotive domains.",
-      "Developed key features: Payment system (use paymob as payment gateway), admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
-      "Managed a service using Docker and AWS EC2"
+      "Built and operated the payment system integrating PayMob and Amazon Payment Services, processing ~10K transactions/month with HMAC-verified webhooks and idempotent handlers that guarantee zero double-charges.",
+      "Designed event-driven background processing (BullMQ + Redis) for email/SMS/OTP and notifications, moving ~500 jobs/day of slow third-party calls off the request path with automatic retries — removing external-provider latency and failures from user-facing endpoints.",
+      "Engineered a real-time chat and notifications layer (WebSockets / SSE) serving 5k concurrent users with reliable delivery.",
+      "Eliminated N+1 query patterns and refactored MongoDB aggregation pipelines, reducing key endpoint response times from 680 ms to 230 ms.",
+      "Built the CoHost system, cancellation policy, booking, reports, and employee tooling, plus a Puppeteer traffic-scraping pipeline used by 4k internal users.",
+      "Owned containerised deployment on AWS — Lesoll via Docker + EC2, EGYStay via Docker + EKS — with GitHub Actions CI/CD and Nginx, reducing deploy time to 1 minute."
     ],
     link: "https://lesoll.com",
     color: "bg-green-400 dark:bg-green-500"
@@ -17,6 +23,7 @@ const timeline = [
     company: "Modern Academy (CS)",
     role: "B.S. Computer Science",
     period: "2018 - 2022",
+    logo: modernAcademyLogo,
     desc: "Completed B.Sc. in Computing Web applications.",
     color: "bg-yellow-500 dark:bg-yellow-400"
   },
@@ -32,15 +39,16 @@ const timeline = [
 
 <template>
   <div 
-    max-w-xl mx-auto space-y-12 p-1
+    max-w-3xl mx-auto space-y-15 p1
     text-black dark:text-white
     flex justify-center items-start
   >
     <div w-full p="4 md:10">
       <section class="animate-fade-in">
         <h2 
-          text-2xl font-bold mb-6 text-center
-          text-black dark:text-white
+        text-2xl font-bold mb-8
+        text-black dark:text-white
+        tracking-tight
         >
           Timeline
         </h2>
@@ -64,7 +72,8 @@ const timeline = [
               class="timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/10 dark:bg-white/8 border border-black/10 dark:border-white/14 shadow-md transition-all duration-300 group-hover:shadow-xl"
             >
               <div class="flex flex-wrap items-start justify-between gap-1 mb-1">
-                <h3 font-bold text-black dark:text-white>
+                <h3 font-bold text-black dark:text-white class="flex items-center gap-2">
+                  <img v-if="item.logo" :src="item.logo" :alt="`${item.company} logo`" class="w-6 h-6 rounded-md object-contain shrink-0" />
                   <a v-if="item.link" :href="item.link" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">{{ item.company }}</a>
                   <span v-else>{{ item.company }}</span>
                 </h3>

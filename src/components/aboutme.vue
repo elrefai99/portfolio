@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import logo from "../../public/projects/lesoll-logo.png"
-
+import egystayLogo from "../../public/projects/egy-stay-logo.png"
 // Optional: Set to null or empty string to hide profile photo
 const profilePhoto = ref<string | null>(null) // Change to your photo path like: "/profile.jpg"
 
@@ -190,8 +190,8 @@ const techStack = [
             <img :src="logo" alt="Lesoll logo" class="inline-block h-4 w-auto" />Lesoll
           </a>
           and
-          <a href="https://egystay.com" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
-             Egystay
+          <a href="https://egystay.com/en" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
+             <img :src="egystayLogo" alt="Lesoll logo" class="inline-block h-2 w-auto" /> Egystay
           </a>.
         </p>
 
@@ -260,7 +260,7 @@ const techStack = [
       </div>
     </div>
     <!-- Tech Stack Section -->
-    <div class="animate-slide-up-delay-6">
+    <!-- <div class="animate-slide-up-delay-6">
       <h2 
         text-2xl font-bold mb-8
         text-black dark:text-white
@@ -292,7 +292,7 @@ const techStack = [
           </span>
         </div>
       </div>
-    </div>
+    </div> -->
   </section>
 </template>
 
