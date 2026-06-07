@@ -72,16 +72,6 @@ onUnmounted(() => {
           >
             Resume
           </router-link> -->
-          <router-link
-            to="/contact"
-            class="nav-link"
-            text-black dark:text-white
-            transition-all duration-200
-            hover="text-gray-600 dark:text-gray-300"
-            active-class="border-b-2 border-current pb-1"
-          >
-            Contact
-          </router-link>
         </div>
         <Darkmode 
           ml-8
