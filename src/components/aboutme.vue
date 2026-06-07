@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import logo from "../../public/projects/lesoll-logo.png"
-import egystayLogo from "../../public/projects/egy-stay-logo.png"
 
 // Optional: Set to null or empty string to hide profile photo
 const profilePhoto = ref<string | null>(null) // Change to your photo path like: "/profile.jpg"
@@ -69,7 +68,7 @@ const techStack = [
             text-base md:text-lg font-medium text-gray-600 dark:text-gray-400 mt-2
             class="animate-slide-down-delay-2"
           >
-            also known as <span font-bold text-black dark:text-white>Elrefai</span>
+            also known as <span font-bold text-black dark:text-white>elrefai</span>
             (<a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" class="underline underline-offset-3">@elrefai99</a>)
           </p>
           
@@ -178,7 +177,7 @@ const techStack = [
           text-gray-700 dark:text-gray-300
           text-left
         >
-          I'm Mohammed Mostafa — known online as <span font-semibold text-black dark:text-white>Elrefai</span> —
+          I'm Mohammed Mostafa — known online as <span font-semibold text-black dark:text-white>elrefai</span> —
           a software engineer specializing in backend development, scalable APIs,
           payment integrations, and production systems with
           <span inline-flex items-center gap-1.5 font-semibold text-black dark:text-white>
@@ -192,7 +191,7 @@ const techStack = [
           </a>
           and
           <a href="https://egystay.com" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
-            <img :src="egystayLogo" alt="EGYStay logo" class="inline-block h-4 w-auto" />
+             Egystay
           </a>.
         </p>
 
