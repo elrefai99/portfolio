@@ -6,7 +6,9 @@ import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
 import { defineConfig, type ViteDevServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { sitemapEntries, siteUrl } from './src/utils/site'
+import type {} from 'vite-ssg'
+import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
+import { blogs } from './src/utils/blogs'
 
 const createSitemapXml = () => {
   const lastmod = new Date().toISOString()
@@ -37,6 +39,8 @@ const sitemapPlugin = () => ({
   },
 })
 
+const blogRoutes = blogs.map((blog) => `${sitePaths.blogs}/${blog.slug}`)
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -56,4 +60,11 @@ export default defineConfig({
     UnoCSS(),
     sitemapPlugin(),
   ],
+  ssgOptions: {
+    formatting: 'minify',
+    includedRoutes(paths: string[]) {
+      const staticPaths = paths.filter((p) => !p.includes(':'))
+      return Array.from(new Set([...staticPaths, ...blogRoutes]))
+    },
+  },
 })

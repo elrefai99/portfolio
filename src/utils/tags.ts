@@ -198,7 +198,7 @@ const createSeo = ({
 }
 
 export const homeSEO = createSeo({
-  title: 'Elrefai — Mohammed Mostafa | Software Engineer in Cairo',
+  title: 'Mohammed Mostafa • Software Engineer',
   description:
     'Elrefai (Mohammed Mostafa, elrefai99) — Backend Software Engineer at Lesoll building scalable APIs, payments, and cloud systems with Node.js, TypeScript & AWS.',
   path: sitePaths.home,
@@ -210,20 +210,22 @@ export const homeSEO = createSeo({
     'Mohammed Mostafa portfolio',
     'Mohamed Mostafa portfolio',
     'Software Engineer Cairo',
+    "Lesoll",
     'Node.js Backend Engineer Egypt',
     'Lesoll Backend Engineer',
     'Lesoll developer',
     'Lesoll backend developer',
+    "EGYStay",
     'EGYStay developer',
     'EGYStay backend developer',
     'EGYStay backend engineer',
   ],
-  imageAlt: 'Mohammed Mostafa - Backend Software Engineer Portfolio',
+  imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   schema: [personSchema, websiteSchema],
 })
 
 export const resumeSEO = createSeo({
-  title: 'Mohammed Mostafa Resume | Node.js TypeScript Backend Engineer',
+  title: 'Mohammed Mostafa Resume • Node.js TypeScript Backend Engineer',
   description:
     'Resume of Mohammed Mostafa, a Software Engineer with experience in Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, Docker, and AWS.',
   path: sitePaths.resume,
@@ -234,7 +236,7 @@ export const resumeSEO = createSeo({
     'Node.js TypeScript resume',
     'Software Engineer Egypt CV',
   ],
-  imageAlt: 'Mohammed Mostafa - Software Engineer Resume',
+  imageAlt: 'Mohammed Mostafa • Software Engineer Resume',
   schema: [
     personSchema,
     {
@@ -295,7 +297,7 @@ const projectNameKeywords = (projects as ProjectShape[]).flatMap((project) => [
 ])
 
 export const projectsSEO = createSeo({
-  title: 'Elrefai — Mohammed Mostafa | Projects',
+  title: 'Mohammed Mostafa • Projects',
   description:
     'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
@@ -309,7 +311,7 @@ export const projectsSEO = createSeo({
     ...projectNameKeywords,
   ]),
   image: `${siteUrl}/og/projects_page_og.png`,
-  imageAlt: 'Elrefai (Mohammed Mostafa) - Node.js and TypeScript Projects Portfolio',
+  imageAlt: 'Mohammed Mostafa • Node.js and TypeScript Projects Portfolio',
   schema: {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -326,7 +328,7 @@ export const projectsSEO = createSeo({
 })
 
 export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa Blog | Backend Engineering',
+  title: 'Mohammed Mostafa Blog • Backend Engineering',
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
@@ -348,7 +350,7 @@ export const blogsSEO = createSeo({
     'Production systems blog',
     ...blogTopicKeywords,
   ]),
-  imageAlt: 'Mohammed Mostafa - Backend Engineering Blog',
+  imageAlt: 'Mohammed Mostafa • Backend Engineering Blog',
   schema: {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -395,12 +397,12 @@ export const createBlogPostSEO = (blog: BlogPost) => {
   ])
 
   return createSeo({
-    title: `${blog.title} | Mohammed Mostafa Blog`,
+    title: `${blog.title} • Mohammed Mostafa Blog`,
     description: blog.excerpt,
     path,
     keywords,
     ogType: 'article',
-    imageAlt: `${blog.title} - Mohammed Mostafa Blog`,
+    imageAlt: `${blog.title} • Mohammed Mostafa Blog`,
     extraMeta: [
       { property: 'article:published_time', content: blog.date },
       { property: 'article:modified_time', content: blog.date },
@@ -432,9 +434,9 @@ export const createBlogPostSEO = (blog: BlogPost) => {
 }
 
 export const notFoundSEO = createSeo({
-  title: 'Mohammed Mostafa | 404',
+  title: 'Mohammed Mostafa • 404',
   description: 'The requested page could not be found on Mohammed Mostafa’s portfolio.',
   path: sitePaths.home,
-  imageAlt: 'Mohammed Mostafa - Software Engineer Portfolio',
+  imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   robots: 'noindex, follow',
 })
