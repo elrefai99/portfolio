@@ -32,6 +32,267 @@ export type BlogPost = {
 
 export const blogs: BlogPost[] = [
   {
+    id: 2,
+    slug: 'paymob-amazon-payment-services-integration',
+    title: 'PayMob, Amazon Payment Services',
+    excerpt:
+      'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace • the adapter, payment state machine, and webhook pipeline',
+    category: 'Payment Integration',
+    date: '2026-06-12',
+    readTime: '12 min read',
+    tags: ['Payments', 'Paymob', 'Amazon Payment Services', 'PayFort', 'Webhooks', 'BullMQ', 'Node.js', 'TypeScript'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'I\'ve spent the last few months integrating two payment providers into a production marketplace: PayMob and Amazon Payment Services (the thing everyone still calls PayFort). The docs got me to my first sandbox transaction in an afternoon. Everything after that, I had to figure out the hard way.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So this post is the writeup I wish existed when I started. It\'s not "how to call the PayMob API" — there are ten of those already and they all stop right before the part that hurts. This is about the architecture that sits between your Express app and two providers that disagree on basically everything.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Fair warning: this assumes you\'re a backend engineer who\'s shipped things before. I\'m not going to explain what a webhook is.',
+      },
+
+      {
+        type: 'heading',
+        text: 'Two providers, one interface (or: how I stopped writing if-statements)',
+      },
+      {
+        type: 'paragraph',
+        text: 'My first version had `if (provider === \'paymob\')` checks scattered around. It worked for about two weeks. Then I needed refunds, and the branching got ugly fast, because these two providers genuinely agree on nothing:',
+      },
+      {
+        type: 'list',
+        items: [
+          'PayMob auth is a three-step dance — authenticate, create an order, get a payment key. APS signs every single request with a signature you compute over the sorted request params plus a passphrase.',
+          'PayMob webhooks come with an HMAC computed over a very specific ordering of fields concatenated together. APS sends a signature you recompute yourself with the same sorted-params scheme.',
+          'PayMob wants amounts in piasters. APS wants the amount multiplied by the currency\'s decimal factor, which is different per currency. Yes, I got this wrong once.',
+          '"Success" in PayMob is a boolean and a transaction object. In APS it\'s a numeric response code where the `14xxx` family means success and everything else means go check the table.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'So I pulled everything behind one internal interface: create intent, capture, refund, verify webhook, normalize status. One adapter per provider. The rest of the codebase has no idea PayMob exists.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The payoff came faster than expected. APS merchant accounts are scoped to a single currency — something I learned when an EGP transaction went through a USD-configured account and failed in a way that made zero sense. The fix lived entirely inside the APS adapter. Nothing else in the system changed. That\'s the whole argument for the pattern, honestly.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The catch: the shared interface is a lowest common denominator. PayMob has installment stuff, APS has tokenization quirks, and neither maps cleanly. You either keep growing the interface (it gets bloated) or you add a providerOptions passthrough and accept the leak. I went with the leak. A documented escape hatch beats pretending two different products are the same product.',
+      },
+
+      {
+        type: 'heading',
+        text: 'Payments are state machines whether you like it or not',
+      },
+      {
+        type: 'paragraph',
+        text: 'Early on, payment status was just a string field that any code path could update. Then a late PayMob retry arrived after my expiry job had already marked an intent as expired, flipped it back to success, and I spent an evening figuring out why an expired payment had sent a confirmation email.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now every intent goes through an actual state machine:',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'payment-intent-states.mmd',
+        code:
+          'stateDiagram-v2\n' +
+          '    [*] --> CREATED\n' +
+          '    CREATED --> PENDING: redirect to provider\n' +
+          '    PENDING --> PROCESSING: webhook received\n' +
+          '    PROCESSING --> SUCCEEDED: verified success\n' +
+          '    PROCESSING --> FAILED: verified failure\n' +
+          '    PENDING --> EXPIRED: TTL exceeded\n' +
+          '    SUCCEEDED --> REFUND_PENDING: refund requested\n' +
+          '    REFUND_PENDING --> REFUNDED: refund confirmed\n' +
+          '    REFUND_PENDING --> SUCCEEDED: refund rejected\n' +
+          '    FAILED --> [*]\n' +
+          '    EXPIRED --> [*]\n' +
+          '    REFUNDED --> [*]',
+      },
+      {
+        type: 'paragraph',
+        text: 'The rule is simple: transitions get validated at write time, with an atomic compare-and-set on the current state. A FAILED intent can\'t become SUCCEEDED no matter what shows up. An EXPIRED intent rejects everything. When two writers race — say, a webhook handler and a reconciliation job hitting the same intent milliseconds apart — the loser gets a rejected transition instead of silently winning by being last.',
+      },
+      {
+        type: 'paragraph',
+        text: 'A status field describes. A state machine enforces. That\'s the difference, and it only matters in exactly the moments when everything else is going wrong, which is exactly when you need it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The annoying part: now you have to handle legitimate out-of-order events explicitly. Under load, APS can deliver an authorization webhook after the capture webhook. The state machine forces you to sit down and decide what that means instead of letting the last write win. More design work up front. Way fewer 2 AM surprises.',
+      },
+
+      {
+        type: 'heading',
+        text: 'Webhooks: do almost nothing, fast',
+      },
+      {
+        type: 'paragraph',
+        text: 'Here\'s the mistake I see in nearly every integration tutorial: the webhook handler verifies the signature, updates the database, sends an email, updates inventory, and then returns 200. If anything in that chain is slow or throws, the provider retries, and now you\'ve processed the same payment twice. And PayMob retries aggressively. It will not be polite about it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'What actually works:',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'webhook-pipeline.mmd',
+        code:
+          'sequenceDiagram\n' +
+          '    participant P as Provider (PayMob / APS)\n' +
+          '    participant W as Webhook Endpoint\n' +
+          '    participant Q as BullMQ Queue\n' +
+          '    participant J as Worker\n' +
+          '    participant DB as MongoDB\n' +
+          '    participant L as Ledger\n\n' +
+          '    P->>W: POST webhook payload\n' +
+          '    W->>W: Verify HMAC / signature (raw body)\n' +
+          '    alt invalid signature\n' +
+          '        W-->>P: 401\n' +
+          '    else valid\n' +
+          '        W->>Q: Enqueue, jobId = provider txn id\n' +
+          '        W-->>P: 200 within milliseconds\n' +
+          '    end\n' +
+          '    Q->>J: Deliver job (deduped by jobId)\n' +
+          '    J->>DB: Atomic state transition\n' +
+          '    alt transition valid\n' +
+          '        J->>L: Append ledger entry\n' +
+          '        J->>Q: Enqueue side effects (email, inventory)\n' +
+          '    else transition invalid\n' +
+          '        J->>J: Log it, drop it\n' +
+          '    end',
+      },
+      {
+        type: 'paragraph',
+        text: 'The endpoint does two things: cryptographic verification and enqueueing. That\'s it. Everything else happens in a BullMQ worker.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Verification stays synchronous and happens against the raw body, before you trust a single field in the payload. If you enqueue unverified payloads, congratulations, your queue is now an attack surface.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The trick I like most here: use the provider\'s transaction ID as the BullMQ job ID. BullMQ dedupes jobs with the same ID, so PayMob\'s retry storm collapses into one job before your handler logic even runs. Idempotency at the queue layer, basically free.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There is a real cost, though. Returning 200 now means "received and verified," not "processed." If the worker dies permanently, the provider walks away believing delivery succeeded, and nobody retries anything. That gap is exactly why reconciliation exists — more on that below. I considered going back to synchronous processing once or twice, but coupling your webhook response time to your slowest side effect is a worse deal in every scenario I could come up with.',
+      },
+
+      {
+        type: 'heading',
+        text: 'The outbound side: don\'t trust your own retries either',
+      },
+      {
+        type: 'paragraph',
+        text: 'Webhooks cover inbound duplicates. But your own server retrying a capture or refund after a timeout is just as dangerous, and nobody talks about it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The scenario: you call the APS refund API, it times out. Did the refund go through? You genuinely don\'t know. Their behavior under timeout is ambiguous. Retry blindly and you might refund twice — and explaining a double refund to finance is a conversation I\'d like to never have.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So before any provider call, I write an operation record keyed by a deterministic idempotency key: intent ID plus operation type plus attempt scope. The retry path checks that record first, then queries the provider for the operation\'s actual status before re-issuing anything. It turns "did I just double-refund someone" from a panic into a database query.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Cost: more writes, more state, and you need a cleanup policy for stale records. Cheap insurance.',
+      },
+
+      {
+        type: 'heading',
+        text: 'The ledger, or: your database will lie to you eventually',
+      },
+      {
+        type: 'paragraph',
+        text: 'The intent record answers "what is the state right now." It cannot answer "what happened, in what order, according to whom." For that I keep an append-only ledger — every event is a new immutable row referencing the intent. Webhook received? Row. Transition applied? Row. Reconciliation corrected something? Row, tagged as such.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The first time PayMob\'s dashboard and my database disagreed about a transaction, the ledger was how I reconstructed what actually happened. Mutable state tells you where you ended up. The ledger tells you how you got there. It\'s also the thing your finance team actually wants when they audit — not the current status, the history.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And no, the provider\'s dashboard doesn\'t replace this. Providers prune, paginate, and occasionally revise their own records. The ledger is the only record you control.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Could I have gone full event sourcing and derived all state from events? Sure. But replaying events to answer "what\'s the current status" is a lot of machinery for a payments subsystem. The hybrid — intent record for current state, ledger for history — is the pragmatic middle ground, and I haven\'t regretted it.',
+      },
+
+      {
+        type: 'heading',
+        text: 'Reconciliation: the job that catches everyone else\'s mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Every layer above has some narrow failure window. A webhook lost after the 200. A worker crash mid-transition. The provider revising a status on their side. Reconciliation is the scheduled job that sweeps up after all of them:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Pull intents stuck in non-terminal states past a threshold.',
+          'Hit the provider\'s transaction inquiry API for ground truth.',
+          'Apply corrections through the state machine — no backdoors, corrections are transitions like everything else.',
+          'Write a ledger entry tagged as reconciliation-sourced.',
+          'Alert on anything it can\'t resolve on its own.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Why pull-based inquiry instead of trusting webhook retries? Because webhook delivery is at-least-once in theory and at-most-once whenever the provider is having a bad day. The inquiry API doesn\'t depend on their delivery infrastructure being healthy.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two things to watch. Inquiry APIs are rate-limited, so the job needs cursor pagination and backoff — don\'t hammer them. And the sneaky one: reconciliation can mask upstream bugs. If it\'s quietly fixing hundreds of intents a day, your webhook pipeline is broken and the job is hiding the evidence. I track the correction rate as a health metric. The day it spikes, something upstream broke.',
+      },
+
+      {
+        type: 'heading',
+        text: 'The stuff that actually bit me',
+      },
+      {
+        type: 'paragraph',
+        text: 'Quick field notes, because every comparison post out there stops at a pricing table:',
+      },
+      {
+        type: 'list',
+        items: [
+          'PayMob\'s HMAC field ordering — the HMAC is computed over a specific concatenation of fields, including booleans serialized as lowercase strings. Get one field wrong and every webhook fails verification with an error message that tells you absolutely nothing. I lost real hours to this.',
+          'APS currency-scoped merchant accounts — one account, one currency. Multi-currency means multiple accounts and routing logic in your adapter. Find this out before launch. I almost didn\'t.',
+          'Refunds are where the bugs live — PayMob refunds reference the original transaction directly. APS refunds are brand-new operations with their own signature computation and their own response-code space. Whatever time you budgeted for refund testing, double it.',
+          'Both sandboxes lie, differently — APS sandbox response codes don\'t cover the full production failure space. PayMob\'s sandbox webhook timing is much gentler than production retry behavior. Fire synthetic duplicate webhooks at your own endpoint before going live — production will do it for you otherwise, at a worse time.',
+        ],
+      },
+
+      {
+        type: 'heading',
+        text: 'Wrapping up',
+      },
+      {
+        type: 'paragraph',
+        text: 'Nothing here is exotic. Adapters, state machines, queues, ledgers, a reconciliation job — you\'ve seen all of these before. What took me a while to internalize is that payments need all of them at once, because each one covers a failure mode the others can\'t reach. Skip the adapter and provider quirks spread through your codebase. Skip the state machine and races corrupt your data. Skip verify-then-enqueue and retries double-process. Skip the ledger and you can\'t audit anything. Skip reconciliation and every gap above turns into silent data loss.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Build all five and something nice happens: PayMob and APS stop being a source of incidents and become what payment infrastructure should be — boring.',
+      },
+      {
+        type: 'paragraph',
+        text: 'If you\'ve integrated either of these and hit something I didn\'t cover, I\'d genuinely like to hear about it.',
+      },
+    ],
+  },
+  {
     id: 1,
     slug: 'jwt-vs-paseto-tokens',
     title: 'JWT vs PASETO',
@@ -500,7 +761,7 @@ export const blogs: BlogPost[] = [
         text: 'Either way — the format is the smaller decision. The bigger one is whether you are using a signed stateless token for a job that needs an opaque revocable one. Refresh tokens that are JWT. Password reset links that are JWT. API keys that are JWT. Get the taxonomy right first. Then worry about JWT vs PASETO.',
       },
     ],
-  }
+  },
 ]
 
 export const getBlogBySlug = (slug: string) => blogs.find((blog) => blog.slug === slug)
