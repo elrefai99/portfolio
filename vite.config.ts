@@ -11,8 +11,7 @@ import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
 import { blogs } from './src/utils/blogs'
 
 const createSitemapXml = () => {
-  const lastmod = new Date().toISOString()
-  const urls = sitemapEntries.map(({ path, changefreq, priority }) => `  <url>
+  const urls = sitemapEntries.map(({ path, changefreq, priority, lastmod }) => `  <url>
     <loc>${new URL(path, siteUrl).toString()}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>

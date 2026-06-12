@@ -68,7 +68,8 @@ const personSchema = {
   name: 'Mohammed Mostafa',
   alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
   url: siteUrl,
-  jobTitle: 'Backend Software Engineer',
+  email: 'mailto:mohamed.mostafa0699@gmail.com',
+  jobTitle: 'Software Engineer',
   worksFor: {
     '@type': 'Organization',
     name: 'Lesoll',
@@ -76,7 +77,7 @@ const personSchema = {
   },
   hasOccupation: {
     '@type': 'Occupation',
-    name: 'Backend Software Engineer',
+    name: 'Software Engineer',
     occupationLocation: {
       '@type': 'City',
       name: 'Cairo',
@@ -198,9 +199,9 @@ const createSeo = ({
 }
 
 export const homeSEO = createSeo({
-  title: 'Mohammed Mostafa • Software Engineer',
+  title: 'Mohammed Mostafa (Elrefai) • Node.js Backend Engineer at Lesoll',
   description:
-    'Elrefai (Mohammed Mostafa, elrefai99) — Backend Software Engineer at Lesoll building scalable APIs, payments, and cloud systems with Node.js, TypeScript & AWS.',
+    'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
   path: sitePaths.home,
   keywords: [
     'Elrefai',

@@ -2,15 +2,13 @@
 import { ref, onMounted } from 'vue'
 import logo from "../../public/projects/lesoll-logo.png"
 import egystayLogo from "../../public/projects/egy-stay-logo.png"
-// Optional: Set to null or empty string to hide profile photo
-const profilePhoto = ref<string | null>(null) // Change to your photo path like: "/profile.jpg"
 
-// Typing animation
-const displayedText = ref('')
 const fullText = "Mohammed Mostafa"
+const displayedText = ref(fullText)
 const typingSpeed = 100
 
 onMounted(() => {
+  displayedText.value = ''
   let index = 0
   const typeText = () => {
     if (index < fullText.length) {
@@ -21,18 +19,6 @@ onMounted(() => {
   }
   typeText()
 })
-
-// Tech stack
-const techStack = [
-  { name: 'TypeScript', icon: 'i-logos:typescript-icon' },
-  { name: 'Node.js', icon: 'i-logos:nodejs-icon-alt' },
-  { name: 'Express', icon: 'dark:i-skill-icons:expressjs-light i-skill-icons:expressjs-dark' },
-  { name: 'MongoDB', icon: 'i-logos:mongodb-icon' },
-  { name: 'Docker', icon: 'i-logos:docker-icon' },
-  { name: 'Git', icon: 'i-logos:git-icon' },
-  { name: 'AWS', icon: 'i-logos:aws' },
-  { name: 'Vue.js', icon: 'i-logos:vue' },
-]
 </script>
 
 <template>
@@ -81,7 +67,7 @@ const techStack = [
             class="animate-slide-down-delay-3"
           >
             <span text-sm text-gray-600 dark:text-gray-400 font-medium>
-              Backend Software Engineer at
+              Software Engineer at
             </span>
             <a 
               href="https://lesoll.com" 
@@ -259,40 +245,6 @@ const techStack = [
         </div>
       </div>
     </div>
-    <!-- Tech Stack Section -->
-    <!-- <div class="animate-slide-up-delay-6">
-      <h2 
-        text-2xl font-bold mb-8
-        text-black dark:text-white
-        tracking-tight
-      >
-        Technical Expertise
-      </h2>
-      <div 
-        grid="~ cols-2 md:cols-4"
-        gap-4
-        max-w-700px mx-auto
-      >
-        <div 
-          v-for="tech in techStack" 
-          :key="tech.name"
-          flex="~ col" items-center gap-3
-          p-6
-          bg="black/2 dark:white/8"
-          border="1 black/6 dark:white/14"
-          rounded-2xl
-          transition-all duration-300
-          cursor-pointer
-          hover="bg-black/4 dark:bg-white/12 border-black/12 dark:border-white/20 shadow-lg"
-          :title="tech.name"
-        >
-          <i :class="tech.icon" text-4xl></i>
-          <span text-sm font-semibold text-gray-800 dark:text-gray-300 text-center>
-            {{ tech.name }}
-          </span>
-        </div>
-      </div>
-    </div> -->
   </section>
 </template>
 

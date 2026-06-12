@@ -9,30 +9,39 @@ export const sitePaths = {
   resume: '/resume',
 } as const
 
+// Bump when the content of the static pages meaningfully changes —
+// a fresh lastmod on every build teaches crawlers to ignore the value.
+const staticPagesLastmod = '2026-06-12'
+
 export const sitemapEntries = [
   {
     path: sitePaths.home,
     changefreq: 'weekly',
     priority: '1.0',
+    lastmod: staticPagesLastmod,
   },
   {
     path: sitePaths.projects,
     changefreq: 'weekly',
     priority: '0.8',
+    lastmod: staticPagesLastmod,
   },
   {
     path: sitePaths.blogs,
     changefreq: 'weekly',
     priority: '0.8',
+    lastmod: staticPagesLastmod,
   },
   {
     path: sitePaths.resume,
     changefreq: 'monthly',
     priority: '0.7',
+    lastmod: staticPagesLastmod,
   },
   ...blogs.map((blog) => ({
     path: `${sitePaths.blogs}/${blog.slug}`,
     changefreq: 'weekly',
     priority: '0.7',
+    lastmod: blog.date,
   })),
 ] as const
