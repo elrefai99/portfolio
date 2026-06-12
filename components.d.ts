@@ -16,6 +16,7 @@ declare module 'vue' {
     Footer: typeof import('./src/components/footer.vue')['default']
     GridGlowBackground: typeof import('./src/components/GridGlowBackground.vue')['default']
     HeaderCV: typeof import('./src/components/cv/headerCV.vue')['default']
+    MermaidDiagram: typeof import('./src/components/MermaidDiagram.vue')['default']
     ModelView: typeof import('./src/components/modelView.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
