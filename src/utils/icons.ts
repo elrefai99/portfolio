@@ -28,6 +28,8 @@ export const tagIconMap: Record<string, string> = {
      'sendgrid': 'i-logos:sendgrid',
      'axios': 'i-logos:axios',
      'npm': 'i-logos:npm-icon',
+     'pinia': 'i-logos:pinia',
+     'unocss': 'i-logos:unocss',
 }
 
 export function getTagIcon(tag: string): string | null {

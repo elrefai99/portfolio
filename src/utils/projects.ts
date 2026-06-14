@@ -3,6 +3,7 @@ import egystay from "../../public/projects/egy-stay-logo.png"
 import keepits from "../../public/projects/keepits.png"
 import Gosha0 from "../../public/projects/0Gosha.png"
 import GenImport from '../../public/projects/Gen-Import.jpg'
+import srvj from '../../public/projects/srvj.svg'
 
 export const projects: any = [
   {
@@ -155,6 +156,39 @@ export const projects: any = [
       "Netlify",
       "git/github",
       "Docker"
+    ]
+  },
+  {
+    id: 12,
+    name: "SRVJ",
+    slug: "srvj",
+    category: "Live",
+    logo: srvj,
+    class: "w-5 h-5",
+    link: "https://srvj.elrefai.me/",
+    github: "https://github.com/elrefai99/SRVJ",
+    desc: [
+      "A production-ready, web-based diagram editor and whiteboard blending a Draw.io/Lucidchart-style flow editor with an Excalidraw-like hand-drawn sketch mode and Miro-style sticky notes and infinite canvas.",
+      "Built key features: infinite pan-and-zoom canvas with mini-map, shapes (rectangle, ellipse, diamond, sticky note, text), connectable curved edges, marquee selection, undo/redo history, and keyboard shortcuts.",
+      "Persists diagrams to localStorage with debounced auto-save, plus JSON import/export, dark mode, and a toggleable Excalidraw-style sketch theme."
+    ],
+    tags: [
+      "Vue.js",
+      "TypeScript",
+      "Vite",
+      "Vue Flow",
+      "Pinia",
+      "UnoCSS",
+      "Iconify",
+      "express",
+      "postgresql",
+      "prisma",
+      "redis",
+      "BullMQ",
+      "Docker",
+      "NGINX",
+      "Github Actions",
+      "git/github"
     ]
   },
   {

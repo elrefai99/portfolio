@@ -96,5 +96,7 @@ export default defineConfig({
           'i-logos:sendgrid',
           'i-logos:axios',
           'i-logos:npm-icon',
+          'i-logos:pinia',
+          'i-logos:unocss',
      ],
 })
