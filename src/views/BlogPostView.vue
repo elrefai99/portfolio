@@ -12,7 +12,7 @@ const blog = computed(() => getBlogBySlug(slug.value))
 
 useHead(computed(() => (blog.value ? createBlogPostSEO(blog.value) : notFoundSEO)))
 
-const panelClass = 'rounded-xl border border-slate-300/30 bg-white/74 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]'
+const panelClass = 'timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/1 dark:bg-white/1 border border-black/7 dark:border-white/10 shadow-md transition-all duration-300 group-hover:shadow-xl'
 const tagClass = 'rounded-full border border-slate-300/30 bg-white/82 px-2 py-1 text-xs text-black backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] dark:border-white/12 dark:bg-white/9 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]'
 const inlineCodeClass = 'mx-0.5 rounded-md border border-red-500/25 bg-red-500/8 px-1.5 py-0.5 font-mono text-[0.85em] text-red-600 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
 const codeShellClass = 'overflow-hidden rounded-lg border border-[#202020] bg-black text-[#dbd7caee] shadow-[0_18px_48px_rgba(0,0,0,0.42)]'

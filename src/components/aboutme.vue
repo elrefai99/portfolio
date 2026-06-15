@@ -216,7 +216,7 @@ onMounted(() => {
       <div 
         max-w-700px mx-auto
         p-6
-        bg="black/2 dark:white/8"
+        bg="black/2 dark:white/1"
         rounded-2xl
       >
         <a 

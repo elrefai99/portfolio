@@ -69,7 +69,7 @@ const timeline = [
 
             <!-- Box card -->
             <div
-              class="timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/10 dark:bg-white/8 border border-black/10 dark:border-white/14 shadow-md transition-all duration-300 group-hover:shadow-xl"
+              class="timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/10 dark:bg-white/1 border border-black/10 dark:border-white/7 shadow-md transition-all duration-300 group-hover:shadow-xl"
             >
               <div class="flex flex-wrap items-start justify-between gap-1 mb-1">
                 <h3 font-bold text-black dark:text-white class="flex items-center gap-2">
