@@ -62,12 +62,22 @@ const sameAs = [
   'https://bsky.app/profile/elrefai99.bsky.social',
 ]
 
+// Stable entity node ids. Reusing these `@id`s across every page lets Google
+// merge all the name variants (Elrefai / Mohammed Mostafa / elrefai99) into one
+// knowledge-graph entity instead of treating each page as a new person.
+const personId = `${siteUrl}/#person`
+const websiteId = `${siteUrl}/#website`
+
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': personId,
   name: 'Mohammed Mostafa',
   alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
+  description:
+    'Mohammed Mostafa (Elrefai, elrefai99) is a Software Engineer in Cairo, Egypt, building backend APIs, payment integrations, and cloud systems with Node.js, TypeScript, and AWS.',
   url: siteUrl,
+  mainEntityOfPage: siteUrl,
   image: defaultImage,
   email: 'mailto:mohamed.mostafa0699@gmail.com',
   jobTitle: 'Software Engineer',
@@ -111,14 +121,13 @@ const personSchema = {
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': websiteId,
   name: siteName,
   alternateName: ['Elrefai', 'elrefai99', 'Mohammed Mostafa Portfolio'],
   url: siteUrl,
-  author: {
-    '@type': 'Person',
-    name: 'Mohammed Mostafa',
-    alternateName: 'Elrefai',
-  },
+  // Reference the Person by @id so the site and its author resolve to one entity.
+  author: { '@id': personId },
+  publisher: { '@id': personId },
   inLanguage: 'en',
 }
 
@@ -237,7 +246,22 @@ export const homeSEO = createSeo({
     'EGYStay backend engineer',
   ],
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
-  schema: [personSchema, websiteSchema],
+  schema: [
+    // ProfilePage is Google's recommended type for a person's primary page; it
+    // names the Person as the page's mainEntity so the homepage *is* the entity.
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ProfilePage',
+      '@id': `${siteUrl}/#profilepage`,
+      url: siteUrl,
+      name: 'Mohammed Mostafa (Elrefai) — Software Engineer',
+      isPartOf: { '@id': websiteId },
+      mainEntity: { '@id': personId },
+      about: { '@id': personId },
+    },
+    personSchema,
+    websiteSchema,
+  ],
 })
 
 export const resumeSEO = createSeo({
