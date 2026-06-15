@@ -90,7 +90,7 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/1
                 <!-- Header -->
                 <div flex items-center justify-between mb-4>
                   <div flex items-center gap-2 flex-1>
-                    <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class"/>
+                    <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class" loading="lazy" decoding="async"/>
                     <h3 font-semibold text-lg text-black dark:text-white>{{ project.name }}</h3>
                   </div>
                   <div flex gap-2>

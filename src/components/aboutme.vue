@@ -77,7 +77,7 @@ onMounted(() => {
               transition-transform duration-200
               hover:scale-105
             >
-              <img :src="logo" alt="Lesoll Logo" w-5 h-auto/>
+              <img :src="logo" alt="Lesoll Logo" decoding="async" w-5 h-auto/>
               <span font-bold text-black dark:text-white>Lesoll</span>
             </a>
           </div>
@@ -173,11 +173,11 @@ onMounted(() => {
           I recently expanded into frontend development with Vue.js.
           As a backend developer, I built and shipped the systems behind production platforms like
           <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
-            <img :src="logo" alt="Lesoll logo" class="inline-block h-4 w-auto" />Lesoll
+            <img :src="logo" alt="Lesoll logo" loading="lazy" decoding="async" class="inline-block h-4 w-auto" />Lesoll
           </a>
           and
           <a href="https://egystay.com/en" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
-             <img :src="egystayLogo" alt="Lesoll logo" class="inline-block h-2 w-auto" /> Egystay
+             <img :src="egystayLogo" alt="Egystay logo" loading="lazy" decoding="async" class="inline-block h-2 w-auto" /> Egystay
           </a>.
         </p>
 
@@ -224,9 +224,11 @@ onMounted(() => {
           target="_blank"
           block
         >
-          <img 
-            src="https://ghchart.rshah.org/6e7681/elrefai99" 
-            alt="GitHub Contribution Graph"
+          <img
+            src="https://ghchart.rshah.org/6e7681/elrefai99"
+            alt="Mohammed Mostafa (elrefai99) GitHub contribution graph"
+            loading="lazy"
+            decoding="async"
             w-full h-auto
             class="github-chart bg-black/2 dark:bg-white/6"
           />

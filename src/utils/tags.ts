@@ -68,6 +68,7 @@ const personSchema = {
   name: 'Mohammed Mostafa',
   alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
   url: siteUrl,
+  image: defaultImage,
   email: 'mailto:mohamed.mostafa0699@gmail.com',
   jobTitle: 'Software Engineer',
   worksFor: {
@@ -123,7 +124,21 @@ const websiteSchema = {
 
 const createJsonLd = (schema: Record<string, unknown> | Record<string, unknown>[]) => ({
   type: 'application/ld+json',
-  children: JSON.stringify(schema),
+  // Must be `innerHTML` (raw script content), not `children` — this unhead
+  // version renders unknown keys like `children` as an attribute, which leaves
+  // the <script> empty and makes the JSON-LD invisible to crawlers.
+  innerHTML: JSON.stringify(schema),
+})
+
+const createBreadcrumb = (items: { name: string; path: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: new URL(item.path, siteUrl).toString(),
+  })),
 })
 
 type SeoMeta = ({ name: string } | { property: string }) & { content: string }
@@ -313,19 +328,25 @@ export const projectsSEO = createSeo({
   ]),
   image: `${siteUrl}/og/projects_page_og.png`,
   imageAlt: 'Mohammed Mostafa • Node.js and TypeScript Projects Portfolio',
-  schema: {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'Elrefai — Mohammed Mostafa Projects',
-    url: new URL(sitePaths.projects, siteUrl).toString(),
-    about: 'Backend, API, cloud, payment, and developer tooling projects by Elrefai (Mohammed Mostafa).',
-    author: personSchema,
-    mainEntity: {
-      '@type': 'ItemList',
-      numberOfItems: projectListItems.length,
-      itemListElement: projectListItems,
+  schema: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Elrefai — Mohammed Mostafa Projects',
+      url: new URL(sitePaths.projects, siteUrl).toString(),
+      about: 'Backend, API, cloud, payment, and developer tooling projects by Elrefai (Mohammed Mostafa).',
+      author: personSchema,
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: projectListItems.length,
+        itemListElement: projectListItems,
+      },
     },
-  },
+    createBreadcrumb([
+      { name: 'Home', path: sitePaths.home },
+      { name: 'Projects', path: sitePaths.projects },
+    ]),
+  ],
 })
 
 export const blogsSEO = createSeo({
@@ -352,28 +373,34 @@ export const blogsSEO = createSeo({
     ...blogTopicKeywords,
   ]),
   imageAlt: 'Mohammed Mostafa • Backend Engineering Blog',
-  schema: {
-    '@context': 'https://schema.org',
-    '@type': 'Blog',
-    name: 'Mohammed Mostafa Blog',
-    description:
-      'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
-    url: new URL(sitePaths.blogs, siteUrl).toString(),
-    author: personSchema,
-    inLanguage: 'en',
-    keywords: blogTopicKeywords,
-    about: [
-      'Backend engineering',
-      'Node.js',
-      'TypeScript',
-      'Express.js',
-      'API architecture',
-      'Authentication security',
-      'Payment token security',
-      'Redis queues',
-      'Production architecture',
-    ],
-  },
+  schema: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: 'Mohammed Mostafa Blog',
+      description:
+        'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
+      url: new URL(sitePaths.blogs, siteUrl).toString(),
+      author: personSchema,
+      inLanguage: 'en',
+      keywords: blogTopicKeywords,
+      about: [
+        'Backend engineering',
+        'Node.js',
+        'TypeScript',
+        'Express.js',
+        'API architecture',
+        'Authentication security',
+        'Payment token security',
+        'Redis queues',
+        'Production architecture',
+      ],
+    },
+    createBreadcrumb([
+      { name: 'Home', path: sitePaths.home },
+      { name: 'Blog', path: sitePaths.blogs },
+    ]),
+  ],
 })
 
 export const createBlogPostSEO = (blog: BlogPost) => {
@@ -411,26 +438,33 @@ export const createBlogPostSEO = (blog: BlogPost) => {
       { property: 'article:section', content: blog.category },
       ...blog.tags.map((tag) => ({ property: 'article:tag', content: tag })),
     ],
-    schema: {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': url,
+    schema: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': url,
+        },
+        headline: blog.title,
+        name: blog.title,
+        description: blog.excerpt,
+        image: defaultImage,
+        datePublished: blog.date,
+        dateModified: blog.date,
+        url,
+        author: personSchema,
+        publisher: personSchema,
+        articleSection: blog.category,
+        inLanguage: 'en',
+        keywords,
       },
-      headline: blog.title,
-      name: blog.title,
-      description: blog.excerpt,
-      image: defaultImage,
-      datePublished: blog.date,
-      dateModified: blog.date,
-      url,
-      author: personSchema,
-      publisher: personSchema,
-      articleSection: blog.category,
-      inLanguage: 'en',
-      keywords,
-    },
+      createBreadcrumb([
+        { name: 'Home', path: sitePaths.home },
+        { name: 'Blog', path: sitePaths.blogs },
+        { name: blog.title, path },
+      ]),
+    ],
   })
 }
 

@@ -37,11 +37,14 @@ onMounted(async () => {
       <span class="font-mono">{{ filename || 'diagram' }}</span>
       <span class="rounded-full bg-black/5 px-2 py-1 font-mono uppercase dark:bg-white/10">mermaid</span>
     </div>
-    <div v-if="svg" class="mermaid-diagram flex justify-center overflow-x-auto p-4" v-html="svg" />
-    <pre
-      v-else
-      class="overflow-x-auto p-4 text-sm leading-7 text-gray-700 dark:text-gray-300"
-    ><code>{{ code }}</code></pre>
+    <!-- min-height reserves space so the client-side <pre> → <svg> swap doesn't shift the page (CLS) -->
+    <div class="mermaid-body flex min-h-64 items-center justify-center">
+      <div v-if="svg" class="mermaid-diagram w-full overflow-x-auto p-4" v-html="svg" />
+      <pre
+        v-else
+        class="w-full overflow-x-auto p-4 text-sm leading-7 text-gray-700 dark:text-gray-300"
+      ><code>{{ code }}</code></pre>
+    </div>
   </div>
 </template>
 
