@@ -49,14 +49,6 @@ onMounted(() => {
           >
             {{ displayedText }}<span class="cursor-blink" text-gray-600 dark:text-gray-400 font-light>|</span>
           </h1>
-
-          <p
-            text-base md:text-lg font-medium text-gray-600 dark:text-gray-400 mt-2
-            class="animate-slide-down-delay-2"
-          >
-            also known as <span font-bold text-black dark:text-white>elrefai</span>
-            (<a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" class="underline underline-offset-3">@elrefai99</a>)
-          </p>
           
           <div 
             inline-flex items-center gap-3 
