@@ -3,7 +3,7 @@ import egystay from "../../public/projects/egy-stay-logo.png"
 import keepits from "../../public/projects/keepits.png"
 import Gosha0 from "../../public/projects/0Gosha.png"
 import GenImport from '../../public/projects/Gen-Import.jpg'
-import srvj from '../../public/projects/srvj.svg'
+import srvj from '../../public/projects/srvj.png'
 
 export const projects: any = [
   {
