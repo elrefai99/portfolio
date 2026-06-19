@@ -29,9 +29,6 @@ const sameAs = [
   'https://bsky.app/profile/elrefai99.bsky.social',
 ]
 
-// Stable entity node ids. Reusing these `@id`s across every page lets Google
-// merge all the name variants (Elrefai / Mohammed Mostafa / elrefai99) into one
-// knowledge-graph entity instead of treating each page as a new person.
 const personId = `${siteUrl}/#person`
 const websiteId = `${siteUrl}/#website`
 
@@ -39,7 +36,7 @@ const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   '@id': personId,
-  name: 'Mohammed Mostafa',
+  name: 'Mohammed Mostafa • Software Engineer',
   alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
   description:
     'Mohammed Mostafa (Elrefai, elrefai99) is a Software Engineer in Cairo, Egypt, building backend APIs, payment integrations, and cloud systems with Node.js, TypeScript, and AWS.',
@@ -186,7 +183,7 @@ const createSeo = ({
 }
 
 export const homeSEO = createSeo({
-  title: 'Mohammed Mostafa',
+  title: 'Mohammed Mostafa • Software Engineer',
   description:
     'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
   path: sitePaths.home,
@@ -294,7 +291,7 @@ export const projectsSEO = createSeo({
 })
 
 export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa Blog',
+  title: 'Mohammed Mostafa • Blog',
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
