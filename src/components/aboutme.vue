@@ -47,7 +47,7 @@ onMounted(() => {
             my-2
             class="animate-slide-down-delay-2"
           >
-            {{ displayedText }}<span class="cursor-blink" text-gray-600 dark:text-gray-400 font-light>|</span>
+            {{ displayedText }}<span class="cursor-blink" aria-hidden="true" text-gray-600 dark:text-gray-400 font-light></span>
           </h1>
 
           <p
@@ -229,6 +229,8 @@ onMounted(() => {
             alt="Mohammed Mostafa (elrefai99) GitHub contribution graph"
             loading="lazy"
             decoding="async"
+            width="720"
+            height="112"
             w-full h-auto
             class="github-chart bg-black/2 dark:bg-white/6"
           />
@@ -310,6 +312,10 @@ onMounted(() => {
 
 .cursor-blink {
   animation: blink 1s infinite;
+}
+
+.cursor-blink::after {
+  content: '|';
 }
 
 .github-chart {

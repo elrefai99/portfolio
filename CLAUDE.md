@@ -38,7 +38,7 @@ No test suite is configured. Run `npm run type-check && npm run build` as the va
 - **`src/utils/icons.ts`** — Maps tech-stack tag strings to Iconify icon identifiers used on project cards.
 - **`src/utils/tags.ts`** — SEO `<head>` metadata per route.
 - **`src/utils/spotify.ts`** — Static arrays of Spotify embed-iframe descriptors (`src`, dimensions, `allow`) rendered by `src/components/songs.vue`. Not an API integration — to change tracks/playlists, edit the embed URLs here.
-- **`src/composables/useTheme.ts`** — Dark/light/auto theme toggle. Persists to the `theme-mode` localStorage key and toggles the `dark` class on `<html>`. **Caveat**: `src/main.ts` unconditionally force-enables dark mode on load (`classList.add('dark')` + writes a separate `theme-preference` key) before this composable mounts, so the site effectively boots dark regardless of stored preference.
+- **`src/composables/useTheme.ts`** — Dark/light/auto theme toggle. Persists to the `theme-mode` localStorage key and toggles the `dark` class on `<html>`. To avoid a FOUC, an inline script in `index.html` reads `theme-mode` synchronously before paint and applies the `dark` class (matching this composable's auto/light/dark logic). `theme-mode` is the single source of truth.
 - **`src/locales/lang/{en,ar}.json`** — i18n copy. The site supports English and Arabic; all user-visible text should go through vue-i18n rather than being hardcoded.
 - **`uno.config.ts`** — UnoCSS config with icon presets (Iconify). Add new icon collections here.
 - **`vite.config.ts`** — Vite config with unplugin-auto-import and unplugin-vue-components (components and Vue APIs are auto-imported; no explicit imports needed).

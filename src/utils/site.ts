@@ -9,9 +9,7 @@ export const sitePaths = {
   resume: '/resume',
 } as const
 
-// Bump when the content of the static pages meaningfully changes —
-// a fresh lastmod on every build teaches crawlers to ignore the value.
-const staticPagesLastmod = '2026-06-12'
+const staticPagesLastmod = '2026-06-19'
 
 export const sitemapEntries = [
   {

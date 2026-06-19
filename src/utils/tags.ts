@@ -2,42 +2,9 @@ import { sitePaths, siteUrl } from './site'
 import { projects } from './projects'
 import type { BlogPost } from './blogs'
 
-const author = 'Mohammed Mostafa (Elrefai)'
-const siteName = 'Elrefai — Mohammed Mostafa Portfolio'
+const author = 'elrefai99'
+const siteName = 'Mohammed Mostafa Portfolio'
 const defaultImage = `${siteUrl}/og-image.png`
-
-const coreKeywords = [
-  'Elrefai',
-  'elrefai',
-  'elrefai99',
-  'elrefai.me',
-  'Elrefai developer',
-  'Elrefai portfolio',
-  'Elrefai backend engineer',
-  'Mohammed Elrefai',
-  'Mohammed Mostafa',
-  'Mohamed Mostafa',
-  'Software Engineer',
-  'Backend Engineer',
-  'Backend Developer Egypt',
-  'Backend Developer Cairo',
-  'Node.js Developer',
-  'TypeScript Developer',
-  'Express.js Developer',
-  'REST API Developer',
-  'MongoDB',
-  'PostgreSQL',
-  'Redis',
-  'BullMQ',
-  'Socket.IO',
-  'Docker',
-  'AWS EC2',
-  'AWS EKS',
-  'Payment Integration',
-  'Paymob',
-  'Amazon Payment Services',
-  'Vue.js Portfolio',
-]
 
 const blogTopicKeywords = [
   'Backend engineering articles',
@@ -79,7 +46,7 @@ const personSchema = {
   url: siteUrl,
   mainEntityOfPage: siteUrl,
   image: defaultImage,
-  email: 'mailto:mohamed.mostafa0699@gmail.com',
+  email: 'mailto:elrefai99@gmail.com',
   jobTitle: 'Software Engineer',
   worksFor: {
     '@type': 'Organization',
@@ -158,7 +125,6 @@ const createSeo = ({
   title,
   description,
   path,
-  keywords = [],
   image = defaultImage,
   imageAlt,
   ogType = 'website',
@@ -169,7 +135,6 @@ const createSeo = ({
   title: string
   description: string
   path: string
-  keywords?: string[]
   image?: string
   imageAlt: string
   ogType?: 'website' | 'article'
@@ -178,7 +143,6 @@ const createSeo = ({
   schema?: Record<string, unknown> | Record<string, unknown>[]
 }) => {
   const url = new URL(path, siteUrl).toString()
-  const keywordContent = uniqueKeywords([...coreKeywords, ...keywords]).join(', ')
 
   return {
     title,
@@ -195,7 +159,6 @@ const createSeo = ({
       { name: 'title', content: title },
       { name: 'author', content: author },
       { name: 'description', content: description },
-      { name: 'keywords', content: keywordContent },
       { name: 'robots', content: robots },
       { property: 'og:type', content: ogType },
       { property: 'og:url', content: url },
@@ -223,28 +186,10 @@ const createSeo = ({
 }
 
 export const homeSEO = createSeo({
-  title: 'Mohammed Mostafa (Elrefai) • Node.js Backend Engineer at Lesoll',
+  title: 'Mohammed Mostafa',
   description:
     'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
   path: sitePaths.home,
-  keywords: [
-    'Elrefai',
-    'Elrefai portfolio',
-    'Elrefai backend engineer',
-    'Elrefai Mohammed Mostafa',
-    'Mohammed Mostafa portfolio',
-    'Mohamed Mostafa portfolio',
-    'Software Engineer Cairo',
-    "Lesoll",
-    'Node.js Backend Engineer Egypt',
-    'Lesoll Backend Engineer',
-    'Lesoll developer',
-    'Lesoll backend developer',
-    "EGYStay",
-    'EGYStay developer',
-    'EGYStay backend developer',
-    'EGYStay backend engineer',
-  ],
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   schema: [
     // ProfilePage is Google's recommended type for a person's primary page; it
@@ -254,7 +199,7 @@ export const homeSEO = createSeo({
       '@type': 'ProfilePage',
       '@id': `${siteUrl}/#profilepage`,
       url: siteUrl,
-      name: 'Mohammed Mostafa (Elrefai) — Software Engineer',
+      name: 'Mohammed Mostafa — Software Engineer',
       isPartOf: { '@id': websiteId },
       mainEntity: { '@id': personId },
       about: { '@id': personId },
@@ -265,18 +210,11 @@ export const homeSEO = createSeo({
 })
 
 export const resumeSEO = createSeo({
-  title: 'Mohammed Mostafa Resume • Node.js TypeScript Backend Engineer',
+  title: 'Mohammed Mostafa • Resume',
   description:
     'Resume of Mohammed Mostafa, a Software Engineer with experience in Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, Docker, and AWS.',
   path: sitePaths.resume,
-  keywords: [
-    'Mohammed Mostafa resume',
-    'Mohamed Mostafa CV',
-    'Backend Engineer resume',
-    'Node.js TypeScript resume',
-    'Software Engineer Egypt CV',
-  ],
-  imageAlt: 'Mohammed Mostafa • Software Engineer Resume',
+  imageAlt: 'Mohammed Mostafa • Resume',
   schema: [
     personSchema,
     {
@@ -327,36 +265,18 @@ const projectListItems = (projects as ProjectShape[]).map((project, index) => {
   }
 })
 
-// Per-project name searches (e.g. "Lesoll developer", "who built EGYStay").
-const projectNameKeywords = (projects as ProjectShape[]).flatMap((project) => [
-  project.name,
-  `${project.name} developer`,
-  `${project.name} backend`,
-  `${project.name} Elrefai`,
-  `who built ${project.name}`,
-])
-
 export const projectsSEO = createSeo({
   title: 'Mohammed Mostafa • Projects',
   description:
     'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
-  keywords: uniqueKeywords([
-    'Elrefai projects',
-    'Elrefai portfolio projects',
-    'Mohammed Mostafa projects',
-    'elrefai99 projects',
-    'Node.js portfolio projects',
-    'TypeScript backend portfolio',
-    ...projectNameKeywords,
-  ]),
   image: `${siteUrl}/og/projects_page_og.png`,
   imageAlt: 'Mohammed Mostafa • Node.js and TypeScript Projects Portfolio',
   schema: [
     {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: 'Elrefai — Mohammed Mostafa Projects',
+      name: 'Mohammed Mostafa Projects',
       url: new URL(sitePaths.projects, siteUrl).toString(),
       about: 'Backend, API, cloud, payment, and developer tooling projects by Elrefai (Mohammed Mostafa).',
       author: personSchema,
@@ -374,29 +294,11 @@ export const projectsSEO = createSeo({
 })
 
 export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa Blog • Backend Engineering',
+  title: 'Mohammed Mostafa Blog',
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
-  keywords: uniqueKeywords([
-    'Mohammed Mostafa blog',
-    'Mohamed Mostafa blog',
-    'elrefai99 blog',
-    'Mohammed Mostafa articles',
-    'Backend engineering blog',
-    'Backend software engineering articles',
-    'Node.js backend articles',
-    'TypeScript backend articles',
-    'Express.js API architecture',
-    'REST API design blog',
-    'Authentication security blog',
-    'JWT PASETO blog',
-    'Payment token security blog',
-    'BullMQ Redis queues',
-    'Production systems blog',
-    ...blogTopicKeywords,
-  ]),
-  imageAlt: 'Mohammed Mostafa • Backend Engineering Blog',
+  imageAlt: 'Mohammed Mostafa Blog',
   schema: [
     {
       '@context': 'https://schema.org',
@@ -449,12 +351,11 @@ export const createBlogPostSEO = (blog: BlogPost) => {
   ])
 
   return createSeo({
-    title: `${blog.title} • Mohammed Mostafa Blog`,
+    title: `${blog.title} • Blog`,
     description: blog.excerpt,
     path,
-    keywords,
     ogType: 'article',
-    imageAlt: `${blog.title} • Mohammed Mostafa Blog`,
+    imageAlt: `${blog.title} • Blog`,
     extraMeta: [
       { property: 'article:published_time', content: blog.date },
       { property: 'article:modified_time', content: blog.date },

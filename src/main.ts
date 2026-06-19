@@ -11,7 +11,7 @@ import messages from './locales'
 export const createApp = ViteSSG(
   App,
   { routes },
-  ({ app, isClient }) => {
+  ({ app }) => {
     app.use(createPinia())
     app.use(
       createI18n({
@@ -20,10 +20,5 @@ export const createApp = ViteSSG(
         messages,
       }),
     )
-
-    if (isClient) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme-preference', 'dark')
-    }
   },
 )
