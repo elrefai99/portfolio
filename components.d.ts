@@ -21,6 +21,7 @@ declare module 'vue' {
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectedProjects: typeof import('./src/components/SelectedProjects.vue')['default']
     Songs: typeof import('./src/components/songs.vue')['default']
     StarBackground: typeof import('./src/components/StarBackground.vue')['default']
     Timeline: typeof import('./src/components/timeline.vue')['default']

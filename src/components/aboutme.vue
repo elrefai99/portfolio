@@ -150,13 +150,6 @@ onMounted(() => {
 
     <!-- About Section -->
     <div class="animate-slide-up-delay-5">
-      <h2 
-        text-2xl font-bold mb-8
-        text-black dark:text-white
-        tracking-tight
-      >
-        About
-      </h2>
       <div max-w-700px mx-auto space-y-6>
         <p 
           text-lg leading-relaxed

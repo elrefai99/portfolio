@@ -9,6 +9,7 @@ useHead(homeSEO)
 <template>
   <main>
     <Aboutme />
+    <SelectedProjects />
     <Timeline />
 </main>
 </template>
