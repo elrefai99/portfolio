@@ -78,17 +78,7 @@ const footerLinkClass = 'inline-flex items-center gap-2 text-sm font-medium text
         <!-- Footer link -->
         <div class="mt-auto pt-5">
           <a
-            v-if="project.github"
-            :href="project.github"
-            target="_blank"
-            rel="noopener noreferrer"
-            :class="footerLinkClass"
-          >
-            <i class="i-carbon:logo-github w-4 h-4" />
-            Source
-          </a>
-          <a
-            v-else-if="project.link"
+            v-if="project.link"
             :href="project.link"
             target="_blank"
             rel="noopener noreferrer"
@@ -97,6 +87,17 @@ const footerLinkClass = 'inline-flex items-center gap-2 text-sm font-medium text
             <i class="i-solar:eye-bold w-4 h-4" />
             Visit
           </a>
+          <a
+            v-else-if="project.github"
+            :href="project.github"
+            target="_blank"
+            rel="noopener noreferrer"
+            :class="footerLinkClass"
+          >
+            <i class="i-carbon:logo-github w-4 h-4" />
+            Source
+          </a>
+
         </div>
       </div>
     </div>
