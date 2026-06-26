@@ -168,9 +168,12 @@ export const projects: any = [
     link: "https://srvj.elrefai.me/",
     github: "https://github.com/elrefai99/SRVJ",
     desc: [
-      "A production-ready, web-based diagram editor and whiteboard blending a Draw.io/Lucidchart-style flow editor with an Excalidraw-like hand-drawn sketch mode and Miro-style sticky notes and infinite canvas.",
-      "Built key features: infinite pan-and-zoom canvas with mini-map, shapes (rectangle, ellipse, diamond, sticky note, text), connectable curved edges, marquee selection, undo/redo history, and keyboard shortcuts.",
-      "Persists diagrams to localStorage with debounced auto-save, plus JSON import/export, dark mode, and a toggleable Excalidraw-style sketch theme."
+      "Built real-time collaborative diagram editing using Yjs CRDTs over a custom WebSocket server implementing the Yjs sync and awareness protocols, enabling live cursors, presence, and seamless multiplayer editing.",
+      "Secured WebSocket connections with PASETO v4 authentication and enforced project-level role-based access control, while isolating collaboration sessions into dedicated board rooms.",
+      "Designed a dual-snapshot persistence layer that stores both the authoritative Yjs binary state for lossless recovery and a denormalized JSON representation for efficient querying and API reads.",
+      "Architected the backend using PostgreSQL/Prisma for relational data (users, projects, memberships, sharing) and MongoDB/Mongoose for high-frequency diagram mutations.",
+      "Implemented horizontally scalable notifications using SSE with Redis Pub/Sub fan-out, alongside BullMQ workers for asynchronous email and notification processing.",
+      "Improved platform reliability and security through Zod validation, Helmet, CORS, rate limiting, centralized error handling, structured logging with Pino, and Prometheus metrics. Verified collaboration behavior with integration tests and containerized the platform using Docker Compose behind Nginx."
     ],
     tags: [
       "Vue.js",

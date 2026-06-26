@@ -219,7 +219,8 @@ export const resumeSEO = createSeo({
       '@type': 'ProfilePage',
       name: 'Mohammed Mostafa Resume',
       url: new URL(sitePaths.resume, siteUrl).toString(),
-      about: personSchema,
+      mainEntity: { '@id': personId },
+      about: { '@id': personId },
     },
   ],
 })
