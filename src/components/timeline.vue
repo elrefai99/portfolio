@@ -9,12 +9,12 @@ const timeline = [
     period: "2023 - Present",
     logo: lesollLogo,
     desc: [
-      "Built and operated the payment system integrating PayMob and Amazon Payment Services, processing ~10K transactions/month with HMAC-verified webhooks and idempotent handlers that guarantee zero double-charges.",
-      "Designed event-driven background processing (BullMQ + Redis) for email/SMS/OTP and notifications, moving ~500 jobs/day of slow third-party calls off the request path with automatic retries — removing external-provider latency and failures from user-facing endpoints.",
-      "Engineered a real-time chat and notifications layer (WebSockets / SSE) serving 5k concurrent users with reliable delivery.",
-      "Eliminated N+1 query patterns and refactored MongoDB aggregation pipelines, reducing key endpoint response times from 680 ms to 230 ms.",
-      "Built the CoHost system, cancellation policy, booking, reports, and employee tooling, plus a Puppeteer traffic-scraping pipeline used by 4k internal users.",
-      "Owned containerised deployment on AWS — Lesoll via Docker + EC2, EGYStay via Docker + EKS — with GitHub Actions CI/CD and Nginx, reducing deploy time to 1 minute."
+      "Leading backend development and architecture decisions for Lesoll and EGYStay, including system design, technology choices, and production operations.",
+      "Built and maintained payment integrations with Paymob and Amazon Payment Services, handling around 10K transactions per month with webhook validation, idempotency, and reconciliation processes.",
+      "Designed and implemented asynchronous workflows using BullMQ and Redis for notifications, emails, SMS, OTPs, and other background jobs.",
+      "Worked on several core business modules including booking, cancellation policies, CoHost management, reporting, employee tools, and internal traffic intelligence systems built with Puppeteer.",
+      "Deployed and managed applications on AWS using Docker, EC2, and EKS, while maintaining CI/CD pipelines with GitHub Actions and automated deployments.",
+      "Collaborated closely with product and engineering teams to deliver new features, define technical solutions, and ensure platform reliability."
     ],
     link: "https://lesoll.com",
     color: "bg-green-400 dark:bg-green-500"

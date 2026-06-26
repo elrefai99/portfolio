@@ -37,12 +37,12 @@ const downloadResume = () => {
           <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-400">
             <span>Banha, Al Qalyubia</span>
             <span class="text-gray-300 dark:text-gray-600">•</span>
-            <a href="mailto:elrefai99@gmail.com" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
-              elrefai99@gmail.com
+            <a href="mailto:mohamed.mostafa0699@gmail.com" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+              mohamed.mostafa0699@gmail.com
             </a>
             <span class="text-gray-300 dark:text-gray-600">•</span>
             <a href="tel:+201142314446" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
-              +201142314446
+              +20 114 231 4446
             </a>
             <span class="text-gray-300 dark:text-gray-600">•</span>
             <div>
@@ -60,7 +60,7 @@ const downloadResume = () => {
           <h2 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-widest">Summary</h2>
           <hr class="border-gray-200 dark:border-gray-900 mb-3" />
           <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-            Backend Engineer with 4+ years of building and operating production payment systems and real-time
+            Backend Engineer with 3+ years of building and operating production payment systems and real-time
             services in Node.js and TypeScript. Shipped multi-provider payment integrations (PayMob, Amazon
             Payment Services, Stripe), event-driven background processing, and SSE/WebSocket notifications across
             two live marketplace platforms. Focused on reliability, idempotency, and performance under real
@@ -76,19 +76,19 @@ const downloadResume = () => {
           <div>
             <div flex items-baseline justify-between flex-wrap gap-2 mb-2>
               <div class="flex items-baseline gap-1.5 flex-wrap">
-                <span class="text-sm font-bold text-gray-900 dark:text-white">Backend Engineer</span>
+                <span class="text-sm font-bold text-gray-900 dark:text-white">Software Engineer II</span>
                 <span class="text-sm text-gray-400">|</span>
                 <a href="https://lesoll.com" target="_blank" class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:underline">Lesoll</a>
               </div>
               <span class="text-xs text-gray-500 dark:text-gray-400">Jun 2023 – Present · Cairo, Egypt · On-site</span>
             </div>
             <ul class="list-disc pl-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              <li>Leading backend architecture and development for large-scale hospitality platforms.</li>
               <li>Built and operated the payment system integrating PayMob and Amazon Payment Services, processing ~10K transactions/month with HMAC-verified webhooks and idempotent handlers that guarantee zero double-charges.</li>
-              <li>Designed event-driven background processing (BullMQ + Redis) for email/SMS/OTP and notifications, moving ~500 jobs/day of slow third-party calls off the request path with automatic retries — removing external-provider latency and failures from user-facing endpoints.</li>
-              <li>Engineered a real-time chat and notifications layer (WebSockets / SSE) serving 5k concurrent users with reliable delivery.</li>
-              <li>Eliminated N+1 query patterns and refactored MongoDB aggregation pipelines, reducing key endpoint response times from 680 ms to 230 ms.</li>
-              <li>Built the CoHost system, cancellation policy, booking, reports, and employee tooling, plus a Puppeteer traffic-scraping pipeline used by 4k internal users.</li>
-              <li>Owned containerised deployment on AWS — Lesoll via Docker + EC2, EGYStay via Docker + EKS — with GitHub Actions CI/CD and Nginx, reducing deploy time to 1 minute.</li>
+              <li>Developed scalable background processing and real-time communication systems using Redis, BullMQ, and WebSockets.</li>
+              <li>Improved API performance and optimized database operations across critical services.</li>
+              <li>Delivered core business features, including booking, reporting, CoHost management, and employee tools.</li>
+              <li>Managed AWS infrastructure, Docker deployments, and CI/CD pipelines.</li>
             </ul>
           </div>
         </section>
@@ -98,24 +98,19 @@ const downloadResume = () => {
           <h2 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-widest">Projects</h2>
           <hr class="border-gray-200 dark:border-gray-900 mb-4" />
 
-          <!-- Gosha -->
-          <div mb-5>
-            <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">Gosha — AI Prompt Optimisation Engine</h3>
-            <ul class="list-disc pl-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-              <li>Architected a self-learning prompt optimisation engine that rewrites raw user input into structured, model-specific prompts (Claude XML / GPT Markdown) using a weighted rule system — zero external AI API calls.</li>
-              <li>Designed a 5-phase pipeline (Analyse → Learn → Transform → Merge → Record) with a feedback loop that adjusts rule weights from user ratings, enabling category-specific personalisation over time.</li>
-              <li>Built a full SaaS backend with PASETO/JWT auth, tiered subscription billing (Free → Enterprise), dual payment integration (Stripe international + PayMob MENA card &amp; wallet), and a daily token ledger per plan.</li>
-              <li>Implemented real-time notifications via SSE backed by Redis pub/sub, async email jobs with BullMQ, structured logging with Pino, and a Prometheus metrics endpoint for observability.</li>
-            </ul>
-          </div>
-
-          <!-- gen-import -->
+          <!-- SRVJ -->
           <div>
-            <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">gen-import — TypeScript Barrel File Generator</h3>
+            <div class="flex items-baseline gap-1.5 flex-wrap mb-2">
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white">SRVJ — Real-Time Collaborative Whiteboard Platform</h3>
+              <a href="https://srvj.elrefai.me/" target="_blank" class="text-xs font-semibold text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-white transition-colors">Live</a>
+            </div>
             <ul class="list-disc pl-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-              <li>Built a zero-dependency CLI that auto-generates barrel files (index.ts) for Node.js/TypeScript projects using the TypeScript compiler API for accurate AST-level export detection.</li>
-              <li>Implemented an <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono">--init</code> command that injects tsconfig path aliases and package.json scripts idempotently, with <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono">--alias</code> support for custom path prefixes.</li>
-              <li>Added <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono">--watch</code> mode using native fs.watch (no chokidar), enabling real-time regeneration with zero runtime dependencies; separates type-only from value exports and supports CommonJS and ESM.</li>
+              <li>Built real-time collaborative diagram editing using Yjs CRDTs over a custom WebSocket server implementing the Yjs sync and awareness protocols, enabling live cursors, presence, and seamless multiplayer editing.</li>
+              <li>Secured WebSocket connections with PASETO v4 authentication and enforced project-level role-based access control, while isolating collaboration sessions into dedicated board rooms.</li>
+              <li>Designed a dual-snapshot persistence layer that stores both the authoritative Yjs binary state for lossless recovery and a denormalized JSON representation for efficient querying and API reads.</li>
+              <li>Architected the backend using PostgreSQL/Prisma for relational data (users, projects, memberships, sharing) and MongoDB/Mongoose for high-frequency diagram mutations.</li>
+              <li>Implemented horizontally scalable notifications using SSE with Redis Pub/Sub fan-out, alongside BullMQ workers for asynchronous email and notification processing.</li>
+              <li>Improved platform reliability and security through Zod validation, Helmet, CORS, rate limiting, centralized error handling, structured logging with Pino, and Prometheus metrics. Verified collaboration behavior with integration tests and containerized the platform using Docker Compose behind Nginx.</li>
             </ul>
           </div>
         </section>
