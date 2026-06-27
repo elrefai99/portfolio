@@ -28,7 +28,7 @@ export const sitemapEntries = [
     path: sitePaths.blogs,
     changefreq: 'weekly',
     priority: '0.8',
-    lastmod: staticPagesLastmod,
+    lastmod: '2026-06-27',
   },
   {
     path: sitePaths.resume,
