@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { resolve } from 'node:path'
@@ -10,13 +11,43 @@ import type {} from 'vite-ssg'
 import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
 import { blogs } from './src/utils/blogs'
 
+// Source files whose last git commit date drives a route's <lastmod>. Keeps the
+// sitemap freshness honest instead of relying on a hand-typed constant. Blog
+// posts already carry their own `date`, and absolute (subdomain) URLs are skipped.
+const routeSources: Record<string, string[]> = {
+  [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/timeline.vue'],
+  [sitePaths.projects]: ['src/views/projectsView.vue', 'src/utils/projects.ts'],
+  [sitePaths.blogs]: ['src/views/BlogsView.vue', 'src/utils/blogs.ts'],
+  [sitePaths.resume]: ['src/views/ResumeView.vue'],
+}
+
+// Most recent commit date (YYYY-MM-DD) across the given files, or undefined if
+// git is unavailable (e.g. shallow CI checkout) so callers fall back gracefully.
+const gitLastmod = (files: string[]): string | undefined => {
+  const dates = files
+    .map((file) => {
+      try {
+        return execSync(`git log -1 --format=%cs -- "${file}"`, { encoding: 'utf8' }).trim()
+      } catch {
+        return ''
+      }
+    })
+    .filter(Boolean)
+    .sort()
+  return dates.at(-1)
+}
+
 const createSitemapXml = () => {
-  const urls = sitemapEntries.map(({ path, changefreq, priority, lastmod }) => `  <url>
+  const urls = sitemapEntries.map(({ path, changefreq, priority, lastmod }) => {
+    const sources = routeSources[path]
+    const resolvedLastmod = (sources && gitLastmod(sources)) || lastmod
+    return `  <url>
     <loc>${new URL(path, siteUrl).toString()}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <lastmod>${resolvedLastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>`).join('\n')
+  </url>`
+  }).join('\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

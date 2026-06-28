@@ -330,6 +330,11 @@ export const blogsSEO = createSeo({
 export const createBlogPostSEO = (blog: BlogPost) => {
   const path = `${sitePaths.blogs}/${blog.slug}`
   const url = new URL(path, siteUrl).toString()
+  // Per-post OG image when provided, else the site default. Root-relative
+  // paths are resolved against siteUrl so crawlers get an absolute URL.
+  const ogImage = blog.ogImage
+    ? new URL(blog.ogImage, siteUrl).toString()
+    : defaultImage
   const keywords = uniqueKeywords([
     blog.title,
     blog.category,
@@ -352,6 +357,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
     title: `${blog.title} • Blog`,
     description: blog.excerpt,
     path,
+    image: ogImage,
     ogType: 'article',
     imageAlt: `${blog.title} • Blog`,
     extraMeta: [
@@ -372,7 +378,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         headline: blog.title,
         name: blog.title,
         description: blog.excerpt,
-        image: defaultImage,
+        image: ogImage,
         datePublished: blog.date,
         dateModified: blog.date,
         url,

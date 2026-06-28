@@ -28,6 +28,12 @@ export type BlogPost = {
   readTime: string
   tags: string[]
   blocks: BlogBlock[]
+  /**
+   * Optional per-post Open Graph image, root-relative (e.g. `/og/my-post.png`)
+   * or absolute. Falls back to the site default OG image when omitted.
+   * Use a 1200×630 PNG for best social/Discover rendering.
+   */
+  ogImage?: string
 }
 
 export const blogs: BlogPost[] = [
