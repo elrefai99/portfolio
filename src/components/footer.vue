@@ -18,7 +18,7 @@
         <a class="social-link" href="https://x.com/elrefai99" target="_blank" title="X (Twitter)" aria-label="X">
           <i class="i-carbon-logo-x social-icon" aria-hidden="true"></i>
         </a>
-        <a class="social-link" href="https://bsky.app/profile/elrefai99.bsky.social" target="_blank" title="Bluesky" aria-label="Bluesky">
+        <a class="social-link" href="https://bsky.app/profile/elrefai.me" target="_blank" title="Bluesky" aria-label="Bluesky">
           <i class="i-ri:bluesky-fill social-icon" aria-hidden="true"></i>
         </a>
         <a class="social-link" href="mailto:elrefai99@gmail.com" title="Email" aria-label="Email">
