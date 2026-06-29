@@ -79,6 +79,49 @@ export const projects: any = [
     ]
   },
   {
+    id: 12,
+    name: "SRVJ",
+    slug: "srvj",
+    category: "Live",
+    logo: srvj,
+    class: "w-5 h-5",
+    link: "https://srvj.elrefai.me/",
+    github: "https://github.com/elrefai99/SRVJ",
+    desc: [
+      "Built real-time collaborative diagram editing using Yjs CRDTs over a custom WebSocket server implementing the Yjs sync and awareness protocols, enabling live cursors, presence, and seamless multiplayer editing.",
+      "Secured WebSocket connections with PASETO v4 authentication and enforced project-level role-based access control, while isolating collaboration sessions into dedicated board rooms.",
+      "Designed a dual-snapshot persistence layer that stores both the authoritative Yjs binary state for lossless recovery and a denormalized JSON representation for efficient querying and API reads.",
+      "Architected the backend using PostgreSQL/Prisma for relational data (users, projects, memberships, sharing) and MongoDB/Mongoose for high-frequency diagram mutations.",
+      "Implemented horizontally scalable notifications using SSE with Redis Pub/Sub fan-out, alongside BullMQ workers for asynchronous email and notification processing.",
+      "Improved platform reliability and security through Zod validation, Helmet, CORS, rate limiting, centralized error handling, structured logging with Pino, and Prometheus metrics. Verified collaboration behavior with integration tests and containerized the platform using Docker Compose behind Nginx."
+    ],
+    tags: [
+      "TypeScript",
+      "Express",
+      "PostgreSQL",
+      "Prisma",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "Docker",
+      "Kubernetes",
+      "NGINX",
+      "Socket.IO",
+      "CRDTs (Yjs)",
+      "Cloudinary",
+      "Vitest",
+      "Vue.js",
+      "Vite",
+      "Vue Flow",
+      "Pinia",
+      "UnoCSS",
+      "Iconify",
+      "Github Actions",
+      "git/github",
+      "PNPM"
+    ]
+  },
+  {
     id: 3,
     name: "0Gosha",
     slug: "0gosha",
@@ -156,42 +199,6 @@ export const projects: any = [
       "Netlify",
       "git/github",
       "Docker"
-    ]
-  },
-  {
-    id: 12,
-    name: "SRVJ",
-    slug: "srvj",
-    category: "Live",
-    logo: srvj,
-    class: "w-5 h-5",
-    link: "https://srvj.elrefai.me/",
-    github: "https://github.com/elrefai99/SRVJ",
-    desc: [
-      "Built real-time collaborative diagram editing using Yjs CRDTs over a custom WebSocket server implementing the Yjs sync and awareness protocols, enabling live cursors, presence, and seamless multiplayer editing.",
-      "Secured WebSocket connections with PASETO v4 authentication and enforced project-level role-based access control, while isolating collaboration sessions into dedicated board rooms.",
-      "Designed a dual-snapshot persistence layer that stores both the authoritative Yjs binary state for lossless recovery and a denormalized JSON representation for efficient querying and API reads.",
-      "Architected the backend using PostgreSQL/Prisma for relational data (users, projects, memberships, sharing) and MongoDB/Mongoose for high-frequency diagram mutations.",
-      "Implemented horizontally scalable notifications using SSE with Redis Pub/Sub fan-out, alongside BullMQ workers for asynchronous email and notification processing.",
-      "Improved platform reliability and security through Zod validation, Helmet, CORS, rate limiting, centralized error handling, structured logging with Pino, and Prometheus metrics. Verified collaboration behavior with integration tests and containerized the platform using Docker Compose behind Nginx."
-    ],
-    tags: [
-      "Vue.js",
-      "TypeScript",
-      "Vite",
-      "Vue Flow",
-      "Pinia",
-      "UnoCSS",
-      "Iconify",
-      "express",
-      "postgresql",
-      "prisma",
-      "redis",
-      "BullMQ",
-      "Docker",
-      "NGINX",
-      "Github Actions",
-      "git/github"
     ]
   },
   {

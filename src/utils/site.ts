@@ -9,7 +9,7 @@ export const sitePaths = {
   resume: '/resume',
 } as const
 
-const staticPagesLastmod = '2026-06-19'
+const staticPagesLastmod = '2026-06-29'
 
 export const sitemapEntries = [
   {
