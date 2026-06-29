@@ -38,7 +38,10 @@ onMounted(() => {
         }
       }
     },
-    { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    // threshold 0: reveal as soon as any part intersects. Floors taller than
+    // the viewport (e.g. long blog posts) never reach a higher ratio, so a
+    // non-zero threshold would leave them stuck at opacity:0 (blank).
+    { threshold: 0, rootMargin: '0px 0px -10% 0px' },
   )
   observer.observe(el)
 })
