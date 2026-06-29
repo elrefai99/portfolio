@@ -17,93 +17,120 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header 
+  <header
     sticky top-0 z-50
     transition-all duration-300
-    :class="isScrolled 
-      ? 'backdrop-blur-md bg-white/75 dark:bg-black/60 shadow-lg shadow-black/10 dark:shadow-black/40' 
-      : 'bg-transparent'"
+    class="bp-nav"
+    :class="isScrolled ? 'bp-nav--scrolled' : ''"
   >
     <nav w-full>
-      <div max-w-3xl mx-auto flex items-center justify-center px-6 py-4 relative>
-        <div 
-          text="lg md:md" 
-          flex flex-wrap justify-center items-center 
-          gap="4 md:8" 
-          opacity-80
-        >
-          <router-link 
-            to="/" 
-            class="nav-link"
-            text-black dark:text-white
-            transition-all duration-200
-            hover="text-gray-600 dark:text-gray-300"
-            active-class="border-b-2 border-current pb-1"
-          >
-            Home
+      <div mx-auto flex items-center justify-between gap-4 px-5 py-3 relative class="bp-nav__row">
+        <!-- Drawing title block -->
+        <router-link to="/" class="bp-nav__brand bp-mono" aria-label="Home">
+          <BlueprintLogo :size="25" />
+        </router-link>
+
+        <!-- Floor index -->
+        <div class="bp-nav__index bp-mono">
+          <router-link to="/projects" class="bp-nav__link" active-class="is-active">
+            <span class="bp-nav__code">03</span>Projects
           </router-link>
-          <router-link 
-            to="/projects" 
-            class="nav-link"
-            text-black dark:text-white
-            transition-all duration-200
-            hover="text-gray-600 dark:text-gray-300"
-            active-class="border-b-2 border-current pb-1"
-          >
-            Projects
+          <router-link to="/blogs" class="bp-nav__link" active-class="is-active">
+            <span class="bp-nav__code">04</span>Blogs
           </router-link>
-          <router-link
-            to="/blogs"
-            class="nav-link"
-            text-black dark:text-white
-            transition-all duration-200
-            hover="text-gray-600 dark:text-gray-300"
-            active-class="border-b-2 border-current pb-1"
-          >
-            Blogs
-          </router-link>
-          <!-- <router-link
-            to="/resume"
-            class="nav-link"
-            text-black dark:text-white
-            transition-all duration-200
-            hover="text-gray-600 dark:text-gray-300"
-            active-class="border-b-2 border-current pb-1"
-          >
-            Resume
-          </router-link> -->
+          <Darkmode class="bp-nav__theme" aria-label="Toggle theme" />
         </div>
-        <Darkmode 
-          ml-8
-          p3
-          class="nav-link "
-          text-black dark:text-white
-          transition-all duration-200
-          hover="text-gray-600 dark:text-gray-300"
-          active-class="border-b-2 border-current pb-1"
-             />
       </div>
+      <div class="bp-nav__rule" aria-hidden="true" />
     </nav>
   </header>
 </template>
 
 <style scoped>
-.nav-link {
-  position: relative;
+.bp-nav {
+  background: transparent;
+}
+.bp-nav--scrolled {
+  background: color-mix(in srgb, var(--bp-canvas) 78%, transparent);
+  backdrop-filter: blur(10px);
 }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: currentColor;
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
+.bp-nav__row {
   width: 100%;
+  max-width: 60rem;
+}
+
+.bp-nav__rule {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--bp-line) 12%,
+    var(--bp-line) 88%,
+    transparent
+  );
+  opacity: 0.7;
+}
+
+/* title block */
+.bp-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 11px;
+  color: var(--bp-blue);
+  text-decoration: none;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--bp-line-soft);
+}
+.bp-nav__brand:hover { border-color: var(--bp-line); }
+.bp-nav__brand-id { font-weight: 700; letter-spacing: 0.2em; }
+.bp-nav__brand-sub { opacity: 0.6; }
+@media (max-width: 520px) {
+  .bp-nav__brand-sub { display: none; }
+}
+
+/* floor index links */
+.bp-nav__index {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 11px;
+}
+.bp-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.65rem;
+  color: var(--bp-blue);
+  opacity: 0.72;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.bp-nav__link:hover {
+  opacity: 1;
+  border-color: var(--bp-line-soft);
+}
+.bp-nav__link.is-active {
+  opacity: 1;
+  border-color: var(--bp-line);
+  background: var(--bp-line-faint);
+}
+.bp-nav__code {
+  font-size: 9px;
+  opacity: 0.55;
+}
+@media (max-width: 520px) {
+  .bp-nav__code { display: none; }
+  .bp-nav__link { padding: 0.4rem 0.5rem; }
+}
+
+.bp-nav__theme {
+  margin-left: 0.25rem;
+  color: var(--bp-blue);
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
 }
 </style>

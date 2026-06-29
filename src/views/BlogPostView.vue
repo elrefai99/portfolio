@@ -12,8 +12,8 @@ const blog = computed(() => getBlogBySlug(slug.value))
 
 useHead(computed(() => (blog.value ? createBlogPostSEO(blog.value) : notFoundSEO)))
 
-const panelClass = 'timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/1 dark:bg-white/1 border border-black/7 dark:border-white/10 shadow-md transition-all duration-300 group-hover:shadow-xl'
-const tagClass = 'rounded-full border border-slate-300/30 bg-white/82 px-2 py-1 text-xs text-black backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] dark:border-white/12 dark:bg-white/9 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]'
+const panelClass = 'bp-card'
+const tagClass = 'bp-chip'
 const inlineCodeClass = 'mx-0.5 rounded-md border border-red-500/25 bg-red-500/8 px-1.5 py-0.5 font-mono text-[0.85em] text-red-600 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
 const codeShellClass = 'overflow-hidden rounded-lg border border-[#202020] bg-black text-[#dbd7caee] shadow-[0_18px_48px_rgba(0,0,0,0.42)]'
 const codeHeaderClass = 'flex items-center justify-between gap-4 border-b border-[#181818] bg-[#050505] px-4 py-2 text-xs text-[#a6a59d]'
@@ -151,13 +151,11 @@ const isMermaidCode = (block: BlogBlock) =>
 </script>
 
 <template>
+  <FloorSection level="L-04" name="Journal / Article" elevation="+0.00 m" :top-slab="false">
   <div max-w-4xl mx-auto min-h-screen text-black dark:text-white flex justify-center items-start>
     <main w-full max-w-4xl p-4 md:p-10>
       <article v-if="blog" class="space-y-6">
-        <router-link
-          to="/blogs"
-          class="inline-flex items-center gap-2 rounded-lg border border-slate-300/30 bg-white/74 px-3 py-1.5 text-sm font-medium text-black backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] transition-all duration-200 hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14"
-        >
+        <router-link to="/blogs" class="bp-tab inline-flex items-center gap-2">
           <i class="i-carbon:arrow-left w-4 h-4" />
           Blogs
         </router-link>
@@ -171,8 +169,8 @@ const isMermaidCode = (block: BlogBlock) =>
             <span>{{ blog.readTime }}</span>
           </div>
 
-          <h1 class="text-4xl font-bold leading-tight text-black dark:text-white md:text-5xl">{{ blog.title }}</h1>
-          <p class="mt-4 max-w-3xl text-base leading-7 text-gray-700 dark:text-gray-300 md:text-lg">
+          <h1 class="text-4xl font-bold leading-tight text-black dark:text-gray-300 md:text-5xl">{{ blog.title }}</h1>
+          <p class="mt-4 max-w-3xl text-base leading-7 text-black dark:text-gray-400 md:text-lg">
             {{ blog.excerpt }}
           </p>
 
@@ -186,21 +184,21 @@ const isMermaidCode = (block: BlogBlock) =>
             <template v-for="(block, index) in blog.blocks" :key="index">
               <p
                 v-if="block.type === 'paragraph'"
-                class="text-base leading-8 text-gray-700 dark:text-gray-300"
+                class="text-base leading-8 text-black dark:text-gray-400"
               >
                 <template v-for="(part, partIndex) in parseInline(block.text)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><template v-else>{{ part.text }}</template></template>
               </p>
 
               <h2
                 v-else-if="block.type === 'heading'"
-                class="pt-2 text-2xl font-semibold text-black dark:text-white"
+                class="pt-2 text-2xl font-semibold text-black dark:text-gray-300"
               >
                 {{ block.text }}
               </h2>
 
               <ul
                 v-else-if="block.type === 'list'"
-                class="list-disc space-y-2 pl-5 text-base leading-7 text-gray-700 dark:text-gray-300"
+                class="list-disc space-y-2 pl-5 text-base leading-7 text-black dark:text-gray-400"
               >
                 <li v-for="item in block.items" :key="item">
                   <template v-for="(part, partIndex) in parseInline(item)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><template v-else>{{ part.text }}</template></template>
@@ -231,16 +229,14 @@ const isMermaidCode = (block: BlogBlock) =>
       <section v-else :class="`${panelClass} p-6 text-center md:p-8`">
         <h1 class="text-3xl font-semibold text-black dark:text-white">Blog not found</h1>
         <p class="mt-3 text-gray-700 dark:text-gray-300">This post does not exist or was moved.</p>
-        <router-link
-          to="/blogs"
-          class="mt-6 inline-flex items-center gap-2 rounded-lg border border-slate-300/30 bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-slate-700 dark:border-white/14 dark:bg-white/92 dark:text-black dark:hover:bg-white"
-        >
+        <router-link to="/blogs" class="bp-tab is-active mt-6 inline-flex items-center gap-2">
           <i class="i-carbon:arrow-left w-4 h-4" />
           Back to blogs
         </router-link>
       </section>
     </main>
   </div>
+  </FloorSection>
 </template>
 
 <style scoped>

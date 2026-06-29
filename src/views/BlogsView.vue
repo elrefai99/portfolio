@@ -21,14 +21,15 @@ const filteredBlogs = computed(() => {
   return blogs.filter((blog) => blog.category === selectedCategory.value)
 })
 
-const shellClass = 'animate-project-rise relative overflow-hidden rounded-xl border border-black/10 bg-black/[0.02] backdrop-blur-[18px] transition-all duration-300 hover:border-black/18 hover:bg-black/[0.04] dark:border-white/14 dark:bg-black/18 dark:hover:border-white/22 dark:hover:bg-black/24'
-const chipClass = 'animate-project-tab rounded-lg px-4 py-2 font-semibold transition-all duration-300 border backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:scale-105 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]'
-const inactiveChipClass = 'border-slate-300/30 bg-white/74 text-gray-700 hover:border-slate-900 hover:bg-slate-900 hover:text-white dark:border-white/14 dark:bg-white/8 dark:text-gray-200 dark:hover:border-white/92 dark:hover:bg-white/92 dark:hover:text-black'
-const activeChipClass = 'border-slate-900 bg-slate-900 text-white shadow-lg scale-105 hover:border-slate-900 hover:bg-slate-900 hover:text-white dark:border-white/92 dark:bg-white/92 dark:text-black dark:hover:border-white/92 dark:hover:bg-white/92 dark:hover:text-black'
-const tagClass = 'rounded-full border border-black/10 bg-transparent px-2 py-1 text-xs text-black backdrop-blur-[18px] dark:border-white/12 dark:text-white'
+const shellClass = 'bp-card animate-project-rise overflow-hidden'
+const chipClass = 'animate-project-tab bp-tab'
+const inactiveChipClass = ''
+const activeChipClass = 'is-active'
+const tagClass = 'bp-chip'
 </script>
 
 <template>
+  <FloorSection level="L-04" name="Journal / Field Notes" elevation="+0.00 m" :top-slab="false">
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
     <div w-full max-w-4xl p-4 md:p-10>
       <section>
@@ -71,11 +72,11 @@ const tagClass = 'rounded-full border border-black/10 bg-transparent px-2 py-1 t
 
               <div class="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <h2 class="text-2xl font-semibold text-black dark:text-white">{{ blog.title }}</h2>
-                  <p class="mt-3 leading-7 text-gray-700 dark:text-gray-300">{{ blog.excerpt }}</p>
+                  <h2 class="text-2xl font-semibold text-black dark:text-gray-300">{{ blog.title }}</h2>
+                  <p class="mt-3 leading-7 text-black dark:text-gray-400">{{ blog.excerpt }}</p>
                 </div>
-                <span class="mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-black/10 bg-transparent text-black backdrop-blur-[18px] dark:border-white/14 dark:text-white">
-                  <i class="i-carbon:arrow-up-right text-lg" />
+                <span class="bp-icon-btn mt-1 shrink-0">
+                  <i class="i-carbon:arrow-up-right" />
                 </span>
               </div>
 
@@ -88,4 +89,5 @@ const tagClass = 'rounded-full border border-black/10 bg-transparent px-2 py-1 t
       </section>
     </div>
   </div>
+  </FloorSection>
 </template>

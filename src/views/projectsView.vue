@@ -31,16 +31,17 @@ const toggleDescription = (id: number) => {
 
 const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
 
-const heroLinkClass = 'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-black transition-all duration-200 border border-slate-300/30 bg-white/74 backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:border-slate-500/32 hover:bg-white/92 dark:border-white/14 dark:bg-white/8 dark:text-white dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)] dark:hover:border-white/22 dark:hover:bg-white/14'
-const categoryChipClass = 'animate-project-tab rounded-lg px-4 py-2 font-semibold transition-all duration-300 border backdrop-blur-[18px] shadow-[0_18px_48px_rgba(148,163,184,0.18)] hover:scale-105 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]'
-const categoryChipInactiveClass = 'border-slate-300/30 bg-white/74 text-gray-700 hover:border-slate-900 hover:bg-slate-900 hover:text-white dark:border-white/14 dark:bg-white/8 dark:text-gray-200 dark:hover:border-white/92 dark:hover:bg-white/92 dark:hover:text-black'
-const categoryChipActiveClass = 'border-slate-900 bg-slate-900 text-white shadow-lg scale-105 hover:border-slate-900 hover:bg-slate-900 hover:text-white dark:border-white/92 dark:bg-white/92 dark:text-black dark:hover:border-white/92 dark:hover:bg-white/92 dark:hover:text-black'
-const projectCardClass = 'timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/1 dark:bg-white/1 border border-black/7 dark:border-white/10 shadow-md transition-all duration-300 group-hover:shadow-xl'
-const actionIconClass = 'inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/14 !text-black backdrop-blur-[18px] transition-all duration-300 hover:-translate-y-0.5 hover:border-white/22 hover:bg-gray-6 dark:border-white/14 dark:!text-white dark:hover:border-white/22 dark:hover:bg-gray-5 dark:hover:!text-white'
-const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/10 bg-transparent px-2 py-1 text-xs text-black backdrop-blur-[18px] transition-colors duration-200 hover:border-black/18 hover:bg-black/[0.04] dark:border-white/12 dark:text-white dark:hover:border-white/22 dark:hover:bg-white/6'
+const heroLinkClass = 'bp-link'
+const categoryChipClass = 'animate-project-tab bp-tab'
+const categoryChipInactiveClass = ''
+const categoryChipActiveClass = 'is-active'
+const projectCardClass = 'bp-card animate-project-rise mb-4'
+const actionIconClass = 'bp-icon-btn'
+const tagChipClass = 'bp-chip'
 </script>
 
 <template>
+  <FloorSection level="L-03" name="Project Archive" elevation="+0.00 m" :top-slab="false">
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
     <div w-full max-w-4xl p-4 md:p-10>
       <section>
@@ -91,12 +92,12 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/1
                 <div flex items-center justify-between mb-4>
                   <div flex items-center gap-2 flex-1>
                     <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class" loading="lazy" decoding="async"/>
-                    <h3 font-semibold text-lg text-black dark:text-white>{{ project.name }}</h3>
+                    <h3 font-semibold text-lg text-black dark:text-gray-300>{{ project.name }}</h3>
                   </div>
                   <div flex gap-2>
-                    <a v-if="project.link" :href="project.link" target="_blank" :class="actionIconClass + ' i-solar:eye-bold'" title="Live Site" />
-                    <a v-if="project.github" :href="project.github" target="_blank" :class="`${actionIconClass} i-carbon:logo-github`" title="GitHub Repo" />
-                    <a v-if="project.npm" :href="project.npm" target="_blank" :class="`${actionIconClass} i-carbon:logo-npm`" title="Npm Package" />
+                    <a v-if="project.link" :href="project.link" target="_blank" :class="actionIconClass" title="Live Site"><i class="i-solar:eye-bold" /></a>
+                    <a v-if="project.github" :href="project.github" target="_blank" :class="actionIconClass" title="GitHub Repo"><i class="i-carbon:logo-github" /></a>
+                    <a v-if="project.npm" :href="project.npm" target="_blank" :class="actionIconClass" title="Npm Package"><i class="i-carbon:logo-npm" /></a>
                   </div>
                 </div>
 
@@ -126,10 +127,10 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/1
                   overflow-hidden transition-all duration-300 ease-out
                   :style="{ maxHeight: isDescriptionExpanded(project.id) ? '800px' : '0px' }"
                 >
-                  <ul v-if="Array.isArray(project.desc)" text-gray-700 dark:text-gray-300 leading-relaxed mt-3 list-disc pl-5 space-y-2>
+                  <ul v-if="Array.isArray(project.desc)" text-black dark:text-gray-400 leading-relaxed mt-3 list-disc pl-5 space-y-2>
                     <li v-for="(point, idx) in project.desc" :key="idx">{{ point }}</li>
                   </ul>
-                  <p v-else text-gray-700 dark:text-gray-300 leading-relaxed mt-3>{{ project.desc }}</p>
+                  <p v-else text-black dark:text-gray-400 leading-relaxed mt-3>{{ project.desc }}</p>
                 </div>
               </div>
           </div>
@@ -137,4 +138,5 @@ const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/1
       </section>
     </div>
   </div>
+  </FloorSection>
 </template>

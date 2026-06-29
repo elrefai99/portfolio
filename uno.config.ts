@@ -17,6 +17,14 @@ export default defineConfig({
      theme: {
           colors: {
                whiteMode: "#202020",
+               // Architectural blueprint palette
+               blueprint: {
+                    DEFAULT: "#4FC3F7",
+                    glow: "#7fd6fb",
+                    dim: "#2b6f8f",
+                    deep: "#0a1f2b",
+                    ink: "#0b3d5c",
+               },
           },
           animation: {
                'drift-one': 'drift-one 24s ease-in-out infinite',

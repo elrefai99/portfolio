@@ -11,9 +11,9 @@ const selectedProjects = computed(() =>
 const getDesc = (desc: string | string[]) =>
   Array.isArray(desc) ? desc[0] : desc
 
-const cardClass = 'group relative flex flex-col rounded-xl border border-black/7 dark:border-white/10 bg-white/10 dark:bg-white/1 backdrop-blur-sm p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5'
-const tagChipClass = 'flex items-center gap-1 rounded-full border border-black/10 bg-transparent px-2 py-1 text-xs text-black backdrop-blur-[18px] transition-colors duration-200 hover:border-black/18 hover:bg-black/[0.04] dark:border-white/12 dark:text-white dark:hover:border-white/22 dark:hover:bg-white/6'
-const footerLinkClass = 'inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 transition-colors duration-200 hover:text-black dark:hover:text-white'
+const cardClass = 'bp-card flex flex-col p-6'
+const tagChipClass = 'bp-chip'
+const footerLinkClass = 'bp-link'
 </script>
 
 <template>
@@ -46,7 +46,7 @@ const footerLinkClass = 'inline-flex items-center gap-2 text-sm font-medium text
               loading="lazy"
               decoding="async"
             />
-            <h3 font-semibold text-lg text-black dark:text-white class="truncate">{{ project.name }}</h3>
+            <h3 font-semibold text-lg text-black dark:text-gray-300 class="truncate">{{ project.name }}</h3>
           </div>
           <a
             v-if="project.link"
@@ -61,7 +61,7 @@ const footerLinkClass = 'inline-flex items-center gap-2 text-sm font-medium text
         </div>
 
         <!-- Description -->
-        <p text-sm text-gray-600 dark:text-gray-400 leading-relaxed class="line-clamp-3">{{ getDesc(project.desc) }}</p>
+        <p text-sm text-black dark:text-gray-400 leading-relaxed class="line-clamp-3">{{ getDesc(project.desc) }}</p>
 
         <!-- Tags -->
         <div class="flex flex-wrap gap-2 mt-4">

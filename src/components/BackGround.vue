@@ -1,3 +1,3 @@
 <template>
-  <StarBackground />
+  <BlueprintBackground />
 </template>

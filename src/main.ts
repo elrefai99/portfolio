@@ -1,4 +1,5 @@
 import './assets/main.css'
+import './assets/blueprint.css'
 import { ViteSSG } from 'vite-ssg'
 import { createPinia } from 'pinia'
 import App from './App.vue'
