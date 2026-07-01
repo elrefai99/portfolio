@@ -36,6 +36,12 @@
 }
 
 
+html,
+body,
+#app {
+  font-family: 'Alexandria', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
 *,
 *::before,
 *::after {
