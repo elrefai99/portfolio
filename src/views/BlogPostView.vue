@@ -15,10 +15,10 @@ useHead(computed(() => (blog.value ? createBlogPostSEO(blog.value) : notFoundSEO
 const panelClass = 'bp-card'
 const tagClass = 'bp-chip'
 const inlineCodeClass = 'mx-0.5 rounded-md border border-red-500/25 bg-red-500/8 px-1.5 py-0.5 font-mono text-[0.85em] text-red-600 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
-const codeShellClass = 'overflow-hidden rounded-lg border border-[#202020] bg-black text-[#dbd7caee] shadow-[0_18px_48px_rgba(0,0,0,0.42)]'
-const codeHeaderClass = 'flex items-center justify-between gap-4 border-b border-[#181818] bg-[#050505] px-4 py-2 text-xs text-[#a6a59d]'
+const codeShellClass = 'overflow-hidden rounded-lg border border-[#202020] bg-[#121212] text-[#dbd7caee] shadow-[0_18px_48px_rgba(0,0,0,0.42)]'
+const codeHeaderClass = 'flex items-center justify-between gap-4 border-b border-[#181818] bg-[#0e0e0e] px-4 py-2 text-xs text-[#a6a59d]'
 const codeBadgeClass = 'rounded-full bg-[#181818] px-2 py-1 font-mono uppercase text-[#d7ba7d]'
-const codePreClass = 'vitesse-code min-h-36 overflow-x-auto bg-black p-4 text-[13px] leading-6'
+const codePreClass = 'vitesse-code min-h-36 overflow-x-auto bg-[#121212] p-4 text-[13px] leading-6'
 
 const keywords = new Set([
   'as',
