@@ -1,24 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import logo from "../../public/projects/lesoll-logo.png"
 import egystayLogo from "../../public/projects/egy-stay-logo.png"
 
+// Static text — this H1 is the homepage's LCP element. It used to be wiped
+// to '' on mount and retyped letter-by-letter, which delayed LCP by ~1.6s
+// and made the largest element on the page visibly disappear on hydration.
 const fullText = "Mohammed Mostafa"
-const displayedText = ref(fullText)
-const typingSpeed = 100
-
-onMounted(() => {
-  displayedText.value = ''
-  let index = 0
-  const typeText = () => {
-    if (index < fullText.length) {
-      displayedText.value += fullText.charAt(index)
-      index++
-      setTimeout(typeText, typingSpeed)
-    }
-  }
-  typeText()
-})
 </script>
 
 <template>
@@ -47,7 +34,7 @@ onMounted(() => {
             my-2
             class="animate-slide-down-delay-2"
           >
-            {{ displayedText }}<span class="cursor-blink" aria-hidden="true" text-gray-600 dark:text-gray-400 font-light></span>
+            {{ fullText }}<span class="cursor-blink" aria-hidden="true" text-gray-600 dark:text-gray-400 font-light></span>
           </h1>
 
           <p
@@ -77,7 +64,7 @@ onMounted(() => {
               transition-transform duration-200
               hover:scale-105
             >
-              <img :src="logo" alt="Lesoll Logo" decoding="async" w-5 h-auto/>
+              <img :src="logo" alt="Lesoll Logo" decoding="async" width="20" height="20" w-5 h-auto/>
               <span font-bold text-black dark:text-white>Lesoll</span>
             </a>
           </div>
@@ -166,11 +153,11 @@ onMounted(() => {
           I recently expanded into frontend development with Vue.js.
           As a backend developer, I built and shipped the systems behind production platforms like
           <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
-            <img :src="logo" alt="Lesoll logo" loading="lazy" decoding="async" class="inline-block h-4 w-auto" />Lesoll
+            <img :src="logo" alt="Lesoll logo" loading="lazy" decoding="async" width="16" height="16" class="inline-block h-4 w-auto" />Lesoll
           </a>
           and
           <a href="https://egystay.com/en" target="_blank" rel="noopener noreferrer" inline-flex items-center gap-1.5 font-semibold text-black dark:text-white class="underline underline-offset-3 align-middle">
-             <img :src="egystayLogo" alt="Egystay logo" loading="lazy" decoding="async" class="inline-block h-2 w-auto" /> Egystay
+             <img :src="egystayLogo" alt="Egystay logo" loading="lazy" decoding="async" width="31" height="8" class="inline-block h-2 w-auto" /> Egystay
           </a>.
         </p>
 

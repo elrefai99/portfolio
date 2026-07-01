@@ -8,7 +8,7 @@ useHead(homeSEO)
 
 <template>
   <main>
-    <FloorSection level="L-00" name="Hero / Introduction" elevation="+0.00 m" :top-slab="false">
+    <FloorSection level="L-00" name="Hero / Introduction" elevation="+0.00 m" :top-slab="false" eager>
       <Aboutme />
     </FloorSection>
     <FloorSection level="L-01" name="Selected Works" elevation="+8.00 m" slab="RC SLAB · 300mm">

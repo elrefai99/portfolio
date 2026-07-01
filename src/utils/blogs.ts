@@ -25,6 +25,8 @@ export type BlogPost = {
   excerpt: string
   category: string
   date: string
+  /** Set when the post's content changes after publish; falls back to `date`. */
+  updated?: string
   readTime: string
   tags: string[]
   blocks: BlogBlock[]

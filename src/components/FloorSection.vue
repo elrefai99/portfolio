@@ -13,10 +13,16 @@ const props = withDefaults(defineProps<{
   slab?: string            // concrete slab annotation text
   topSlab?: boolean        // draw the slab separator on top (default true)
   id?: string
+  // Skip the scroll-reveal animation and render already-visible. Use for the
+  // first above-the-fold floor on a page — it's the LCP candidate, and
+  // gating it behind IntersectionObserver + a 0.7s transition adds ~800ms
+  // to LCP for no visual benefit since it's already on screen at load.
+  eager?: boolean
 }>(), {
   elevation: '',
   slab: 'RC SLAB · 300mm',
   topSlab: true,
+  eager: false,
 })
 
 const root = ref<HTMLElement | null>(null)
@@ -24,7 +30,7 @@ let observer: IntersectionObserver | null = null
 
 onMounted(() => {
   const el = root.value
-  if (!el) return
+  if (!el || props.eager) return
   if (typeof IntersectionObserver === 'undefined') {
     el.classList.add('is-visible')
     return
@@ -50,7 +56,7 @@ onUnmounted(() => observer?.disconnect())
 </script>
 
 <template>
-  <section ref="root" :id="props.id" class="bp-floor scroll-mt-28">
+  <section ref="root" :id="props.id" class="bp-floor scroll-mt-28" :class="{ 'is-visible': props.eager }">
     <!-- reinforced concrete slab separator -->
     <div v-if="props.topSlab" class="bp-slab" aria-hidden="true">
       <span class="bp-slab__label bp-slab__label--left">{{ props.slab }}</span>

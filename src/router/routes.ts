@@ -33,6 +33,14 @@ export const routes: RouteRecordRaw[] = [
     name: 'resume',
     component: ResumeView,
   },
+  // Literal path (no `:`) so vite-ssg prerenders it to dist/404.html — the
+  // exact filename Vercel auto-serves (with a real 404 status) for any
+  // unmatched path once the SPA-fallback rewrite is gone.
+  {
+    path: '/404',
+    name: 'not-found-static',
+    component: NotFound,
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',

@@ -33,7 +33,7 @@ const downloadResume = () => {
 
         <!-- Header -->
         <div text-center mb-8>
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-1">Mohamed Mostafa</h1>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-1">Mohammed Mostafa</h1>
           <p class="text-base font-semibold text-gray-600 dark:text-gray-400 mb-3">Software Engineer</p>
           <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-400">
             <span>Banha, Al Qalyubia</span>

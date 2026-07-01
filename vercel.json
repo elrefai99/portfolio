@@ -1,9 +1,17 @@
 {
+  "cleanUrls": true,
   "redirects": [
     { "source": "/github", "destination": "https://github.com/elrefai99", "permanent": true },
     { "source": "/gh", "destination": "https://github.com/elrefai99", "permanent": true }
   ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
   ]
 }

@@ -91,7 +91,7 @@ const tagChipClass = 'bp-chip'
                 <!-- Header -->
                 <div flex items-center justify-between mb-4>
                   <div flex items-center gap-2 flex-1>
-                    <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class" loading="lazy" decoding="async"/>
+                    <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class" :width="project.logoWidth" :height="project.logoHeight" loading="lazy" decoding="async"/>
                     <h3 font-semibold text-lg text-black dark:text-gray-300>{{ project.name }}</h3>
                   </div>
                   <div flex gap-2>

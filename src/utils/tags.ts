@@ -124,6 +124,8 @@ const createSeo = ({
   path,
   image = defaultImage,
   imageAlt,
+  imageWidth = '1200',
+  imageHeight = '630',
   ogType = 'website',
   robots = 'index, follow, max-image-preview:large',
   extraMeta = [],
@@ -134,6 +136,8 @@ const createSeo = ({
   path: string
   image?: string
   imageAlt: string
+  imageWidth?: string
+  imageHeight?: string
   ogType?: 'website' | 'article'
   robots?: string
   extraMeta?: SeoMeta[]
@@ -165,8 +169,8 @@ const createSeo = ({
       { property: 'og:image', content: image },
       { property: 'og:image:secure_url', content: image },
       { property: 'og:image:type', content: 'image/png' },
-      { property: 'og:image:width', content: '1200' },
-      { property: 'og:image:height', content: '630' },
+      { property: 'og:image:width', content: imageWidth },
+      { property: 'og:image:height', content: imageHeight },
       { property: 'og:image:alt', content: imageAlt },
       { property: 'og:locale', content: 'en_US' },
       { name: 'twitter:card', content: 'summary_large_image' },
@@ -269,6 +273,10 @@ export const projectsSEO = createSeo({
     'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
   image: `${siteUrl}/og/projects_page_og.png`,
+  // Real file is 498x202, not the site's default 1200x630 — declaring the
+  // wrong size breaks Facebook/LinkedIn/Slack/Discord link-preview cards.
+  imageWidth: '498',
+  imageHeight: '202',
   imageAlt: 'Mohammed Mostafa • Node.js and TypeScript Projects Portfolio',
   schema: [
     {
@@ -330,6 +338,7 @@ export const blogsSEO = createSeo({
 export const createBlogPostSEO = (blog: BlogPost) => {
   const path = `${sitePaths.blogs}/${blog.slug}`
   const url = new URL(path, siteUrl).toString()
+  const modifiedDate = blog.updated || blog.date
   // Per-post OG image when provided, else the site default. Root-relative
   // paths are resolved against siteUrl so crawlers get an absolute URL.
   const ogImage = blog.ogImage
@@ -362,7 +371,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
     imageAlt: `${blog.title} • Blog`,
     extraMeta: [
       { property: 'article:published_time', content: blog.date },
-      { property: 'article:modified_time', content: blog.date },
+      { property: 'article:modified_time', content: modifiedDate },
       { property: 'article:author', content: author },
       { property: 'article:section', content: blog.category },
       ...blog.tags.map((tag) => ({ property: 'article:tag', content: tag })),
@@ -380,7 +389,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         description: blog.excerpt,
         image: ogImage,
         datePublished: blog.date,
-        dateModified: blog.date,
+        dateModified: modifiedDate,
         url,
         author: personSchema,
         publisher: personSchema,
