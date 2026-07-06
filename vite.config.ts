@@ -14,11 +14,15 @@ import { blogs } from './src/utils/blogs'
 // Source files whose last git commit date drives a route's <lastmod>. Keeps the
 // sitemap freshness honest instead of relying on a hand-typed constant. Blog
 // posts already carry their own `date`, and absolute (subdomain) URLs are skipped.
+// Files that change the rendered output of *every* route (SEO head, theme,
+// document shell). A commit touching these legitimately refreshes all lastmods.
+const globalSources = ['src/utils/tags.ts', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
+
 const routeSources: Record<string, string[]> = {
-  [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/timeline.vue'],
-  [sitePaths.projects]: ['src/views/projectsView.vue', 'src/utils/projects.ts'],
-  [sitePaths.blogs]: ['src/views/BlogsView.vue', 'src/utils/blogs.ts'],
-  [sitePaths.resume]: ['src/views/ResumeView.vue'],
+  [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/timeline.vue', ...globalSources],
+  [sitePaths.projects]: ['src/views/projectsView.vue', 'src/utils/projects.ts', ...globalSources],
+  [sitePaths.blogs]: ['src/views/BlogsView.vue', 'src/utils/blogs.ts', ...globalSources],
+  [sitePaths.resume]: ['src/views/ResumeView.vue', ...globalSources],
 }
 
 // Most recent commit date (YYYY-MM-DD) across the given files, or undefined if

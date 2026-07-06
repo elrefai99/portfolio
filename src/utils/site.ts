@@ -53,6 +53,7 @@ export const sitemapEntries = [
     path: `${sitePaths.blogs}/${blog.slug}`,
     changefreq: 'weekly',
     priority: '0.7',
-    lastmod: blog.date,
+    // Prefer the last-updated date so edits refresh the sitemap signal.
+    lastmod: blog.updated || blog.date,
   })),
 ] as const

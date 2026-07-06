@@ -634,6 +634,7 @@ export const blogs: BlogPost[] = [
       'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace • the adapter, payment state machine, and webhook pipeline',
     category: 'Payment Integration',
     date: '2026-06-12',
+    updated: '2026-07-06',
     readTime: '12 min read',
     tags: ['Payments', 'Paymob', 'Amazon Payment Services', 'PayFort', 'Webhooks', 'BullMQ', 'Node.js', 'TypeScript'],
     blocks: [
