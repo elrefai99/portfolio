@@ -21,6 +21,41 @@ const blogTopicKeywords = [
   'Backend architecture notes',
 ]
 
+// Curated keyword targets. Kept tight (no stuffing) — Google largely ignores the
+// keywords meta, but Bing/Yandex weakly use it and it documents intent per route.
+const brandKeywords = [
+  'Mohammed Mostafa',
+  'Mohamed Mostafa',
+  'Elrefai',
+  'Mohammed Elrefai',
+  'Mohamed Elrefai',
+  'elrefai99',
+]
+
+const roleLocationKeywords = [
+  'Software Engineer',
+  'Backend Engineer',
+  'Backend Developer',
+  'Software Engineer Cairo',
+  'Software Engineer Egypt',
+  'Backend Developer Egypt',
+  'Node.js Developer Egypt',
+]
+
+const skillKeywords = [
+  'Node.js Developer',
+  'TypeScript Developer',
+  'Express.js Developer',
+  'REST API Developer',
+  'Payment Integration Engineer',
+  'AWS Cloud Developer',
+  'MongoDB',
+  'PostgreSQL',
+  'Redis',
+  'Docker',
+  'Kubernetes',
+]
+
 const sameAs = [
   'https://github.com/elrefai99',
   'https://www.linkedin.com/in/elrefai99/',
@@ -79,6 +114,11 @@ const personSchema = {
     'Payment integrations',
     'Backend architecture',
   ],
+  knowsLanguage: [
+    { '@type': 'Language', name: 'English' },
+    { '@type': 'Language', name: 'Arabic' },
+  ],
+  nationality: { '@type': 'Country', name: 'Egypt' },
   sameAs,
 }
 
@@ -128,6 +168,7 @@ const createSeo = ({
   imageHeight = '630',
   ogType = 'website',
   robots = 'index, follow, max-image-preview:large',
+  keywords = [],
   extraMeta = [],
   schema,
 }: {
@@ -140,6 +181,7 @@ const createSeo = ({
   imageHeight?: string
   ogType?: 'website' | 'article'
   robots?: string
+  keywords?: string[]
   extraMeta?: SeoMeta[]
   schema?: Record<string, unknown> | Record<string, unknown>[]
 }) => {
@@ -161,6 +203,9 @@ const createSeo = ({
       { name: 'author', content: author },
       { name: 'description', content: description },
       { name: 'robots', content: robots },
+      ...(keywords.length
+        ? [{ name: 'keywords', content: uniqueKeywords(keywords).join(', ') }]
+        : []),
       { property: 'og:type', content: ogType },
       { property: 'og:url', content: url },
       { property: 'og:site_name', content: siteName },
@@ -174,6 +219,8 @@ const createSeo = ({
       { property: 'og:image:alt', content: imageAlt },
       { property: 'og:locale', content: 'en_US' },
       { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:site', content: '@elrefai99' },
+      { name: 'twitter:creator', content: '@elrefai99' },
       { name: 'twitter:url', content: url },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
@@ -189,8 +236,9 @@ const createSeo = ({
 export const homeSEO = createSeo({
   title: 'Mohammed Mostafa • Software Engineer',
   description:
-    'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
+    'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer in Cairo, Egypt at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
   path: sitePaths.home,
+  keywords: [...brandKeywords, ...roleLocationKeywords, ...skillKeywords],
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   schema: [
     // ProfilePage is Google's recommended type for a person's primary page; it
@@ -215,6 +263,14 @@ export const resumeSEO = createSeo({
   description:
     'Resume of Mohammed Mostafa, a Software Engineer with experience in Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, Docker, and AWS.',
   path: sitePaths.resume,
+  keywords: [
+    ...brandKeywords,
+    'Mohammed Mostafa resume',
+    'Mohammed Mostafa CV',
+    'Software Engineer resume',
+    'Backend Engineer CV',
+    ...skillKeywords,
+  ],
   imageAlt: 'Mohammed Mostafa • Resume',
   schema: [
     personSchema,
@@ -272,6 +328,16 @@ export const projectsSEO = createSeo({
   description:
     'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
+  keywords: [
+    ...brandKeywords,
+    'Mohammed Mostafa projects',
+    'Elrefai projects',
+    ...(projects as ProjectShape[]).map((project) => project.name),
+    'Backend projects',
+    'Node.js projects',
+    'API projects',
+    'Developer tooling',
+  ],
   image: `${siteUrl}/og/projects_page_og.png`,
   // Real file is 498x202, not the site's default 1200x630 — declaring the
   // wrong size breaks Facebook/LinkedIn/Slack/Discord link-preview cards.
@@ -304,6 +370,12 @@ export const blogsSEO = createSeo({
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
+  keywords: [
+    ...brandKeywords,
+    'Mohammed Mostafa blog',
+    'Elrefai blog',
+    ...blogTopicKeywords,
+  ],
   imageAlt: 'Mohammed Mostafa Blog',
   schema: [
     {
@@ -347,6 +419,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
   const keywords = uniqueKeywords([
     blog.title,
     blog.category,
+    ...brandKeywords,
     `${blog.title} Mohammed Mostafa`,
     `${blog.title} elrefai99`,
     `${blog.category} blog`,
@@ -368,6 +441,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
     path,
     image: ogImage,
     ogType: 'article',
+    keywords,
     imageAlt: `${blog.title} • Blog`,
     extraMeta: [
       { property: 'article:published_time', content: blog.date },
