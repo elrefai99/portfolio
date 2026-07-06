@@ -20,7 +20,7 @@ import { Analytics } from '@vercel/analytics/vue'
 
 <style>
 html.dark {
-  background: #000000;
+  background: #141413;
   color: var(--color-text);
   color-scheme: dark;
 }

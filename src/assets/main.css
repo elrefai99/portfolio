@@ -59,13 +59,13 @@ body,
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: var(--bp-blue);
   transition: 0.4s;
   padding: 3px;
 }
 
 @media (hover: hover) {
   a:hover {
-    color: #e8e8e8;
+    color: var(--bp-muted, #b0aea5);
   }
 }

@@ -5,33 +5,37 @@
    ========================================================================= */
 
 :root {
-  /* dark mode: white linework on pure black */
-  --bp-accent-rgb: 255, 255, 255;
-  --bp-blue: #ffffff;
-  --bp-blue-glow: #ffffff;
-  --bp-blue-dim: rgba(255, 255, 255, 0.55);
-  --bp-line: rgba(255, 255, 255, 0.55);
-  --bp-line-soft: rgba(255, 255, 255, 0.18);
-  --bp-line-faint: rgba(255, 255, 255, 0.08);
-  --bp-grid: rgba(255, 255, 255, 0.06);
-  --bp-grid-major: rgba(255, 255, 255, 0.12);
-  --bp-canvas: #000000;
+  /* dark mode: warm off-white linework on warm near-black */
+  --bp-accent-rgb: 250, 249, 245;
+  --bp-blue: #faf9f5;
+  --bp-blue-glow: #faf9f5;
+  --bp-blue-dim: rgba(var(--bp-accent-rgb), 0.55);
+  --bp-line: rgba(var(--bp-accent-rgb), 0.55);
+  --bp-line-soft: rgba(var(--bp-accent-rgb), 0.18);
+  --bp-line-faint: rgba(var(--bp-accent-rgb), 0.08);
+  --bp-grid: rgba(var(--bp-accent-rgb), 0.06);
+  --bp-grid-major: rgba(var(--bp-accent-rgb), 0.12);
+  --bp-canvas: #141413;
+  --bp-muted: #b0aea5;
+  --bp-subtle: #1e1e1c;
   --bp-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
   --bp-nav-h: 4.25rem;
 }
 
-/* Light mode: black linework on white */
+/* Light mode: warm ink linework on warm paper */
 :root:not(.dark) {
-  --bp-accent-rgb: 0, 0, 0;
-  --bp-blue: #000000;
-  --bp-blue-glow: #000000;
-  --bp-blue-dim: rgba(0, 0, 0, 0.5);
-  --bp-line: rgba(0, 0, 0, 0.5);
-  --bp-line-soft: rgba(0, 0, 0, 0.16);
-  --bp-line-faint: rgba(0, 0, 0, 0.07);
-  --bp-grid: rgba(0, 0, 0, 0.06);
-  --bp-grid-major: rgba(0, 0, 0, 0.11);
-  --bp-canvas: #ffffff;
+  --bp-accent-rgb: 20, 20, 19;
+  --bp-blue: #141413;
+  --bp-blue-glow: #141413;
+  --bp-blue-dim: rgba(var(--bp-accent-rgb), 0.5);
+  --bp-line: rgba(var(--bp-accent-rgb), 0.5);
+  --bp-line-soft: rgba(var(--bp-accent-rgb), 0.16);
+  --bp-line-faint: rgba(var(--bp-accent-rgb), 0.07);
+  --bp-grid: rgba(var(--bp-accent-rgb), 0.06);
+  --bp-grid-major: rgba(var(--bp-accent-rgb), 0.11);
+  --bp-canvas: #faf9f5;
+  --bp-muted: #b0aea5;
+  --bp-subtle: #e8e6dc;
 }
 
 html {
