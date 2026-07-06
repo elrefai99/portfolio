@@ -40,6 +40,367 @@ export type BlogPost = {
 
 export const blogs: BlogPost[] = [
   {
+    id: 4,
+    slug: 'crdts-yjs-collaborative-editing-srvj',
+    title: 'CRDTs, Yjs, and the Day I Stopped Writing Conflict-Resolution Code',
+    excerpt:
+      'Why I stopped writing conflict-resolution code for SRVJ\'s collaborative diagrams — CRDTs from first principles (G-Counter, LWW-Register, OR-Set, sequence types), then Yjs and the authenticated WebSocket relay that keeps every editor converged.',
+    category: 'Distributed Systems',
+    date: '2026-07-06',
+    readTime: '13 min read',
+    tags: ['CRDT', 'Yjs', 'Collaborative Editing', 'Real-Time', 'Distributed Systems', 'WebSocket', 'TypeScript', 'Node.js'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'While building SRVJ (a collaborative diagram tool I\'ve been working on), I hit the problem every real-time app eventually hits: two people drag the same node at the same time. Who wins?',
+      },
+      {
+        type: 'paragraph',
+        text: 'My first instinct was the classic one — lock the node while someone is editing it. Terrible idea. Locks in a whiteboard feel like someone grabbing your mouse. Second instinct: last-write-wins on the server. Also bad, because "last" depends on network latency, and someone\'s work silently disappears. Third instinct: operational transformation, the Google Docs approach. I read two papers, looked at the transformation matrices you need to maintain for every pair of operations, and closed the tab.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then I found CRDTs, and the whole problem class just... dissolved. This post is what I wish someone had handed me at the start.',
+      },
+      {
+        type: 'heading',
+        text: 'So what is a CRDT?',
+      },
+      {
+        type: 'paragraph',
+        text: 'CRDT stands for Conflict-free Replicated Data Type. The idea sounds almost too simple: instead of writing code that resolves conflicts, you design the data structure so conflicts can\'t exist. Every replica can accept writes independently — no coordination, no locks, no central authority — and when replicas exchange their states, they are mathematically guaranteed to converge to the same result.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The guarantee comes from three properties of the merge function:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Commutative — `merge(a, b) === merge(b, a)`. Order of arrival doesn\'t matter.',
+          'Associative — `merge(merge(a, b), c) === merge(a, merge(b, c))`. Grouping doesn\'t matter.',
+          'Idempotent — `merge(a, a) === a`. Receiving the same update twice doesn\'t matter.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'If your merge satisfies these, replicas can gossip updates in any order, drop duplicates, arrive late — and still end up identical. This property has a name: strong eventual consistency. Not "eventually the server decides." Every replica that has seen the same set of updates is in the same state, deterministically.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There are two families. State-based CRDTs ship the whole state and merge it (simple, chunky payloads). Operation-based CRDTs ship individual operations (small payloads, but you need reliable delivery). Most production systems, Yjs included, ship compact operation deltas.',
+      },
+      {
+        type: 'heading',
+        text: 'Where would you actually use one?',
+      },
+      {
+        type: 'paragraph',
+        text: 'CRDTs are not a general-purpose replacement for your database. They shine in a specific set of situations:',
+      },
+      {
+        type: 'paragraph',
+        text: 'Collaborative editing — the obvious one. Docs, whiteboards, kanban boards, Figma-style tools. Anywhere multiple cursors touch the same object.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Offline-first apps — a mobile client edits locally on a plane, syncs three hours later, and the merge just works. No "your version / their version" dialog.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Distributed counters and presence — likes, view counts, "who\'s online" across regions. Riak shipped CRDTs years ago, Redis has CRDT-based active-active replication in its enterprise offering.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Multi-region writes — when you want every region to accept writes without a consensus round-trip per operation.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The common thread: availability over coordination. If your domain genuinely needs a single serialized truth (account balances, inventory), CRDTs are the wrong tool. You can\'t CRDT your way out of "don\'t sell the same seat twice."',
+      },
+      {
+        type: 'heading',
+        text: 'The classic algorithms',
+      },
+      {
+        type: 'paragraph',
+        text: 'Fair warning: the first three are almost disappointingly simple. That\'s the point — the intelligence lives in the data structure, not in some clever resolver.',
+      },
+      {
+        type: 'heading',
+        text: 'G-Counter (grow-only counter)',
+      },
+      {
+        type: 'paragraph',
+        text: 'Each replica only increments its own slot. The total is the sum, and merge is an element-wise `max`.',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'g-counter.ts',
+        code:
+          'interface GCounterState {\n' +
+          '  counts: Record<string, number>;\n' +
+          '}\n\n' +
+          'class GCounter {\n' +
+          '  private counts = new Map<string, number>();\n\n' +
+          '  constructor(private readonly replicaId: string) {}\n\n' +
+          '  increment(): void {\n' +
+          '    const current = this.counts.get(this.replicaId) ?? 0;\n' +
+          '    this.counts.set(this.replicaId, current + 1);\n' +
+          '  }\n\n' +
+          '  value(): number {\n' +
+          '    let total = 0;\n' +
+          '    for (const count of this.counts.values()) total += count;\n' +
+          '    return total;\n' +
+          '  }\n\n' +
+          '  merge(other: GCounter): void {\n' +
+          '    for (const [id, count] of other.counts.entries()) {\n' +
+          '      const mine = this.counts.get(id) ?? 0;\n' +
+          '      this.counts.set(id, Math.max(mine, count));\n' +
+          '    }\n' +
+          '  }\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Why does `max` work? Because a replica\'s own counter only ever grows, the highest value you\'ve seen from a replica is its latest value. Merge twice, merge in any order — same result. All three properties, for free.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Need decrements? That\'s the PN-Counter: two G-Counters, one for increments and one for decrements, value = P − N. Nothing more to it.',
+      },
+      {
+        type: 'heading',
+        text: 'LWW-Register (last-writer-wins register)',
+      },
+      {
+        type: 'paragraph',
+        text: 'A single value with a timestamp. On merge, the higher timestamp wins; ties break on replica ID so both sides pick the same winner.',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'lww-register.ts',
+        code:
+          'interface LWWEntry<T> {\n' +
+          '  value: T;\n' +
+          '  timestamp: number;\n' +
+          '  replicaId: string;\n' +
+          '}\n\n' +
+          'class LWWRegister<T> {\n' +
+          '  constructor(private entry: LWWEntry<T>, private readonly replicaId: string) {}\n\n' +
+          '  set(value: T): void {\n' +
+          '    this.entry = { value, timestamp: Date.now(), replicaId: this.replicaId };\n' +
+          '  }\n\n' +
+          '  get(): T {\n' +
+          '    return this.entry.value;\n' +
+          '  }\n\n' +
+          '  merge(other: LWWRegister<T>): void {\n' +
+          '    const remote = other.entry;\n' +
+          '    const newer =\n' +
+          '      remote.timestamp > this.entry.timestamp ||\n' +
+          '      (remote.timestamp === this.entry.timestamp && remote.replicaId > this.entry.replicaId);\n' +
+          '    if (newer) this.entry = remote;\n' +
+          '  }\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Be honest with yourself about what this is: it\'s deterministic data loss. One concurrent write silently loses. That\'s fine for a "node color" field. It\'s not fine for text.',
+      },
+      {
+        type: 'heading',
+        text: 'OR-Set (observed-remove set)',
+      },
+      {
+        type: 'paragraph',
+        text: 'A plain set breaks under concurrency: if I remove `"x"` while you re-add `"x"`, what should survive? The OR-Set answers "add wins" by tagging every add with a unique ID. Remove only kills the tags you have actually observed — a concurrent add carries a fresh tag the remove never saw, so it survives.',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'or-set.ts',
+        code:
+          'class ORSet<T> {\n' +
+          '  private adds = new Map<T, Set<string>>();\n' +
+          '  private removes = new Map<T, Set<string>>();\n\n' +
+          '  add(value: T): void {\n' +
+          '    const tags = this.adds.get(value) ?? new Set<string>();\n' +
+          '    tags.add(crypto.randomUUID());\n' +
+          '    this.adds.set(value, tags);\n' +
+          '  }\n\n' +
+          '  remove(value: T): void {\n' +
+          '    const observed = this.adds.get(value);\n' +
+          '    if (!observed) return;\n' +
+          '    const removed = this.removes.get(value) ?? new Set<string>();\n' +
+          '    for (const tag of observed) removed.add(tag);\n' +
+          '    this.removes.set(value, removed);\n' +
+          '  }\n\n' +
+          '  has(value: T): boolean {\n' +
+          '    const added = this.adds.get(value);\n' +
+          '    if (!added) return false;\n' +
+          '    const removed = this.removes.get(value);\n' +
+          '    for (const tag of added) {\n' +
+          '      if (!removed?.has(tag)) return true;\n' +
+          '    }\n' +
+          '    return false;\n' +
+          '  }\n\n' +
+          '  merge(other: ORSet<T>): void {\n' +
+          '    for (const [value, tags] of other.adds) {\n' +
+          '      const mine = this.adds.get(value) ?? new Set<string>();\n' +
+          '      for (const tag of tags) mine.add(tag);\n' +
+          '      this.adds.set(value, mine);\n' +
+          '    }\n' +
+          '    for (const [value, tags] of other.removes) {\n' +
+          '      const mine = this.removes.get(value) ?? new Set<string>();\n' +
+          '      for (const tag of tags) mine.add(tag);\n' +
+          '      this.removes.set(value, mine);\n' +
+          '    }\n' +
+          '  }\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Notice what just appeared: removed tags stick around forever. Those are tombstones, and they\'re the tax you pay across almost every CRDT design. Hold that thought.',
+      },
+      {
+        type: 'heading',
+        text: 'Sequence CRDTs — where it gets genuinely hard',
+      },
+      {
+        type: 'paragraph',
+        text: 'Counters, registers, and sets are a weekend project. Ordered sequences — text, arrays, lists of diagram nodes — are a different animal. Array indices are meaningless under concurrency: your "insert at index 3" and my "delete index 2" arrive in different orders on different replicas and index-based logic falls apart instantly.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The trick every sequence CRDT uses: stop using indices. Give every inserted item a globally unique ID (typically `clientID + logical clock`) and describe its position relative to its neighbors — "I was inserted after item (client 4, clock 17)". Deletes don\'t remove items; they mark them as tombstones so late-arriving "insert after X" operations still find X. The algorithms — RGA, Logoot, LSEQ, and YATA (the one Yjs implements) — differ mainly in how they order items that were concurrently inserted at the same position, and how they keep metadata from eating you alive.',
+      },
+      {
+        type: 'paragraph',
+        text: 'I\'m not going to implement YATA in a blog post, and honestly, neither should you in production code. Which brings me to Yjs.',
+      },
+      {
+        type: 'heading',
+        text: 'What is Yjs?',
+      },
+      {
+        type: 'paragraph',
+        text: 'Yjs (github.com/yjs/yjs) is a production-grade CRDT implementation, and probably the fastest one in the JavaScript ecosystem. It gives you shared types — `Y.Map`, `Y.Array`, `Y.Text`, `Y.XmlFragment` — that behave like normal data structures locally but sync conflict-free across any number of peers.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The parts that made me pick it over rolling my own:',
+      },
+      {
+        type: 'paragraph',
+        text: 'It\'s operation-based and binary. Every local change emits a compact binary update. You don\'t ship documents around; you ship diffs measured in bytes.',
+      },
+      {
+        type: 'paragraph',
+        text: 'State vectors make sync a two-step handshake. A client sends a state vector — essentially "here\'s the latest clock I\'ve seen from each peer" — and the other side responds with exactly the updates that are missing. No diffing full documents, no re-sending history.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The engineering is brutal, in a good way. Yjs merges adjacent items written by the same client into single structs, so typing a 1,000-character paragraph doesn\'t create 1,000 objects. That single optimization is a large part of why it benchmarks well ahead of naive implementations.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Transport-agnostic. Yjs doesn\'t care how updates travel. WebSocket, WebRTC, carrier pigeon — the `y-protocols` package defines the sync and awareness message formats, and you bring the pipe.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It also ships awareness as a separate protocol: ephemeral presence data (cursors, selections, "Ali is here") that propagates to peers but deliberately never enters the document. Cursor positions in your edit history would be noise; keeping them out is the right default.',
+      },
+      {
+        type: 'heading',
+        text: 'Why Yjs in SRVJ',
+      },
+      {
+        type: 'paragraph',
+        text: 'SRVJ diagrams are collaboratively edited in real time, and I wanted three things: no lock UX, no server round-trip per keystroke, and a server that doesn\'t need to understand diagram semantics to keep everyone consistent. Yjs delivers all three, because of the single most important realization in this whole build:',
+      },
+      {
+        type: 'paragraph',
+        text: 'The backend is a relay and a persistence layer. It is not a conflict resolver. Convergence is a property of the data type. The server just moves bytes and occasionally writes them down.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Here\'s the actual flow in SRVJ\'s collab layer:',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'collab-sync.mmd',
+        code:
+          'sequenceDiagram\n' +
+          '    participant C as Client (Y.Doc)\n' +
+          '    participant G as attachCollab (WS upgrade)\n' +
+          '    participant R as Room (Y.Doc + awareness)\n' +
+          '    participant M as MongoDB\n\n' +
+          '    C->>G: upgrade /collab/:site_id (PASETO cookie/Bearer)\n' +
+          '    G->>G: origin check + auth + RBAC\n' +
+          '    G-->>C: close 4400/4401/4403/4404 on failure\n' +
+          '    G->>R: getRoom(siteId) - create if absent\n' +
+          '    R->>M: loadDocument (binary snapshot, else seed from diagram)\n' +
+          '    C->>R: SyncStep1 (my state vector)\n' +
+          '    R-->>C: SyncStep2 (only what you\'re missing)\n' +
+          '    C->>R: binary update (edit)\n' +
+          '    R->>R: role gate - EDITOR+ only\n' +
+          '    R-->>C: broadcast to every room connection\n' +
+          '    R->>M: debounced storeDocument',
+      },
+      {
+        type: 'paragraph',
+        text: 'A few implementation details worth calling out, because this is where the theory meets an Express server at 2 AM:',
+      },
+      {
+        type: 'paragraph',
+        text: 'Auth happens before any document bytes flow. The WebSocket upgrade on `/collab` checks the origin, extracts the diagram\'s `site_id` from the URL, verifies the PASETO access token from cookie or Bearer header, and resolves the user\'s role — the same identity and RBAC stack the REST layer uses. Failures close the socket with specific codes (4400 bad request, 4401 unauthenticated, 4403 forbidden, 4404 not found) so the client can tell why it was rejected.',
+      },
+      {
+        type: 'paragraph',
+        text: 'One in-memory Room per open diagram. A Room owns a `Y.Doc`, an awareness instance, and the set of connections. The interesting bit is read/write gating at the protocol level: a `VIEWER` can send SyncStep1 and receive the full document — reading is syncing — but their SyncStep2 and update messages are silently dropped. Only `EDITOR` and above mutate the doc. RBAC enforced inside the sync protocol handler, not just at the door.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Dual-debounced persistence. Writing to MongoDB on every keystroke would be absurd; debouncing naively means a user who never stops dragging could postpone persistence forever. So there are two timers: a short trailing debounce (`COLLAB_DEBOUNCE`) that fires after a pause, and a hard cap (`COLLAB_MAX_DEBOUNCE`) tracked from the first pending edit that forces a write even mid-storm. Quiet rooms persist quickly, busy rooms persist at most every max-interval, and the DB never sees per-keystroke traffic.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two representations on every save. `storeDocument` writes `Y.encodeStateAsUpdate(doc)` as a binary `Buffer` — the CRDT source of truth a returning session resumes from — and also projects `nodes`, `edges`, and `metadata` as plain JSON back onto the queryable diagram document. The rest of the API can read diagrams without knowing Yjs exists. If no snapshot exists yet, `loadDocument` seeds the Y.Doc from the plain diagram inside a single transaction, so pre-collab diagrams onboard cleanly.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Boring but necessary guards. Per-connection rate limiting (200 messages per 10-second window), 30-second ping/pong liveness, and when the last client leaves, the room persists one final time and tears itself down. Integration tests with Vitest and `y-websocket` confirm the parts I care about: an edit on client A lands on client B and in the store, and edits never leak between rooms.',
+      },
+      {
+        type: 'heading',
+        text: 'The parts I haven\'t solved',
+      },
+      {
+        type: 'paragraph',
+        text: 'I\'d be lying if I ended on "and everything is perfect."',
+      },
+      {
+        type: 'paragraph',
+        text: 'Tombstones. Remember the OR-Set tax? Yjs pays it too — deleted items persist as tombstones inside the document so late operations can still resolve their positions. A diagram that lives for months of heavy editing accumulates history it will never need again. There are approaches (snapshotting, `Y.encodeStateAsUpdateV2`, periodic doc rebuilds when no clients are connected), but I don\'t have a compaction strategy in production yet. It\'s the top item on the list.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Horizontal scaling. Rooms are in-memory, per instance. Two users on the same diagram must land on the same instance, which is fine today and a real constraint tomorrow. The known fix is a Redis pub/sub fanout between instances so a room can span processes — the same pattern SRVJ already uses for notification delivery — but the collab layer hasn\'t crossed that bridge yet.',
+      },
+      {
+        type: 'paragraph',
+        text: 'LWW inside the map. Concurrent edits to the same key of a `Y.Map` resolve last-writer-wins. Two people recoloring the same node at the same instant: one color survives. For diagram properties that\'s the correct trade — nobody wants a merge dialog over a hex code — but it\'s worth knowing which semantics you\'re getting where.',
+      },
+      {
+        type: 'paragraph',
+        text: 'If you\'re building anything multiplayer, my honest advice is: don\'t write the merge logic. Pick the data structure that makes merging a non-event, put a thin authenticated relay in front of it, and spend your energy on the two problems that actually remain — persistence and cleanup. That\'s the whole trick, and it took me an embarrassing amount of reading to learn it.',
+      },
+    ],
+  },
+  {
     id: 3,
     slug: 'server-sent-events-real-time-notifications-srvj',
     title: 'Server-Sent Events (SSE): Real-Time Notifications in SRVJ',
