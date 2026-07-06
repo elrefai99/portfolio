@@ -24,6 +24,10 @@ export type BlogPost = {
   title: string
   excerpt: string
   category: string
+  /** SEO <title> / og:title override. Falls back to `${title} • Blog`. Keep ~50–60 chars. */
+  metaTitle?: string
+  /** SEO meta description / og:description override. Falls back to `excerpt`. Keep ~150–160 chars. */
+  metaDescription?: string
   date: string
   /** Set when the post's content changes after publish; falls back to `date`. */
   updated?: string
@@ -45,6 +49,9 @@ export const blogs: BlogPost[] = [
     title: 'CRDTs, Yjs, and the Day I Stopped Writing Conflict-Resolution Code',
     excerpt:
       'Why I stopped writing conflict-resolution code for SRVJ\'s collaborative diagrams — CRDTs from first principles (G-Counter, LWW-Register, OR-Set, sequence types), then Yjs and the authenticated WebSocket relay that keeps every editor converged.',
+    metaTitle: 'CRDTs & Yjs: Conflict-Free Real-Time Collaboration',
+    metaDescription:
+      'How CRDTs and Yjs power conflict-free collaborative editing in SRVJ — G-Counter, LWW-Register and OR-Set explained, plus an authenticated WebSocket relay.',
     category: 'Distributed Systems',
     date: '2026-07-06',
     readTime: '13 min read',
@@ -406,6 +413,9 @@ export const blogs: BlogPost[] = [
     title: 'Server-Sent Events (SSE): Real-Time Notifications in SRVJ',
     excerpt:
       'How SRVJ delivers real-time notifications with Server-Sent Events, BullMQ, Redis Pub/Sub, and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
+    metaTitle: 'Server-Sent Events (SSE) for Real-Time Notifications',
+    metaDescription:
+      'Real-time notifications with SSE, BullMQ, Redis Pub/Sub and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
     category: 'Backend Architecture',
     date: '2026-06-27',
     readTime: '9 min read',
@@ -993,6 +1003,9 @@ export const blogs: BlogPost[] = [
     title: 'PayMob, Amazon Payment Services',
     excerpt:
       'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace • the adapter, payment state machine, and webhook pipeline',
+    metaTitle: 'PayMob & Amazon Payment Services (PayFort) Integration',
+    metaDescription:
+      'Integrating PayMob and Amazon Payment Services (PayFort) in production — the adapter pattern, payment state machine, webhook pipeline and reconciliation.',
     category: 'Payment Integration',
     date: '2026-06-12',
     updated: '2026-07-06',
@@ -1255,6 +1268,9 @@ export const blogs: BlogPost[] = [
     title: 'JWT vs PASETO',
     excerpt:
       'I have shipped JWT in production, gotten burned by it, switched to PASETO for auth and payments, and learned that most teams never question the default.',
+    metaTitle: 'JWT vs PASETO: Choosing the Right Token Type',
+    metaDescription:
+      'JWT vs PASETO for auth and payments — signed vs encrypted vs opaque tokens, algorithm safety, revocation, and picking the right token type for each job.',
     category: 'Backend Security',
     date: '2026-05-12',
     readTime: '14 min read',

@@ -436,8 +436,8 @@ export const createBlogPostSEO = (blog: BlogPost) => {
   ])
 
   return createSeo({
-    title: `${blog.title} • Blog`,
-    description: blog.excerpt,
+    title: blog.metaTitle ?? `${blog.title} • Blog`,
+    description: blog.metaDescription ?? blog.excerpt,
     path,
     image: ogImage,
     ogType: 'article',
