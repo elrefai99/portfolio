@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { resolve } from 'node:path'
 import Components from 'unplugin-vue-components/vite'
@@ -10,6 +10,7 @@ import vue from '@vitejs/plugin-vue'
 import type {} from 'vite-ssg'
 import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
 import { blogs } from './src/utils/blogs'
+import { ensureFonts, ogFileName, renderBlogOgPng } from './build/og-image'
 
 // Source files whose last git commit date drives a route's <lastmod>. Keeps the
 // sitemap freshness honest instead of relying on a hand-typed constant. Blog
@@ -73,6 +74,36 @@ const sitemapPlugin = () => ({
   },
 })
 
+// Renders one blueprint OG PNG per post. Dev: on-demand middleware so social
+// debuggers + local preview work. Build: writes dist/og/blog-<slug>.png so the
+// per-post `ogImage` URLs resolve to real files.
+const ogImagePlugin = () => ({
+  name: 'generate-og-images',
+  configureServer(server: ViteDevServer) {
+    server.middlewares.use((req: IncomingMessage, res: ServerResponse, next: () => void) => {
+      const match = req.url?.match(/^\/og\/(blog-[a-z0-9-]+\.png)(?:\?.*)?$/)
+      if (!match) return next()
+      const blog = blogs.find((b) => ogFileName(b) === match[1])
+      if (!blog) return next()
+      try {
+        ensureFonts()
+        res.setHeader('Content-Type', 'image/png')
+        res.end(renderBlogOgPng(blog))
+      } catch {
+        next()
+      }
+    })
+  },
+  closeBundle() {
+    ensureFonts()
+    const dir = resolve(process.cwd(), 'dist', 'og')
+    mkdirSync(dir, { recursive: true })
+    for (const blog of blogs) {
+      writeFileSync(resolve(dir, ogFileName(blog)), renderBlogOgPng(blog))
+    }
+  },
+})
+
 const blogRoutes = blogs.map((blog) => `${sitePaths.blogs}/${blog.slug}`)
 
 // https://vitejs.dev/config/
@@ -93,6 +124,7 @@ export default defineConfig({
     }),
     UnoCSS(),
     sitemapPlugin(),
+    ogImagePlugin(),
   ],
   ssgOptions: {
     formatting: 'minify',

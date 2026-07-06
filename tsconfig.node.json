@@ -3,6 +3,7 @@
   "include": [
     "src/utils/blogs.ts",
     "src/utils/site.ts",
+    "build/og-image.ts",
     "vite.config.*",
     "vitest.config.*",
     "cypress.config.*",

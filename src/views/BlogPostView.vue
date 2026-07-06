@@ -2,13 +2,14 @@
 import { computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
-import { getBlogBySlug, type BlogBlock } from '../utils/blogs'
+import { getBlogBySlug, getRelatedBlogs, type BlogBlock } from '../utils/blogs'
 import { createBlogPostSEO, notFoundSEO } from '../utils/tags'
 
 const route = useRoute()
 
 const slug = computed(() => String(route.params.slug || ''))
 const blog = computed(() => getBlogBySlug(slug.value))
+const relatedBlogs = computed(() => (blog.value ? getRelatedBlogs(blog.value) : []))
 
 useHead(computed(() => (blog.value ? createBlogPostSEO(blog.value) : notFoundSEO)))
 
@@ -224,6 +225,28 @@ const isMermaidCode = (block: BlogBlock) =>
             </template>
           </div>
         </section>
+
+        <nav
+          v-if="relatedBlogs.length"
+          :class="`${panelClass} p-6 md:p-8`"
+          aria-label="Related articles"
+        >
+          <h2 class="text-xl font-semibold text-black dark:text-gray-300">Related reading</h2>
+          <ul class="mt-4 space-y-3">
+            <li v-for="related in relatedBlogs" :key="related.slug">
+              <router-link
+                :to="`/blogs/${related.slug}`"
+                class="group flex items-start justify-between gap-4 rounded-lg border border-transparent p-3 transition hover:border-gray-300 dark:hover:border-gray-700"
+              >
+                <span>
+                  <span class="block font-semibold text-black dark:text-gray-300">{{ related.title }}</span>
+                  <span class="mt-1 block text-sm text-gray-600 dark:text-gray-400">{{ related.excerpt }}</span>
+                </span>
+                <i class="i-carbon:arrow-up-right mt-1 shrink-0 opacity-60 transition group-hover:opacity-100" />
+              </router-link>
+            </li>
+          </ul>
+        </nav>
       </article>
 
       <section v-else :class="`${panelClass} p-6 text-center md:p-8`">

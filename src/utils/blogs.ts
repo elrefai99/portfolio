@@ -46,6 +46,7 @@ export const blogs: BlogPost[] = [
   {
     id: 4,
     slug: 'crdts-yjs-collaborative-editing-srvj',
+    ogImage: '/og/blog-crdts-yjs-collaborative-editing-srvj.png',
     title: 'CRDTs, Yjs, and the Day I Stopped Writing Conflict-Resolution Code',
     excerpt:
       'Why I stopped writing conflict-resolution code for SRVJ\'s collaborative diagrams — CRDTs from first principles (G-Counter, LWW-Register, OR-Set, sequence types), then Yjs and the authenticated WebSocket relay that keeps every editor converged.',
@@ -410,6 +411,7 @@ export const blogs: BlogPost[] = [
   {
     id: 3,
     slug: 'server-sent-events-real-time-notifications-srvj',
+    ogImage: '/og/blog-server-sent-events-real-time-notifications-srvj.png',
     title: 'Server-Sent Events (SSE): Real-Time Notifications in SRVJ',
     excerpt:
       'How SRVJ delivers real-time notifications with Server-Sent Events, BullMQ, Redis Pub/Sub, and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
@@ -1000,6 +1002,7 @@ export const blogs: BlogPost[] = [
   {
     id: 2,
     slug: 'paymob-amazon-payment-services-integration',
+    ogImage: '/og/blog-paymob-amazon-payment-services-integration.png',
     title: 'PayMob, Amazon Payment Services',
     excerpt:
       'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace • the adapter, payment state machine, and webhook pipeline',
@@ -1265,6 +1268,7 @@ export const blogs: BlogPost[] = [
   {
     id: 1,
     slug: 'jwt-vs-paseto-tokens',
+    ogImage: '/og/blog-jwt-vs-paseto-tokens.png',
     title: 'JWT vs PASETO',
     excerpt:
       'I have shipped JWT in production, gotten burned by it, switched to PASETO for auth and payments, and learned that most teams never question the default.',
@@ -1738,3 +1742,37 @@ export const blogs: BlogPost[] = [
 ]
 
 export const getBlogBySlug = (slug: string) => blogs.find((blog) => blog.slug === slug)
+
+/** Total word count across all textual blocks — feeds BlogPosting.wordCount for rich results. */
+export const blogWordCount = (blog: BlogPost) =>
+  blog.blocks.reduce((total, block) => {
+    const text =
+      block.type === 'paragraph' || block.type === 'heading'
+        ? block.text
+        : block.type === 'list'
+          ? block.items.join(' ')
+          : block.code
+    return total + text.trim().split(/\s+/).filter(Boolean).length
+  }, 0)
+
+/** Reading minutes parsed from `readTime` ("13 min read" → 13), else estimated at 200 wpm. */
+export const blogReadMinutes = (blog: BlogPost) => {
+  const match = blog.readTime.match(/\d+/)
+  return match ? Number(match[0]) : Math.max(1, Math.round(blogWordCount(blog) / 200))
+}
+
+/**
+ * Topically-nearest other posts, ranked by shared tags (+2 for same category).
+ * Powers in-content internal links, which spread crawl equity and topical authority.
+ */
+export const getRelatedBlogs = (blog: BlogPost, limit = 3) =>
+  blogs
+    .filter((candidate) => candidate.slug !== blog.slug)
+    .map((candidate) => {
+      const sharedTags = candidate.tags.filter((tag) => blog.tags.includes(tag)).length
+      const sameCategory = candidate.category === blog.category ? 2 : 0
+      return { blog: candidate, score: sharedTags + sameCategory }
+    })
+    .sort((a, b) => b.score - a.score || (a.blog.date < b.blog.date ? 1 : -1))
+    .slice(0, limit)
+    .map((entry) => entry.blog)

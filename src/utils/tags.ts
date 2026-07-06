@@ -1,6 +1,6 @@
 import { sitePaths, siteUrl } from './site'
 import { projects } from './projects'
-import type { BlogPost } from './blogs'
+import { blogs, blogReadMinutes, blogWordCount, type BlogPost } from './blogs'
 
 const author = 'elrefai99'
 const siteName = 'Mohammed Mostafa Portfolio'
@@ -153,6 +153,11 @@ const createBreadcrumb = (items: { name: string; path: string }[]) => ({
     item: new URL(item.path, siteUrl).toString(),
   })),
 })
+
+// Widen a date-only string ('YYYY-MM-DD') to a full ISO 8601 instant, which the
+// Open Graph article spec expects. Already-full timestamps pass through untouched.
+const toIsoDateTime = (date: string) =>
+  /^\d{4}-\d{2}-\d{2}$/.test(date) ? `${date}T00:00:00+00:00` : date
 
 type SeoMeta = ({ name: string } | { property: string }) & { content: string }
 
@@ -381,6 +386,7 @@ export const blogsSEO = createSeo({
     {
       '@context': 'https://schema.org',
       '@type': 'Blog',
+      '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog`,
       name: 'Mohammed Mostafa Blog',
       description:
         'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
@@ -388,6 +394,19 @@ export const blogsSEO = createSeo({
       author: personSchema,
       inLanguage: 'en',
       keywords: blogTopicKeywords,
+      // Enumerate the posts so crawlers see the collection's members and dates.
+      blogPost: blogs.map((post) => ({
+        '@type': 'BlogPosting',
+        headline: post.title,
+        name: post.title,
+        description: post.metaDescription ?? post.excerpt,
+        url: new URL(`${sitePaths.blogs}/${post.slug}`, siteUrl).toString(),
+        datePublished: post.date,
+        dateModified: post.updated ?? post.date,
+        articleSection: post.category,
+        keywords: post.tags,
+        author: { '@id': personId },
+      })),
       about: [
         'Backend engineering',
         'Node.js',
@@ -444,8 +463,8 @@ export const createBlogPostSEO = (blog: BlogPost) => {
     keywords,
     imageAlt: `${blog.title} • Blog`,
     extraMeta: [
-      { property: 'article:published_time', content: blog.date },
-      { property: 'article:modified_time', content: modifiedDate },
+      { property: 'article:published_time', content: toIsoDateTime(blog.date) },
+      { property: 'article:modified_time', content: toIsoDateTime(modifiedDate) },
       { property: 'article:author', content: author },
       { property: 'article:section', content: blog.category },
       ...blog.tags.map((tag) => ({ property: 'article:tag', content: tag })),
@@ -468,6 +487,10 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         author: personSchema,
         publisher: personSchema,
         articleSection: blog.category,
+        // Google Article-recommended signals: length and reading time (ISO 8601 duration).
+        wordCount: blogWordCount(blog),
+        timeRequired: `PT${blogReadMinutes(blog)}M`,
+        isPartOf: { '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog` },
         inLanguage: 'en',
         keywords,
       },
