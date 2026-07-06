@@ -5,57 +5,70 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # Start Vite dev server (http://localhost:5173)
-npm run build        # Type-check + build + copy Netlify redirects
-npm run build-only   # Build without type-checking
-npm run type-check   # Run vue-tsc only
-npm run preview      # Preview production build locally
+npm run dev          # Vite dev server (http://localhost:5173)
+npm run build        # run-p: type-check AND vite-ssg build, in parallel
+npm run build-only   # vite-ssg build, no type-check
+npm run type-check   # vue-tsc --build --force
+npm run preview      # Serve the production build locally
 ```
 
-No test suite is configured. Run `npm run type-check && npm run build` as the validation baseline before opening a PR.
+No test suite exists. `npm run type-check && npm run build` is the validation baseline before a PR.
 
-> **Windows note**: `npm run build` ends with `cp _dist_redirects dist/_redirects` (POSIX `cp`), which fails in native PowerShell/cmd. On Windows, validate with `npm run type-check && npm run build-only`, or run the full build under Git Bash / WSL.
+`npm run build` uses `run-p` (npm-run-all2), so `type-check` and the SSG build run **concurrently** — the command fails if either fails, but a type error does not stop the build from also running. The lockfile is `pnpm-lock.yaml`; prefer `pnpm` to keep it in sync (the scripts are standard and work with either).
 
-## Architecture
+## Big picture
 
-**Stack**: Vue 3 (Composition API, `<script setup>`) + Vite + UnoCSS + Vue Router + Pinia + vue-i18n + @vueuse/head
+This is a static-site-generated (SSG) Vue 3 portfolio, prerendered to HTML at build time and deployed on **Vercel**. Two ideas drive most of the code and are not obvious from any single file:
 
-**Layout** (`App.vue`): `<NavBar>` → `<BackGround>` → `<RouterView>` → `<Footer>`
+### 1. vite-ssg prerendering
 
-**Routes** (defined in `src/router/index.ts`, paths centralized in `src/utils/site.ts`):
-- `/` → `HomeView` (AboutMe + Timeline)
-- `/projects` → `projectsView` (filterable project gallery)
-- `/blogs` → `BlogsView` (blog listing)
-- `/blogs/:slug` → `BlogPostView` (individual blog post)
-- `/resume` → `ResumeView`
-- `/*` → `NotFound`
+The entry point is `ViteSSG`, not `createApp` (`src/main.ts`). Every route is prerendered to static HTML at build time. `ssgOptions.includedRoutes` in `vite.config.ts` drops `:param` routes and explicitly enumerates blog routes, so **each blog slug gets its own prerendered HTML file** — adding a blog to `src/utils/blogs.ts` automatically extends the prerender set. The `/404` route is a literal (non-`:param`) path so it prerenders to `dist/404.html`, which Vercel auto-serves with a real 404 status.
 
-## Key Files
+### 2. The "Blueprint" architectural design system
 
-- **`src/utils/projects.ts`** — All portfolio project data (title, description, tags, links, image). Add new projects here.
-- **`src/utils/blogs.ts`** — All blog post data as structured blocks (`paragraph`, `heading`, `list`, `code`). Add new posts here; slugs are used for routing.
-- **`src/utils/site.ts`** — Canonical site URL, route path constants (`sitePaths`), and sitemap entries. Update sitemap here when adding routes.
-- **`src/utils/icons.ts`** — Maps tech-stack tag strings to Iconify icon identifiers used on project cards.
-- **`src/utils/tags.ts`** — SEO `<head>` metadata per route.
-- **`src/utils/spotify.ts`** — Static arrays of Spotify embed-iframe descriptors (`src`, dimensions, `allow`) rendered by `src/components/songs.vue`. Not an API integration — to change tracks/playlists, edit the embed URLs here.
-- **`src/composables/useTheme.ts`** — Dark/light/auto theme toggle. Persists to the `theme-mode` localStorage key and toggles the `dark` class on `<html>`. To avoid a FOUC, an inline script in `index.html` reads `theme-mode` synchronously before paint and applies the `dark` class (matching this composable's auto/light/dark logic). `theme-mode` is the single source of truth.
-- **`src/locales/lang/{en,ar}.json`** — i18n copy. The site supports English and Arabic; all user-visible text should go through vue-i18n rather than being hardcoded.
-- **`uno.config.ts`** — UnoCSS config with icon presets (Iconify). Add new icon collections here.
-- **`vite.config.ts`** — Vite config with unplugin-auto-import and unplugin-vue-components (components and Vue APIs are auto-imported; no explicit imports needed).
+The whole site is themed as an architectural blueprint / building elevation. This is the dominant visual language and lives in **`src/assets/blueprint.css`** (imported globally in `main.ts`): `--bp-*` CSS custom properties and `bp-*` component classes (`bp-nav`, `bp-floor`, `bp-card`, `bp-slab`, `bp-chip`, `bp-tab`, `bp-mono`, `bp-roof`, `bp-footer`, …). Dark mode is "blueprint" (near-black), light mode is "paper blueprint" — both defined via `--bp-*` vars on `:root` / `:root:not(.dark)`.
+
+`App.vue` frames the page as a building: roof datum (top) → floors → foundation (footer). Each page section is a **`<FloorSection>`** (`src/components/FloorSection.vue`) with a level code (`L-04`), name, elevation annotation, concrete-slab separators, corner registration marks, and IntersectionObserver scroll-reveal (`eager` disables the reveal for the above-the-fold LCP floor). Build new pages as floors to stay consistent — `BlogsView.vue` is a clean reference.
+
+## Routes & data
+
+Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all.
+
+Content is plain TypeScript data modules under `src/utils/` — no CMS:
+
+- **`projects.ts`** — portfolio project data (title, description, tags, links, image).
+- **`blogs.ts`** — blog posts as structured blocks (`paragraph`, `heading`, `list`, `code`); `slug` drives routing and the prerender set.
+- **`site.ts`** — canonical `siteUrl`, `sitePaths`, and `sitemapEntries`.
+- **`tags.ts`** — per-route SEO `<head>` (OpenGraph, Twitter, JSON-LD schema); consumed via `useHead(...)` in each view.
+- **`icons.ts`** — maps tech-tag strings → Iconify icon ids for project cards.
+- **`spotify.ts`** — static Spotify embed-iframe descriptors (not an API); edit the embed URLs to change tracks.
+
+## Sitemap
+
+A custom Vite plugin in `vite.config.ts` generates `sitemap.xml` (dev: middleware at `/sitemap.xml`; build: `closeBundle` writes `dist/sitemap.xml`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources`, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable. When adding a route: add it to `sitemapEntries` in `site.ts`, and optionally to `routeSources` in `vite.config.ts` for git-driven freshness.
 
 ## Styling
 
-UnoCSS is used with a Tailwind reset. Utility classes work exactly as in Tailwind. Icons are rendered via UnoCSS icon preset — use class names like `i-logos-vue` or `i-simple-icons-docker`. Installed icon collections come from the `@iconify-json/*` dev dependencies (carbon, logos, mdi, ri, skill-icons, solar, etc.).
+UnoCSS with a Tailwind reset — utilities work as in Tailwind. Dark mode is class-based (`presetUno({ dark: 'class' })`), so pair styles with `dark:` variants. Two style layers coexist: the global Blueprint system in `src/assets/blueprint.css`, and UnoCSS shortcuts/animations/theme in **`uno.config.ts`** (`bg-base`, `border-base`, `social-link`, `project-*`/drift keyframes, `theme.colors`).
 
-**Custom theme** lives in `uno.config.ts`: shortcuts (`bg-base`, `border-base`, `social-link`, …), drift/`project-*` keyframe animations, and a `theme.colors` entry. Dark mode is class-based (`presetUno({ dark: 'class' })`), so always pair styles with `dark:` variants.
+Icons render via the UnoCSS icon preset (`i-carbon-*`, `i-logos-*`, `i-simple-icons-*`, …) from the installed `@iconify-json/*` collections.
 
-> **Safelist gotcha**: icon classes chosen at runtime (e.g. tech-tag icons resolved through `src/utils/icons.ts`) are not present in source as literal strings, so UnoCSS purges them. Any such icon must be added to the `safelist` array in `uno.config.ts` or it won't render. When adding a new project tech tag with a new icon, update both `icons.ts` and the `safelist`.
+> **Safelist gotcha**: icon classes chosen at runtime (e.g. tech-tag icons resolved through `src/utils/icons.ts`) are not present as literal strings in source, so UnoCSS purges them. Such icons must be added to `safelist` in `uno.config.ts`. When adding a new tech tag with a new icon, update both `icons.ts` and the `safelist`.
+
+## Theme
+
+`src/composables/useTheme.ts` handles dark/light/auto, persists to the `theme-mode` localStorage key, and toggles the `dark` class on `<html>`. To avoid FOUC, an inline script in `index.html` reads `theme-mode` synchronously before paint and applies `dark` (mirroring the composable's logic). `theme-mode` is the single source of truth.
+
+## i18n (current state)
+
+vue-i18n is wired up (`src/main.ts`, `src/locales/index.ts`, `lang/{en,ar}.json`) with locale hardcoded to `en` and no runtime switcher. In practice **no view or component uses `$t`/`useI18n`** — all UI text is currently hardcoded English, and `ar.json` is effectively dormant. Don't assume the i18n plumbing is live; if a task needs localized copy, wiring `useI18n` into the components is itself part of the work.
 
 ## Auto-imports
 
-Both Vue Composition API helpers (`ref`, `computed`, `onMounted`, etc.) and components placed in `src/components/` are auto-imported by Vite plugins. You do not need to write import statements for these.
+Vue Composition API helpers (`ref`, `computed`, `onMounted`, …), `@vueuse/core`, composables in `src/composables/`, and components in `src/components/` are auto-imported (`unplugin-auto-import` + `unplugin-vue-components`). No explicit imports needed for these; `auto-imports.d.ts` and `components.d.ts` are generated — don't hand-edit.
 
 ## Deployment
 
-- **Netlify**: `npm run build` copies `_dist_redirects` → `dist/_redirects` for SPA routing.
-- **Docker**: Multi-stage Dockerfile — builder stage runs `npm run build`, production stage serves `dist/` via Nginx. Dev stage runs Vite with `--host`.
+- **Vercel** (primary): `vercel.json` — `cleanUrls`, `trailingSlash: false`, `/github` + `/gh` redirects, and security headers. `@vercel/analytics` mounts in `App.vue`.
+- **Docker** (secondary): multi-stage `Dockerfile` builds and serves `dist/` via Nginx (`nginx.conf`); `docker-compose.yml` has dev/prod stages.
+- `_dist_redirects` is legacy Netlify config and is **not** copied by the current build.
