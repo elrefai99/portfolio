@@ -4,7 +4,7 @@ import { Resvg } from '@resvg/resvg-js'
 import type { BlogPost } from '../src/utils/blogs'
 
 // Branded 1200×630 blueprint OG card, rendered to PNG at build time. One image
-// per post so every share/Discover card is unique instead of the site default.
+// per page/post so every share/Discover card is unique instead of the site default.
 const WIDTH = 1200
 const HEIGHT = 630
 
@@ -15,6 +15,19 @@ const fontFiles = [
   resolve(fontsDir, 'Inter-Bold.ttf'),
   resolve(fontsDir, 'InterDisplay-Bold.ttf'),
 ]
+
+export type OgCard = {
+  /** Output filename under /og, e.g. `page-home.png` or `blog-<slug>.png`. */
+  fileName: string
+  /** Small tracked datum line, e.g. `L-04 · JOURNAL / ARTICLE`. */
+  eyebrow: string
+  /** Pill label, e.g. a category or section. */
+  chip: string
+  title: string
+  subtitle: string
+  footerLeft: string
+  footerRight: string
+}
 
 const escapeXml = (value: string) =>
   value.replace(/[&<>"']/g, (char) =>
@@ -58,15 +71,14 @@ const tspans = (lines: string[], x: number, startY: number, lineHeight: number) 
     .map((line, i) => `<tspan x="${x}" y="${startY + i * lineHeight}">${escapeXml(line)}</tspan>`)
     .join('')
 
-const buildSvg = (blog: BlogPost) => {
+const buildSvg = (card: OgCard) => {
   const accent = '#6cb6ff'
-  const titleLines = wrapText(blog.title, 62, WIDTH - 160, 3)
+  const titleLines = wrapText(card.title, 62, WIDTH - 160, 3)
   // Keep the card off the footer: a tall 3-line title leaves room for only one
-  // excerpt line, a short title leaves room for two.
-  const excerptLines = wrapText(blog.excerpt, 28, WIDTH - 160, titleLines.length >= 3 ? 1 : 2)
+  // subtitle line, a short title leaves room for two.
+  const subtitleLines = wrapText(card.subtitle, 28, WIDTH - 160, titleLines.length >= 3 ? 1 : 2)
   const titleY = 250
-  const excerptY = titleY + titleLines.length * 74 + 30
-  const tags = blog.tags.slice(0, 5).join('   ·   ')
+  const subtitleY = titleY + titleLines.length * 74 + 30
 
   // Blueprint grid lines every 48px.
   let grid = ''
@@ -83,20 +95,20 @@ const buildSvg = (blog: BlogPost) => {
     <path d="M24 ${HEIGHT - 60} V${HEIGHT - 24} H60" fill="none"/>
     <path d="M${WIDTH - 60} ${HEIGHT - 24} H${WIDTH - 24} V${HEIGHT - 60}" fill="none"/>
   </g>
-  <text x="80" y="96" font-family="Inter" font-weight="600" font-size="22" letter-spacing="4" fill="${accent}" fill-opacity="0.85">L-04 · JOURNAL / ARTICLE</text>
+  <text x="80" y="96" font-family="Inter" font-weight="600" font-size="22" letter-spacing="4" fill="${accent}" fill-opacity="0.85">${escapeXml(card.eyebrow)}</text>
   <text x="${WIDTH - 80}" y="96" text-anchor="end" font-family="Inter" font-weight="600" font-size="22" letter-spacing="2" fill="#9fb2c7">elrefai.me</text>
-  <rect x="80" y="140" width="${blog.category.length * 15 + 44}" height="44" rx="22" fill="${accent}" fill-opacity="0.12" stroke="${accent}" stroke-opacity="0.5"/>
-  <text x="${80 + 22}" y="169" font-family="Inter" font-weight="600" font-size="22" letter-spacing="2" fill="${accent}">${escapeXml(blog.category.toUpperCase())}</text>
+  <rect x="80" y="140" width="${card.chip.length * 15 + 44}" height="44" rx="22" fill="${accent}" fill-opacity="0.12" stroke="${accent}" stroke-opacity="0.5"/>
+  <text x="${80 + 22}" y="169" font-family="Inter" font-weight="600" font-size="22" letter-spacing="2" fill="${accent}">${escapeXml(card.chip.toUpperCase())}</text>
   <text font-family="Inter Display" font-weight="700" font-size="62" fill="#f4f7fb">${tspans(titleLines, 80, titleY, 74)}</text>
-  <text font-family="Inter" font-weight="400" font-size="28" fill="#9fb2c7">${tspans(excerptLines, 80, excerptY, 40)}</text>
+  <text font-family="Inter" font-weight="400" font-size="28" fill="#9fb2c7">${tspans(subtitleLines, 80, subtitleY, 40)}</text>
   <line x1="80" y1="${HEIGHT - 92}" x2="${WIDTH - 80}" y2="${HEIGHT - 92}" stroke="${accent}" stroke-opacity="0.25" stroke-width="1"/>
-  <text x="80" y="${HEIGHT - 52}" font-family="Inter" font-weight="600" font-size="24" fill="#c7d4e3">Mohammed Mostafa · ${escapeXml(blog.readTime)}</text>
-  <text x="${WIDTH - 80}" y="${HEIGHT - 52}" text-anchor="end" font-family="Inter" font-weight="400" font-size="20" fill="#7d90a6">${escapeXml(tags)}</text>
+  <text x="80" y="${HEIGHT - 52}" font-family="Inter" font-weight="600" font-size="24" fill="#c7d4e3">${escapeXml(card.footerLeft)}</text>
+  <text x="${WIDTH - 80}" y="${HEIGHT - 52}" text-anchor="end" font-family="Inter" font-weight="400" font-size="20" fill="#7d90a6">${escapeXml(card.footerRight)}</text>
 </svg>`
 }
 
-export const renderBlogOgPng = (blog: BlogPost): Buffer => {
-  const resvg = new Resvg(buildSvg(blog), {
+export const renderOgPng = (card: OgCard): Buffer => {
+  const resvg = new Resvg(buildSvg(card), {
     fitTo: { mode: 'width', value: WIDTH },
     font: { fontFiles, loadSystemFonts: false, defaultFontFamily: 'Inter' },
     background: '#0b0f17',
@@ -104,7 +116,62 @@ export const renderBlogOgPng = (blog: BlogPost): Buffer => {
   return resvg.render().asPng()
 }
 
-export const ogFileName = (blog: BlogPost) => `blog-${blog.slug}.png`
+const author = 'Mohammed Mostafa · Software Engineer'
+
+// Per-post card. Path lives at /og/blog-<slug>.png.
+export const blogCard = (blog: BlogPost): OgCard => ({
+  fileName: `blog-${blog.slug}.png`,
+  eyebrow: 'L-04 · JOURNAL / ARTICLE',
+  chip: blog.category,
+  title: blog.title,
+  subtitle: blog.excerpt,
+  footerLeft: `Mohammed Mostafa · ${blog.readTime}`,
+  footerRight: blog.tags.slice(0, 5).join('   ·   '),
+})
+
+// Static-page cards. Paths live at /og/page-<name>.png and are referenced from
+// the matching *SEO exports in src/utils/tags.ts.
+export const staticCards: OgCard[] = [
+  {
+    fileName: 'page-home.png',
+    eyebrow: 'L-01 · PORTFOLIO / HOME',
+    chip: 'Software Engineer',
+    title: 'Mohammed Mostafa',
+    subtitle: 'Backend engineer in Cairo, Egypt — APIs, payment integrations, and cloud systems with Node.js, TypeScript, and AWS.',
+    footerLeft: author,
+    footerRight: 'Node.js · TypeScript · AWS · Backend',
+  },
+  {
+    fileName: 'page-projects.png',
+    eyebrow: 'L-02 · PROJECTS / INDEX',
+    chip: 'Selected Work',
+    title: 'Projects & Open-Source Work',
+    subtitle: 'Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
+    footerLeft: author,
+    footerRight: 'Backend · APIs · Payments · Tooling',
+  },
+  {
+    fileName: 'page-blogs.png',
+    eyebrow: 'L-04 · JOURNAL / INDEX',
+    chip: 'Field Notes',
+    title: 'Backend Engineering Notes',
+    subtitle: 'Node.js, TypeScript, Express.js, API architecture, queues, Redis, authentication, payment tokens, and production systems.',
+    footerLeft: author,
+    footerRight: 'Node.js · TypeScript · Queues · APIs',
+  },
+  {
+    fileName: 'page-resume.png',
+    eyebrow: 'L-03 · RESUME / CV',
+    chip: 'Curriculum Vitae',
+    title: 'Resume — Backend Engineer',
+    subtitle: 'Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, Docker, and AWS.',
+    footerLeft: author,
+    footerRight: 'Node.js · TypeScript · Cloud · Databases',
+  },
+]
+
+/** Every card rendered at build time: static pages plus one per blog post. */
+export const allCards = (blogs: BlogPost[]): OgCard[] => [...staticCards, ...blogs.map(blogCard)]
 
 let cachedFontCheck = false
 export const ensureFonts = () => {

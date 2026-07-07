@@ -244,6 +244,7 @@ export const homeSEO = createSeo({
     'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer in Cairo, Egypt at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
   path: sitePaths.home,
   keywords: [...brandKeywords, ...roleLocationKeywords, ...skillKeywords],
+  image: `${siteUrl}/og/page-home.png`,
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   schema: [
     // ProfilePage is Google's recommended type for a person's primary page; it
@@ -276,6 +277,7 @@ export const resumeSEO = createSeo({
     'Backend Engineer CV',
     ...skillKeywords,
   ],
+  image: `${siteUrl}/og/page-resume.png`,
   imageAlt: 'Mohammed Mostafa • Resume',
   schema: [
     personSchema,
@@ -343,11 +345,7 @@ export const projectsSEO = createSeo({
     'API projects',
     'Developer tooling',
   ],
-  image: `${siteUrl}/og/projects_page_og.png`,
-  // Real file is 498x202, not the site's default 1200x630 — declaring the
-  // wrong size breaks Facebook/LinkedIn/Slack/Discord link-preview cards.
-  imageWidth: '498',
-  imageHeight: '202',
+  image: `${siteUrl}/og/page-projects.png`,
   imageAlt: 'Mohammed Mostafa • Node.js and TypeScript Projects Portfolio',
   schema: [
     {
@@ -381,6 +379,7 @@ export const blogsSEO = createSeo({
     'Elrefai blog',
     ...blogTopicKeywords,
   ],
+  image: `${siteUrl}/og/page-blogs.png`,
   imageAlt: 'Mohammed Mostafa Blog',
   schema: [
     {

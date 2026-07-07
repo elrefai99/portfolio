@@ -10,7 +10,7 @@ import vue from '@vitejs/plugin-vue'
 import type {} from 'vite-ssg'
 import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
 import { blogs } from './src/utils/blogs'
-import { ensureFonts, ogFileName, renderBlogOgPng } from './build/og-image'
+import { allCards, ensureFonts, renderOgPng } from './build/og-image'
 
 // Source files whose last git commit date drives a route's <lastmod>. Keeps the
 // sitemap freshness honest instead of relying on a hand-typed constant. Blog
@@ -74,21 +74,21 @@ const sitemapPlugin = () => ({
   },
 })
 
-// Renders one blueprint OG PNG per post. Dev: on-demand middleware so social
-// debuggers + local preview work. Build: writes dist/og/blog-<slug>.png so the
-// per-post `ogImage` URLs resolve to real files.
+// Renders one blueprint OG PNG per page and per post. Dev: on-demand middleware
+// so social debuggers + local preview work. Build: writes dist/og/*.png so the
+// per-page/post `image` URLs resolve to real files.
 const ogImagePlugin = () => ({
   name: 'generate-og-images',
   configureServer(server: ViteDevServer) {
     server.middlewares.use((req: IncomingMessage, res: ServerResponse, next: () => void) => {
-      const match = req.url?.match(/^\/og\/(blog-[a-z0-9-]+\.png)(?:\?.*)?$/)
+      const match = req.url?.match(/^\/og\/((?:page|blog)-[a-z0-9-]+\.png)(?:\?.*)?$/)
       if (!match) return next()
-      const blog = blogs.find((b) => ogFileName(b) === match[1])
-      if (!blog) return next()
+      const card = allCards(blogs).find((c) => c.fileName === match[1])
+      if (!card) return next()
       try {
         ensureFonts()
         res.setHeader('Content-Type', 'image/png')
-        res.end(renderBlogOgPng(blog))
+        res.end(renderOgPng(card))
       } catch {
         next()
       }
@@ -98,8 +98,8 @@ const ogImagePlugin = () => ({
     ensureFonts()
     const dir = resolve(process.cwd(), 'dist', 'og')
     mkdirSync(dir, { recursive: true })
-    for (const blog of blogs) {
-      writeFileSync(resolve(dir, ogFileName(blog)), renderBlogOgPng(blog))
+    for (const card of allCards(blogs)) {
+      writeFileSync(resolve(dir, card.fileName), renderOgPng(card))
     }
   },
 })
