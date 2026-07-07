@@ -14,6 +14,7 @@ declare module 'vue' {
     BlueprintBackground: typeof import('./src/components/BlueprintBackground.vue')['default']
     BlueprintLogo: typeof import('./src/components/BlueprintLogo.vue')['default']
     BranchBackground: typeof import('./src/components/BranchBackground.vue')['default']
+    ContentBlocks: typeof import('./src/components/ContentBlocks.vue')['default']
     Darkmode: typeof import('./src/components/darkmode.vue')['default']
     FloorSection: typeof import('./src/components/FloorSection.vue')['default']
     Footer: typeof import('./src/components/footer.vue')['default']

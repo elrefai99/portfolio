@@ -13,7 +13,7 @@ const downloadResume = () => {
 </script>
 
 <template>
-  <FloorSection level="L-05" name="Dossier / Curriculum Vitae" elevation="+0.00 m" :top-slab="false">
+  <FloorSection level="L-05" name="Dossier / Curriculum Vitae" elevation="+0.00 m" :top-slab="false" eager>
   <div max-w-4xl mx-auto min-h-screen text-black dark:text-white px-4 py-8>
 
     <!-- Top Download Button -->

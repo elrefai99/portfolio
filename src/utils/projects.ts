@@ -5,7 +5,27 @@ import Gosha0 from "../../public/projects/0Gosha.png"
 import GenImport from '../../public/projects/Gen-Import.jpg'
 import srvj from '../../public/projects/srvj.png'
 
-export const projects: any = [
+interface IProject {
+  id: number
+  name: string
+  slug: string
+  category: string
+  logoWidth?: number
+  logoHeight?: number
+  logo?: string
+  class?: string
+  link?: string
+  github?: string
+  npm?: string
+  /** One-line descriptor shown under the project name on the index. */
+  tagline?: string
+  desc: string | string[]
+  tags: string | string[]
+  keywords?: string | string[]
+  metaDescription?: string | string[]
+}
+
+export const projects: IProject[] = [
   {
     id: 1,
     name: "Lesoll",
@@ -17,33 +37,79 @@ export const projects: any = [
     link: "https://lesoll.com",
     class: "w-5 h-auto",
     github: "",
+    tagline: "Production B2B/B2C real-estate & automotive marketplace backend",
     desc: [
       "Developed a B2C and B2B marketplace for real estate and automotive",
-      "Developed key features: Payment system (use paymob as payment gateway), admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
-      "Deployed and managed a service using Docker and AWS EC2"
+      "Developed key features: payment system (Paymob payment gateway), admin dashboard, user dashboard, chat system, notifications system, email system, SMS/OTP system, traffic system (Puppeteer web scraping), reports, and employee tools",
+      "Deployed and managed the service using Docker and AWS EC2"
     ],
     tags: [
       "Typescript",
       "Javascript",
       "Express.js",
       "MongoDB",
-      "Paymob",
-      "SendGrid",
-      "Message Queue (BullMQ, AWS SQS)",
+      "Paymob (Payment Gateway)",
+      "Resend",
+      "BullMQ",
       "Redis",
       "Puppeteer",
       "Swagger",
       "Docker",
-      "AWS (S3, EC2, CloudFront, Route 53, SQS)",
-      "Render",
+      "AWS (S3, EC2, CloudFront, Route 53)",
       "Socket.IO",
-      "Axios",
       "NGINX",
       "pm2",
       "pnpm",
       "git/github",
       "Github Actions"
-    ]
+    ],
+    keywords: [
+      "Lesoll",
+      "Lesoll Marketplace",
+      "Real Estate Marketplace",
+      "Automotive Marketplace",
+      "Property Listing Platform",
+      "Car Marketplace",
+      "B2B Marketplace",
+      "B2C Marketplace",
+      "Marketplace Backend",
+      "Marketplace API",
+      "TypeScript",
+      "JavaScript",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "Paymob",
+      "Payment Gateway Integration",
+      "OTP Authentication",
+      "SMS Verification",
+      "Email Notifications",
+      "Real-time Chat",
+      "Socket.IO",
+      "Admin Dashboard",
+      "User Dashboard",
+      "Notification System",
+      "Puppeteer Web Scraping",
+      "Background Jobs",
+      "Docker",
+      "NGINX",
+      "AWS EC2",
+      "AWS S3",
+      "AWS CloudFront",
+      "AWS Route 53",
+      "AWS SQS",
+      "GitHub Actions",
+      "CI/CD",
+      "REST API",
+      "Backend Architecture",
+      "Production Backend",
+      "Scalable Backend",
+      "Cloud Deployment"
+    ],
+    metaDescription:
+      "Technical case study of Lesoll, a production B2B and B2C real estate and automotive marketplace. Explore its Express.js backend, MongoDB, Redis, BullMQ, Paymob integration, Docker deployment, AWS infrastructure, real-time chat, notifications, and scalable backend architecture."
   },
   {
     id: 2,
@@ -56,23 +122,24 @@ export const projects: any = [
     class: "w-5 h-auto",
     link: "https://egystay.com",
     github: "",
+    tagline: "Property rental & booking platform with a Co-Host marketplace",
     desc: [
-      "Developed a B2C marketplace for and mobile application property rental and booking",
-      "Developed key features: Payment system (use Amazon Payment Service (APS) as payment gateway), CoHost system (allow users to host their properties), Cancellation policy system, booking system, admin dashboard, user dashboard, chat system, notifications system, emails system, sms system (OTP system), traffic system (use puppeteer to scrape websites),reports and employee tools",
-      "Deployed and managed a service using Docker, AWS EKS (Elastic Kubernetes Service) and render"
+      "Developed a B2C property rental and booking platform for web and mobile",
+      "Developed key features: payment system (Amazon Payment Services (APS) gateway), Co-Host system (lets users host their own properties), cancellation-policy system, booking system, admin dashboard, user dashboard, chat system, notifications system, email system, SMS/OTP system, traffic system (Puppeteer web scraping), reports, and employee tools",
+      "Deployed and managed the service using Docker, AWS EKS (Elastic Kubernetes Service), and Render"
     ],
     tags: [
       "Typescript",
       "Express.js",
       "MongoDB",
       "Amazon Payment Service (APS)",
-      "SendGrid",
-      "Message Queue (BullMQ, AWS SQS)",
+      "Paymob",
+      "Resend",
+      "BullMQ",
       "Redis",
       "Swagger",
       "Docker",
-      "AWS (S3, EC2, CloudFront, Route 53, SQS)",
-      "Render",
+      "AWS (S3, EC2, CloudFront, Route 53)",
       "Socket.IO",
       "Axios",
       "NGINX",
@@ -80,17 +147,74 @@ export const projects: any = [
       "pnpm",
       "git/github",
       "Github Actions"
-    ]
+    ],
+    keywords: [
+      "EGYStay",
+      "EGYStay Booking Platform",
+      "Property Rental Platform",
+      "Vacation Rental Platform",
+      "Property Booking System",
+      "Hotel Booking Alternative",
+      "Short-Term Rental Platform",
+      "Rental Marketplace",
+      "Booking Engine",
+      "Reservation System",
+      "Co-Host Management",
+      "Property Management",
+      "Cancellation Policy",
+      "Marketplace Backend",
+      "Booking Platform Backend",
+      "TypeScript",
+      "Node.js",
+      "Express.js",
+      "Modular Monolith Architecture",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "Amazon Payment Services",
+      "APS Payment Gateway",
+      "Payment Gateway Integration",
+      "OTP Authentication",
+      "SMS Verification",
+      "Email Notifications",
+      "Real-time Chat",
+      "Socket.IO",
+      "Admin Dashboard",
+      "Host Dashboard",
+      "User Dashboard",
+      "Notification System",
+      "Background Jobs",
+      "Puppeteer Web Scraping",
+      "Docker",
+      "NGINX",
+      "AWS EC2",
+      "AWS EKS",
+      "AWS S3",
+      "AWS CloudFront",
+      "AWS Route 53",
+      "AWS SQS",
+      "GitHub Actions",
+      "CI/CD",
+      "REST API",
+      "Scalable Backend",
+      "Production Backend",
+      "Cloud Deployment"
+    ],
+    metaDescription:
+      "Technical case study of EGYStay, a production property rental and booking platform. Discover its Express.js backend, MongoDB, Amazon Payment Services (APS) integration, booking engine, Co-Host system, BullMQ, Docker, AWS EKS deployment, and scalable backend architecture."
   },
   {
-    id: 12,
+    id: 3,
     name: "SRVJ",
     slug: "srvj",
     category: "Live",
     logo: srvj,
+    logoWidth: 1254,
+    logoHeight: 1254,
     class: "w-5 h-5",
     link: "https://srvj.elrefai.me/",
-    github: "https://github.com/elrefai99/SRVJ",
+    github: "",
+    tagline: "Real-time collaborative diagram editor built on Yjs CRDTs",
     desc: [
       "Built real-time collaborative diagram editing using Yjs CRDTs over a custom WebSocket server implementing the Yjs sync and awareness protocols, enabling live cursors, presence, and seamless multiplayer editing.",
       "Secured WebSocket connections with PASETO v4 authentication and enforced project-level role-based access control, while isolating collaboration sessions into dedicated board rooms.",
@@ -123,19 +247,126 @@ export const projects: any = [
       "Github Actions",
       "git/github",
       "PNPM"
-    ]
+    ],
+    keywords: [
+      "SRVJ",
+      "Real-time collaborative editor",
+      "Collaborative diagram editor",
+      "Multiplayer diagram editor",
+      "Yjs",
+      "CRDT",
+      "Conflict-free Replicated Data Types",
+      "Real-time synchronization",
+      "Server-Sent Events",
+      "SSE",
+      "Socket.IO",
+      "Express.js",
+      "TypeScript",
+      "Node.js",
+      "Monolithic Modular Architecture",
+      "MongoDB",
+      "PostgreSQL",
+      "Prisma",
+      "Redis",
+      "BullMQ",
+      "Docker",
+      "Kubernetes",
+      "NGINX",
+      "AWS EC2",
+      "AWS S3",
+      "AWS CloudFront",
+      "AWS Route 53",
+      "GitHub Actions",
+      "Vitest",
+      "Vue.js",
+      "Vue Flow",
+      "Vite",
+      "Pinia",
+      "UnoCSS",
+      "Role-Based Access Control",
+      "RBAC",
+      "PASETO",
+      "WebSocket Authentication",
+      "Backend Architecture",
+      "Distributed Systems",
+      "Real-time Backend",
+      "Collaborative Software"
+    ],
+    metaDescription:
+      "Technical case study of SRVJ, a real-time collaborative diagram editor built with Yjs CRDTs, Express.js, PostgreSQL, MongoDB, Redis, SSE, Docker, and Kubernetes. Learn about multiplayer synchronization, WebSocket authentication, dual-snapshot persistence, and scalable backend architecture."
   },
   {
-    id: 3,
+    id: 4,
+    name: "KeepITs",
+    slug: "keepits",
+    category: "Live",
+    logo: keepits,
+    logoWidth: 263,
+    logoHeight: 226,
+    class: "w-5 h-5",
+    link: "https://keepit.elrefai.me/",
+    github: "",
+    tagline: "Lightweight schedule & task management web app",
+    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Vercel, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
+    tags: [
+      "TypeScript",
+      "Vue.js",
+      "Vite",
+      "Firebase Authentication",
+      "Cloud Firestore",
+      "Vercel",
+      "Responsive Design",
+      "Task Management",
+      "Schedule Management",
+      "Productivity",
+      "GitHub"
+    ],
+    keywords: [
+      "KeepITs",
+      "KeepITs Task Manager",
+      "Task Management App",
+      "Task Management System",
+      "Schedule Management",
+      "Daily Planner",
+      "Productivity App",
+      "To-Do Application",
+      "Personal Task Manager",
+      "Task Tracking",
+      "Calendar Application",
+      "Vue.js",
+      "TypeScript",
+      "Vite",
+      "Firebase",
+      "Firebase Authentication",
+      "Cloud Firestore",
+      "Real-time Database",
+      "Vercel",
+      "Responsive Web App",
+      "Single Page Application",
+      "Frontend Architecture",
+      "Modern Web Application",
+      "Progressive Web App",
+      "GitHub",
+      "CI/CD",
+      "Cloud Deployment"
+    ],
+    metaDescription:
+      "Technical case study of KeepITs, a lightweight task and schedule management application built with Vue.js, TypeScript, Firebase, and Vercel. Explore its architecture, implementation, and deployment decisions."
+  },
+  {
+    id: 5,
     name: "0Gosha",
     slug: "0gosha",
     category: "Backend",
     logo: Gosha0,
+    logoWidth: 440,
+    logoHeight: 440,
     class: "w-5 h-5",
     github: "https://github.com/elrefai99/0G0sha",
     link: "https://0gosha.elrefai.me",
+    tagline: "Rule-based prompt-optimization engine that learns from feedback — no LLM API calls",
     desc: [
-      "Pure AI agent engine that optimizes prompts - learns from user feedback.",
+      "Pure AI agent engine that optimizes prompts and learns from user feedback.",
       "No AI API calls. No OpenAI. No Claude API.",
       "0Gosha is a self-contained rule-based engine that rewrites raw user text into professional, structured prompts optimized for Claude, GPT, or any LLM.",
       "It gets smarter over time by learning which transformation rules produce the highest-rated results."
@@ -160,21 +391,47 @@ export const projects: any = [
       "pnpm",
       "git/github",
       "Github Actions"
-    ]
+    ],
+    keywords: [
+      "0Gosha",
+      "Prompt Optimization Engine",
+      "Prompt Engineering Tool",
+      "Rule-Based Prompt Rewriter",
+      "AI Agent Engine",
+      "Prompt Optimizer",
+      "LLM Prompt Tool",
+      "TypeScript",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "Docker",
+      "Vitest",
+      "Zod",
+      "Backend Architecture",
+      "Feedback Learning",
+      "Self-Contained Engine"
+    ],
+    metaDescription:
+      "Technical case study of 0Gosha, a self-contained rule-based prompt-optimization engine that rewrites raw text into structured LLM prompts and learns from feedback — built with TypeScript, Express.js, MongoDB, Redis, and BullMQ, with no external AI API calls."
   },
   {
-    id: 4,
+    id: 6,
     name: "Gen Import",
     slug: "gen-import",
     category: "Package",
     logo: GenImport,
+    logoWidth: 765,
+    logoHeight: 771,
     class: "w-5 h-5",
     github: "https://github.com/0G0sha/gen-import",
     npm: "https://www.npmjs.com/package/gen-import",
+    tagline: "TypeScript barrel-file generator built on the TypeScript compiler API",
     desc: [
       "Generate a TypeScript barrel file for your Express/Node project using the TypeScript compiler API.",
-      "Automatically generate TypeScript/JavaScript barrel files using the TypeScript compiler API",
-      "Cycle detection · topological sort · globals mode · rich console output."
+      "Automatically generate TypeScript/JavaScript barrel files using the TypeScript compiler API.",
+      "Cycle detection, topological sort, globals mode, and rich console output."
     ],
     tags: [
       "TypeScript",
@@ -183,108 +440,31 @@ export const projects: any = [
       "git/github",
       "Github Actions",
       "fs"
-    ]
-  },
-  {
-    id: 5,
-    name: "KeepITs",
-    slug: "keepits",
-    category: "Live",
-    logo: keepits,
-    class: "w-5 h-5",
-    link: "https://keepit.elrefai.me/",
-    github: "https://github.com/elrefai99/keepits",
-    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
-    tags: [
+    ],
+    keywords: [
+      "Gen Import",
+      "gen-import",
+      "TypeScript Barrel File Generator",
+      "Barrel File",
+      "TypeScript Compiler API",
+      "npm Package",
+      "Node.js CLI",
+      "Topological Sort",
+      "Cycle Detection",
+      "Developer Tooling",
       "TypeScript",
-      "Firebase",
-      "Vue.js",
-      "Vite",
-      "Netlify",
-      "git/github",
-      "Docker"
-    ]
-  },
-  {
-    id: 6,
-    name: "Doc-Station - Orthopedic Surgery Platform",
-    slug: "doc-station",
-    category: "Backend",
-    link: "",
-    github: "https://github.com/elrefai99/doc-station",
-    desc: "A comprehensive healthcare platform connecting patients with orthopedic surgeons and providing a marketplace for surgical instruments. The platform enables seamless appointment booking, medical consultations, and equipment rental services.",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "Redis",
-      "BullMQ",
-      "Prisma",
-      "PostgreSQL",
-      "SendGrid",
-      "Docker",
-      "AWS (S3, EKS, EC2, ECR)",
-      "Payment (Paymob, Amazon Payment Service)",
-      "Socket.IO",
-      "NGINX",
-      "pm2",
-      "pnpm",
-      "K8s (Kubernetes, AWS EKS)",
-      "git/github",
-    ]
+      "Express"
+    ],
+    metaDescription:
+      "Gen Import is an npm package that generates TypeScript/JavaScript barrel files for Express/Node projects using the TypeScript compiler API, with cycle detection, topological sort, and a globals mode."
   },
   {
     id: 7,
-    name: "Smart Parser",
-    slug: "smart-parser",
-    category: "Backend",
-    link: "",
-    github: "https://github.com/elrefai99/smart-parser",
-    desc: 'A full-featured RESTful API built with Node.js, Express.js, and TypeScript, designed to handle file uploads, parsing, and export operations for various document formats including PDF, DOCX, and Excel.',
-    tags: [
-      "Javascript",
-      "TypeScript",
-      "Express.js",
-      "pdf-parse",
-      "mammoth",
-      "Puppeteer",
-      "exceljs",
-      "Docker",
-    ]
-  },
-  {
-    id: 8,
-    name: 'Wedding Orgnization',
-    slug: "wedding-organization",
-    category: "Backend",
-    link: "",
-    github: "https://github.com/elrefai99/Wedding_Orgnization",
-    desc: "It is my graduation project, it's like when u need become marriage and need rent wedding hall for it u can from list of famous hall with us and has section about rent car for this wedding.",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "MongoDB (NoSQL)",
-      "Sprit",
-      "SendGrid",
-    ]
-  },
-  {
-    id: 9,
-    name: "Data Localizer",
-    slug: "data-localizer",
-    category: "Package",
-    github: "https://github.com/elrefai99/data-localizer",
-    npm: "https://www.npmjs.com/package/data-localizer",
-    desc: "A lightweight TypeScript utility for handling multilingual data structures.It helps you localize arrays or objects by returning values based on a given language key (e.g., ar, en). Perfect for apps that need to support multiple languages without writing repetitive localization logic.",
-    tags: [
-      "TypeScript",
-    ]
-  },
-  {
-    id: 10,
     name: "Elrecord",
     slug: "elrecord",
     category: "Backend",
     github: "https://github.com/elrefai99/elrecord",
+    tagline: "Scalable real-time chat backend inspired by Discord",
     desc: "Elrecord is a powerful, scalable backend for a real-time chat application inspired by Discord. It supports direct messaging, group chats, and server-based communities with voice/video call capabilities.",
     tags: [
       "TypeScript",
@@ -302,28 +482,29 @@ export const projects: any = [
       "pm2",
       "pnpm",
       "git/github",
-    ]
-  },
-  {
-    id: 11,
-    name: "Tasks-Day",
-    slug: "tasks-day",
-    category: "Backend",
-    github: "https://github.com/elrefai99/Tasks-Day",
-    desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Netlify, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
-    tags: [
+    ],
+    keywords: [
+      "Elrecord",
+      "Discord Clone Backend",
+      "Real-time Chat Backend",
+      "Chat Application Backend",
+      "Direct Messaging",
+      "Group Chat",
+      "Voice and Video Calls",
+      "WebSocket Chat",
       "TypeScript",
+      "Node.js",
       "Express.js",
-      "Paymob",
-      "Amazon Payment Service (APS)",
-      "SendGrid",
-      "Agenda",
-      "Swagger",
+      "PostgreSQL",
+      "Prisma",
+      "Redis",
+      "Socket.IO",
+      "BullMQ",
       "Docker",
-      "MongoDB",
-      "pnpm",
-      "git/github",
-      "Github Actions"
-    ]
+      "Scalable Backend",
+      "Real-time Backend"
+    ],
+    metaDescription:
+      "Technical case study of Elrecord, a scalable real-time chat backend inspired by Discord with direct messaging, group chats, communities, and voice/video calls — built with TypeScript, Express.js, PostgreSQL/Prisma, Redis, and Socket.IO."
   },
 ]

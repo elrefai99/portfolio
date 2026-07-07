@@ -9,7 +9,7 @@ export const sitePaths = {
   resume: '/resume',
 } as const
 
-const staticPagesLastmod = '2026-06-29'
+const staticPagesLastmod = '2026-07-01'
 
 export const sitemapEntries = [
   {
@@ -36,7 +36,6 @@ export const sitemapEntries = [
     priority: '0.7',
     lastmod: staticPagesLastmod,
   },
-  // Subdomain apps. Absolute URLs override the siteUrl base in createSitemapXml.
   {
     path: 'https://srvj.elrefai.me/',
     changefreq: 'monthly',
@@ -53,7 +52,6 @@ export const sitemapEntries = [
     path: `${sitePaths.blogs}/${blog.slug}`,
     changefreq: 'weekly',
     priority: '0.7',
-    // Prefer the last-updated date so edits refresh the sitemap signal.
     lastmod: blog.updated || blog.date,
   })),
 ] as const

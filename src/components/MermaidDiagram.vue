@@ -70,7 +70,9 @@ const lightThemeVariables = {
 type MermaidModule = typeof import('mermaid')['default']
 let mermaidMod: MermaidModule | null = null
 let observer: MutationObserver | null = null
+let viewportObserver: IntersectionObserver | null = null
 let lastDark: boolean | null = null
+const root = ref<HTMLElement | null>(null)
 
 const renderDiagram = async () => {
   try {
@@ -93,22 +95,48 @@ const renderDiagram = async () => {
   }
 }
 
-onMounted(() => {
-  renderDiagram()
-  // Re-render on the dark/light toggle so a diagram is never left low-contrast.
+// Re-render on the dark/light toggle so a diagram is never left low-contrast.
+const watchThemeToggle = () => {
+  if (observer) return
   observer = new MutationObserver(() => {
     if (document.documentElement.classList.contains('dark') !== lastDark) {
       renderDiagram()
     }
   })
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+}
+
+onMounted(() => {
+  // Defer loading the (~600 KB) mermaid bundle until the diagram is near the
+  // viewport. Keeps it off the critical path so it never delays LCP/TBT on
+  // article and case-study pages that render diagrams below the fold.
+  const el = root.value
+  if (!el || typeof IntersectionObserver === 'undefined') {
+    renderDiagram().then(watchThemeToggle)
+    return
+  }
+  viewportObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        viewportObserver?.disconnect()
+        viewportObserver = null
+        renderDiagram().then(watchThemeToggle)
+      }
+    },
+    { rootMargin: '400px 0px' },
+  )
+  viewportObserver.observe(el)
 })
 
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  viewportObserver?.disconnect()
+})
 </script>
 
 <template>
   <div
+    ref="root"
     class="overflow-hidden rounded-xl border border-slate-300/30 bg-white/74 shadow-[0_18px_48px_rgba(148,163,184,0.18)] dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]"
   >
     <div

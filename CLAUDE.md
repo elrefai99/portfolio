@@ -18,7 +18,7 @@ No test suite exists. `npm run type-check && npm run build` is the validation ba
 
 ## Big picture
 
-This is a static-site-generated (SSG) Vue 3 portfolio, prerendered to HTML at build time and deployed on **Vercel**. Two ideas drive most of the code and are not obvious from any single file:
+This is a static-site-generated (SSG) Vue 3 portfolio, prerendered to HTML at build time and deployed on **Vercel**. Three ideas drive most of the code and are not obvious from any single file:
 
 ### 1. vite-ssg prerendering
 
@@ -30,6 +30,12 @@ The whole site is themed as an architectural blueprint / building elevation. Thi
 
 `App.vue` frames the page as a building: roof datum (top) → floors → foundation (footer). Each page section is a **`<FloorSection>`** (`src/components/FloorSection.vue`) with a level code (`L-04`), name, elevation annotation, concrete-slab separators, corner registration marks, and IntersectionObserver scroll-reveal (`eager` disables the reveal for the above-the-fold LCP floor). Build new pages as floors to stay consistent — `BlogsView.vue` is a clean reference.
 
+### 3. Build-time OG image generation
+
+Every page and blog post gets its own branded 1200×630 blueprint PNG Open Graph card — no runtime image service. The renderer is **`build/og-image.ts`**: it builds an SVG (blueprint grid, corner marks, chip, wrapped title/subtitle) and rasterizes it with `@resvg/resvg-js`, using the Inter `.ttf` files in `build/fonts/` (resvg does not wrap text, so `wrapText` estimates Inter's advance width to break lines). Cards come from `staticCards` (home/projects/blogs/resume) plus one `blogCard` per post; `allCards(blogs)` is the full set.
+
+`ogImagePlugin` in `vite.config.ts` wires it in two modes: **dev** serves `/og/(page|blog)-<name>.png` on demand via middleware (so social debuggers + local preview work); **build** writes every card to `dist/og/*.png` in `closeBundle`. The URLs are referenced from the `*SEO` exports in `src/utils/tags.ts` (`image:` fields point at `/og/page-*.png`; per-post `ogImage`). So: adding a blog post auto-adds its OG card, but **changing OG copy/layout means editing `build/og-image.ts`, not a template**. New static page → add a card to `staticCards` and point its `tags.ts` `image` at the matching `/og/page-*.png`.
+
 ## Routes & data
 
 Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all.
@@ -37,7 +43,7 @@ Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are cent
 Content is plain TypeScript data modules under `src/utils/` — no CMS:
 
 - **`projects.ts`** — portfolio project data (title, description, tags, links, image).
-- **`blogs.ts`** — blog posts as structured blocks (`paragraph`, `heading`, `list`, `code`); `slug` drives routing and the prerender set.
+- **`blogs.ts`** — blog posts as structured content blocks (`paragraph`, `heading`, `list`, `code`); post metadata (`slug`, `title`, `excerpt`, `category`, `tags`, `readTime`, optional `ogImage`) feeds routing, the prerender set, SEO, and OG cards. `slug` drives routing. A `code` block with `language: 'mermaid'` is rendered as a live diagram by `MermaidDiagram.vue` in `BlogPostView.vue` (mermaid is lazy-`import()`ed on first use, theme-aware).
 - **`site.ts`** — canonical `siteUrl`, `sitePaths`, and `sitemapEntries`.
 - **`tags.ts`** — per-route SEO `<head>` (OpenGraph, Twitter, JSON-LD schema); consumed via `useHead(...)` in each view.
 - **`icons.ts`** — maps tech-tag strings → Iconify icon ids for project cards.

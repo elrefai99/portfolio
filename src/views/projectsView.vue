@@ -41,7 +41,7 @@ const tagChipClass = 'bp-chip'
 </script>
 
 <template>
-  <FloorSection level="L-03" name="Project Archive" elevation="+0.00 m" :top-slab="false">
+  <FloorSection level="L-03" name="Project Archive" elevation="+0.00 m" :top-slab="false" eager>
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
     <div w-full max-w-4xl p-4 md:p-10>
       <section>
@@ -91,15 +91,17 @@ const tagChipClass = 'bp-chip'
                 <!-- Header -->
                 <div flex items-center justify-between mb-4>
                   <div flex items-center gap-2 flex-1>
-                    <img v-if="project.logo" :src="project.logo" :alt="project.name + ' Logo'" :class="project.class" :width="project.logoWidth" :height="project.logoHeight" loading="lazy" decoding="async"/>
-                    <h3 font-semibold text-lg text-black dark:text-gray-300>{{ project.name }}</h3>
+                    <img v-if="project.logo" :src="project.logo" :alt="`${project.name} logo`" :class="[project.class, 'object-contain']" :width="project.logoWidth" :height="project.logoHeight" loading="lazy" decoding="async"/>
+                    <h2 font-semibold text-lg text-black dark:text-gray-300>{{ project.name }}</h2>
                   </div>
                   <div flex gap-2>
-                    <a v-if="project.link" :href="project.link" target="_blank" :class="actionIconClass" title="Live Site"><i class="i-solar:eye-bold" /></a>
-                    <a v-if="project.github" :href="project.github" target="_blank" :class="actionIconClass" title="GitHub Repo"><i class="i-carbon:logo-github" /></a>
-                    <a v-if="project.npm" :href="project.npm" target="_blank" :class="actionIconClass" title="Npm Package"><i class="i-carbon:logo-npm" /></a>
+                    <a v-if="project.link" :href="project.link" target="_blank" rel="noopener noreferrer" :class="actionIconClass" :aria-label="`Open the live ${project.name} site (opens in a new tab)`" title="Live Site"><i class="i-solar:eye-bold" aria-hidden="true" /></a>
+                    <a v-if="project.github" :href="project.github" target="_blank" rel="noopener noreferrer" :class="actionIconClass" :aria-label="`View the ${project.name} source on GitHub (opens in a new tab)`" title="GitHub Repo"><i class="i-carbon:logo-github" aria-hidden="true" /></a>
+                    <a v-if="project.npm" :href="project.npm" target="_blank" rel="noopener noreferrer" :class="actionIconClass" :aria-label="`View the ${project.name} package on npm (opens in a new tab)`" title="Npm Package"><i class="i-carbon:logo-npm" aria-hidden="true" /></a>
                   </div>
                 </div>
+
+                <p v-if="project.tagline" text-sm text-gray-600 dark:text-gray-400 mb-4>{{ project.tagline }}</p>
 
                 <!-- Technologies -->
                 <div>
@@ -117,13 +119,20 @@ const tagChipClass = 'bp-chip'
                 </div>
 
                 <!-- Description Toggle -->
-                <button @click="toggleDescription(project.id)" flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors duration-200 hover="text-black dark:text-white" mt-4>
-                  <i class="transition-transform duration-300" :class="isDescriptionExpanded(project.id) ? 'i-carbon:chevron-up' : 'i-carbon:chevron-down'"></i>
+                <button
+                  @click="toggleDescription(project.id)"
+                  :aria-expanded="isDescriptionExpanded(project.id)"
+                  :aria-controls="`desc-${project.slug}`"
+                  flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors duration-200 hover="text-black dark:text-white" mt-4
+                >
+                  <i class="transition-transform duration-300" :class="isDescriptionExpanded(project.id) ? 'i-carbon:chevron-up' : 'i-carbon:chevron-down'" aria-hidden="true"></i>
                   <span>{{ isDescriptionExpanded(project.id) ? 'Hide' : 'Show' }} Description</span>
                 </button>
 
                 <!-- Description (Expandable) -->
                 <div
+                  :id="`desc-${project.slug}`"
+                  :inert="!isDescriptionExpanded(project.id)"
                   overflow-hidden transition-all duration-300 ease-out
                   :style="{ maxHeight: isDescriptionExpanded(project.id) ? '800px' : '0px' }"
                 >

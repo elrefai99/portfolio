@@ -126,6 +126,11 @@ export default defineConfig({
     sitemapPlugin(),
     ogImagePlugin(),
   ],
+  build: {
+    // Emit source maps so Lighthouse "valid source maps" passes and prod stack
+    // traces are debuggable.
+    sourcemap: true,
+  },
   ssgOptions: {
     formatting: 'minify',
     includedRoutes(paths: string[]) {

@@ -24,21 +24,13 @@ export type BlogPost = {
   title: string
   excerpt: string
   category: string
-  /** SEO <title> / og:title override. Falls back to `${title} • Blog`. Keep ~50–60 chars. */
   metaTitle?: string
-  /** SEO meta description / og:description override. Falls back to `excerpt`. Keep ~150–160 chars. */
   metaDescription?: string
   date: string
-  /** Set when the post's content changes after publish; falls back to `date`. */
   updated?: string
   readTime: string
   tags: string[]
   blocks: BlogBlock[]
-  /**
-   * Optional per-post Open Graph image, root-relative (e.g. `/og/my-post.png`)
-   * or absolute. Falls back to the site default OG image when omitted.
-   * Use a 1200×630 PNG for best social/Discover rendering.
-   */
   ogImage?: string
 }
 

@@ -21,8 +21,6 @@ const blogTopicKeywords = [
   'Backend architecture notes',
 ]
 
-// Curated keyword targets. Kept tight (no stuffing) — Google largely ignores the
-// keywords meta, but Bing/Yandex weakly use it and it documents intent per route.
 const brandKeywords = [
   'Mohammed Mostafa',
   'Mohamed Mostafa',
@@ -72,9 +70,15 @@ const personSchema = {
   '@type': 'Person',
   '@id': personId,
   name: 'Mohammed Mostafa • Software Engineer',
-  alternateName: ['Elrefai', 'Mohamed Mostafa', 'Mohammed Elrefai', 'elrefai99'],
+  alternateName: [
+    'Mohamed Mostafa',
+    'Mohammed Elrefai',
+    'Mohamed Elrefai',
+    'Elrefai',
+    'elrefai99',
+  ],
   description:
-    'Mohammed Mostafa (Elrefai, elrefai99) is a Software Engineer in Cairo, Egypt, building backend APIs, payment integrations, and cloud systems with Node.js, TypeScript, and AWS.',
+    'Mohammed Mostafa (Elrefai, elrefai99) is a Software Engineer based in Cairo, Egypt, specializing in backend engineering, distributed systems, real-time collaboration, cloud infrastructure, and scalable Node.js applications using TypeScript, Express.js, Docker, Kubernetes, and AWS.',
   url: siteUrl,
   mainEntityOfPage: siteUrl,
   image: defaultImage,
@@ -99,6 +103,12 @@ const personSchema = {
     addressCountry: 'EG',
   },
   knowsAbout: [
+    'Backend Engineering',
+    'Software Architecture',
+    'Distributed Systems',
+    'Real-Time Systems',
+    'Cloud Computing',
+    'System Design',
     'Node.js',
     'TypeScript',
     'Express.js',
@@ -109,10 +119,26 @@ const personSchema = {
     'BullMQ',
     'Socket.IO',
     'Docker',
-    'AWS',
     'Kubernetes',
-    'Payment integrations',
-    'Backend architecture',
+    'AWS',
+    'CI/CD',
+    'GitHub Actions',
+    'NGINX',
+    'Payment Gateway Integration',
+    'Real-Time Collaboration',
+    'CRDT',
+    'Yjs',
+    'Server-Sent Events',
+    'WebSockets',
+    'PASETO',
+    'Authentication',
+    'Authorization',
+    'RBAC',
+    'Caching',
+    'Background Job Processing',
+    'Message Queues',
+    'Performance Optimization',
+    'Scalable Backend Systems'
   ],
   knowsLanguage: [
     { '@type': 'Language', name: 'English' },
@@ -129,7 +155,6 @@ const websiteSchema = {
   name: siteName,
   alternateName: ['Elrefai', 'elrefai99', 'Mohammed Mostafa Portfolio'],
   url: siteUrl,
-  // Reference the Person by @id so the site and its author resolve to one entity.
   author: { '@id': personId },
   publisher: { '@id': personId },
   inLanguage: 'en',
@@ -137,9 +162,6 @@ const websiteSchema = {
 
 const createJsonLd = (schema: Record<string, unknown> | Record<string, unknown>[]) => ({
   type: 'application/ld+json',
-  // Must be `innerHTML` (raw script content), not `children` — this unhead
-  // version renders unknown keys like `children` as an attribute, which leaves
-  // the <script> empty and makes the JSON-LD invisible to crawlers.
   innerHTML: JSON.stringify(schema),
 })
 
@@ -154,8 +176,6 @@ const createBreadcrumb = (items: { name: string; path: string }[]) => ({
   })),
 })
 
-// Widen a date-only string ('YYYY-MM-DD') to a full ISO 8601 instant, which the
-// Open Graph article spec expects. Already-full timestamps pass through untouched.
 const toIsoDateTime = (date: string) =>
   /^\d{4}-\d{2}-\d{2}$/.test(date) ? `${date}T00:00:00+00:00` : date
 
@@ -247,8 +267,6 @@ export const homeSEO = createSeo({
   image: `${siteUrl}/og/page-home.png`,
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   schema: [
-    // ProfilePage is Google's recommended type for a person's primary page; it
-    // names the Person as the page's mainEntity so the homepage *is* the entity.
     {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
@@ -429,8 +447,6 @@ export const createBlogPostSEO = (blog: BlogPost) => {
   const path = `${sitePaths.blogs}/${blog.slug}`
   const url = new URL(path, siteUrl).toString()
   const modifiedDate = blog.updated || blog.date
-  // Per-post OG image when provided, else the site default. Root-relative
-  // paths are resolved against siteUrl so crawlers get an absolute URL.
   const ogImage = blog.ogImage
     ? new URL(blog.ogImage, siteUrl).toString()
     : defaultImage
@@ -486,7 +502,6 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         author: personSchema,
         publisher: personSchema,
         articleSection: blog.category,
-        // Google Article-recommended signals: length and reading time (ISO 8601 duration).
         wordCount: blogWordCount(blog),
         timeRequired: `PT${blogReadMinutes(blog)}M`,
         isPartOf: { '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog` },

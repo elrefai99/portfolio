@@ -32,7 +32,7 @@ const fullText = "Mohammed Mostafa"
             text-black dark:text-white
             tracking-tight
             my-2
-            class="animate-slide-down-delay-2"
+            class="animate-slide-down"
           >
             {{ fullText }}<span class="cursor-blink" aria-hidden="true" text-gray-600 dark:text-gray-400 font-light></span>
           </h1>
@@ -42,7 +42,7 @@ const fullText = "Mohammed Mostafa"
             class="animate-slide-down-delay-2"
           >
             also known as
-            <a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" class="underline underline-offset-3">elrefai</a>
+            <a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" underline-offset-3 dark:text-gray-100 text-gray-900>elrefai99</a>
           </p>
           
           <div 
@@ -73,7 +73,7 @@ const fullText = "Mohammed Mostafa"
           <div
             inline-flex items-center gap-3 ml-2
             px-6 py-3 mt-3
-            bg="black/3 dark:white/8"
+            bg="black/4 dark:white/8"
             border="1 black/8 dark:white/14"
             rounded-full
             class="animate-slide-down-delay-3"
@@ -82,20 +82,6 @@ const fullText = "Mohammed Mostafa"
             <span text-sm text-gray-600 dark:text-gray-400 font-medium>Based in</span>
             <span font-bold text-black dark:text-white>Cairo, Egypt</span>
           </div>
-
-          <!-- Experience
-          <div
-            inline-flex items-center gap-3
-            px-6 py-3 mt-3
-            bg="black/3 dark:white/3"
-            border="1 black/8 dark:white/8"
-            rounded-full
-            class="animate-slide-down-delay-3"
-          >
-            <i class="i-carbon:time" text-sm text-gray-600 dark:text-gray-400></i>
-            <span text-sm text-gray-600 dark:text-gray-400 font-medium>Experience</span>
-            <span font-bold text-black dark:text-white>2+ Years</span>
-          </div> -->
         </div>
 
         <!-- CTA Buttons -->
@@ -216,15 +202,19 @@ const fullText = "Mohammed Mostafa"
           />
         </a>
         <div flex items-center justify-between mt-4>
-          <a 
-            href="https://github.com/elrefai99" 
+          <a
+            href="https://github.com/elrefai99"
             target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View elrefai99 on GitHub (opens in a new tab)"
             inline-flex items-center gap-2
             text-sm font-medium
             text-gray-600 dark:text-gray-400
             transition-colors duration-200
             hover="text-black dark:text-white"
           >
+            <i class="i-carbon:logo-github" aria-hidden="true" />
+            <span>@elrefai99 on GitHub</span>
           </a>
         </div>
       </div>
