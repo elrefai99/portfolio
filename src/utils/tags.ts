@@ -59,7 +59,8 @@ const sameAs = [
   'https://www.linkedin.com/in/elrefai99/',
   'https://www.instagram.com/elrefai99/',
   'https://x.com/elrefai99',
-  'https://bsky.app/profile/elrefai99.bsky.social',
+  // Must match the footer link exactly — entity reconciliation keys on exact URLs.
+  'https://bsky.app/profile/elrefai.me',
 ]
 
 const personId = `${siteUrl}/#person`
@@ -196,6 +197,7 @@ const createSeo = ({
   keywords = [],
   extraMeta = [],
   schema,
+  canonical = true,
 }: {
   title: string
   description: string
@@ -209,6 +211,8 @@ const createSeo = ({
   keywords?: string[]
   extraMeta?: SeoMeta[]
   schema?: Record<string, unknown> | Record<string, unknown>[]
+  /** Set false on error pages — a 404 must not claim another URL as canonical. */
+  canonical?: boolean
 }) => {
   const url = new URL(path, siteUrl).toString()
 
@@ -217,12 +221,14 @@ const createSeo = ({
     htmlAttrs: {
       lang: 'en',
     },
-    link: [
-      {
-        rel: 'canonical',
-        href: url,
-      },
-    ],
+    link: canonical
+      ? [
+          {
+            rel: 'canonical',
+            href: url,
+          },
+        ]
+      : [],
     meta: [
       { name: 'title', content: title },
       { name: 'author', content: author },
@@ -351,7 +357,7 @@ const projectListItems = (projects as ProjectShape[]).map((project, index) => {
 export const projectsSEO = createSeo({
   title: 'Mohammed Mostafa • Projects',
   description:
-    'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, 0Gosha, Gen-Import, Doc-Station, Smart Parser, Elrecord — backend, API, payment, cloud, and developer tooling.',
+    'Projects by Elrefai (Mohammed Mostafa, elrefai99) including Lesoll, EGYStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord — backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
   keywords: [
     ...brandKeywords,
@@ -523,4 +529,5 @@ export const notFoundSEO = createSeo({
   path: sitePaths.home,
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   robots: 'noindex, follow',
+  canonical: false,
 })

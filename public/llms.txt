@@ -1,0 +1,31 @@
+# Mohammed Mostafa (elrefai99) — Software Engineer
+
+> Portfolio of Mohammed Mostafa (also known as Elrefai / elrefai99), a Software
+> Engineer based in Cairo, Egypt. Backend engineering: Node.js, TypeScript,
+> Express.js, payment integrations (PayMob, Amazon Payment Services, Stripe),
+> real-time systems (WebSockets, SSE, CRDTs/Yjs), MongoDB, PostgreSQL, Redis,
+> BullMQ, Docker, Kubernetes, and AWS.
+
+Software Engineer II at Lesoll (https://lesoll.com), building production
+marketplace and booking platforms. Builds and operates payment systems,
+background job processing, and real-time notification infrastructure.
+
+## Pages
+
+- [Home](https://elrefai.me/): Introduction, selected work, and experience timeline
+- [Projects](https://elrefai.me/projects): Lesoll, EGYStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord
+- [Blog](https://elrefai.me/blogs): Backend engineering articles
+- [Resume](https://elrefai.me/resume): Experience, skills, and education
+
+## Blog posts
+
+- [CRDTs, Yjs, and collaborative editing](https://elrefai.me/blogs/crdts-yjs-collaborative-editing-srvj): CRDT theory and a production Yjs WebSocket relay
+- [Server-Sent Events for real-time notifications](https://elrefai.me/blogs/server-sent-events-real-time-notifications-srvj): SSE with Redis pub/sub fan-out
+- [PayMob & Amazon Payment Services integration](https://elrefai.me/blogs/paymob-amazon-payment-services-integration): HMAC-verified idempotent payment webhooks
+- [JWT vs PASETO](https://elrefai.me/blogs/jwt-vs-paseto-tokens): Token format security trade-offs
+
+## Contact
+
+- GitHub: https://github.com/elrefai99
+- LinkedIn: https://www.linkedin.com/in/elrefai99/
+- Email: elrefai99@gmail.com

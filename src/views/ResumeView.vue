@@ -3,13 +3,6 @@ import { useHead } from '@vueuse/head'
 import { resumeSEO } from '../utils/tags'
 
 useHead(resumeSEO)
-
-const downloadResume = () => {
-  const link = document.createElement('a')
-  link.href = '/resume.pdf'
-  link.download = 'resume.pdf'
-  link.click()
-}
 </script>
 
 <template>
@@ -17,14 +10,16 @@ const downloadResume = () => {
   <div max-w-4xl mx-auto min-h-screen text-black dark:text-white px-4 py-8>
 
     <!-- Top Download Button -->
+    <!-- Real <a href> (not a JS-triggered download) so the PDF is crawlable -->
     <div flex justify-end mb-6>
-      <button
-        @click="downloadResume"
+      <a
+        href="/resume.pdf"
+        download
         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold text-sm hover:opacity-80 transition-all duration-200 shadow-lg hover:scale-105"
       >
         <i class="i-carbon:download w-4 h-4" />
         Download CV
-      </button>
+      </a>
     </div>
 
     <!-- Resume Card -->
@@ -47,11 +42,11 @@ const downloadResume = () => {
             </a>
             <span class="text-gray-300 dark:text-gray-600">•</span>
             <div>
-                <a href="https://www.linkedin.com/in/elrefai99/" target="_blank" class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">LinkedIn</a>
+                <a href="https://www.linkedin.com/in/elrefai99/" target="_blank" rel="noopener noreferrer" class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">LinkedIn</a>
                 <span class="text-gray-300 dark:text-gray-600">•</span>
-                <a href="https://elrefai.me" target="_blank" class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">Portfolio</a>
+                <a href="https://elrefai.me" target="_blank" rel="noopener noreferrer" class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">Portfolio</a>
                 <span class="text-gray-300 dark:text-gray-600">•</span>
-                <a href="https://github.com/elrefai99" target="_blank" class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">GitHub</a>
+                <a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">GitHub</a>
             </div>
           </div>
         </div>
@@ -79,7 +74,7 @@ const downloadResume = () => {
               <div class="flex items-baseline gap-1.5 flex-wrap">
                 <span class="text-sm font-bold text-gray-900 dark:text-white">Software Engineer II</span>
                 <span class="text-sm text-gray-400">|</span>
-                <a href="https://lesoll.com" target="_blank" class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:underline">Lesoll</a>
+                <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:underline">Lesoll</a>
               </div>
               <span class="text-xs text-gray-500 dark:text-gray-400">Jun 2023 – Present · Cairo, Egypt · On-site</span>
             </div>
@@ -103,7 +98,7 @@ const downloadResume = () => {
           <div>
             <div class="flex items-baseline gap-1.5 flex-wrap mb-2">
               <h3 class="text-sm font-bold text-gray-900 dark:text-white">SRVJ — Real-Time Collaborative Whiteboard Platform</h3>
-              <a href="https://srvj.elrefai.me/" target="_blank" class="text-xs font-semibold text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-white transition-colors">Live</a>
+              <a href="https://srvj.elrefai.me/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-white transition-colors">Live</a>
             </div>
             <ul class="list-disc pl-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
               <li>Built real-time collaborative diagram editing using Yjs CRDTs over a custom WebSocket server implementing the Yjs sync and awareness protocols, enabling live cursors, presence, and seamless multiplayer editing.</li>
@@ -146,13 +141,14 @@ const downloadResume = () => {
 
     <!-- Bottom Download Button -->
     <div flex justify-center mt-8 mb-4>
-      <button
-        @click="downloadResume"
+      <a
+        href="/resume.pdf"
+        download
         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-semibold hover:opacity-80 transition-all duration-200 shadow-lg hover:scale-105"
       >
         <i class="i-carbon:download w-5 h-5" />
         Download CV
-      </button>
+      </a>
     </div>
 
   </div>

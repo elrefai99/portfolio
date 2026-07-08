@@ -67,7 +67,7 @@ Icons render via the UnoCSS icon preset (`i-carbon-*`, `i-logos-*`, `i-simple-ic
 
 ## i18n (current state)
 
-vue-i18n is wired up (`src/main.ts`, `src/locales/index.ts`, `lang/{en,ar}.json`) with locale hardcoded to `en` and no runtime switcher. In practice **no view or component uses `$t`/`useI18n`** — all UI text is currently hardcoded English, and `ar.json` is effectively dormant. Don't assume the i18n plumbing is live; if a task needs localized copy, wiring `useI18n` into the components is itself part of the work.
+vue-i18n and pinia are **not registered** — both were removed from `src/main.ts` because nothing used them (no `$t`/`useI18n`, no store imports) and they added ~50KB of dead JS to every page. The packages remain in `package.json`, and `src/locales/` (`lang/{en,ar}.json`) plus `src/stores/counter.ts` still exist as dormant scaffolding. If a task needs localized copy or a store, re-registering the plugin in `main.ts` is part of the work.
 
 ## Auto-imports
 

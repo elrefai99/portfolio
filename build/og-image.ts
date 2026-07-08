@@ -3,8 +3,6 @@ import { resolve } from 'node:path'
 import { Resvg } from '@resvg/resvg-js'
 import type { BlogPost } from '../src/utils/blogs'
 
-// Branded 1200×630 blueprint OG card, rendered to PNG at build time. One image
-// per page/post so every share/Discover card is unique instead of the site default.
 const WIDTH = 1200
 const HEIGHT = 630
 
@@ -17,11 +15,8 @@ const fontFiles = [
 ]
 
 export type OgCard = {
-  /** Output filename under /og, e.g. `page-home.png` or `blog-<slug>.png`. */
   fileName: string
-  /** Small tracked datum line, e.g. `L-04 · JOURNAL / ARTICLE`. */
   eyebrow: string
-  /** Pill label, e.g. a category or section. */
   chip: string
   title: string
   subtitle: string
@@ -34,8 +29,6 @@ const escapeXml = (value: string) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string,
   )
 
-// resvg does not wrap text — split into lines by estimating Inter's advance width
-// (~0.52em average). Trims to `maxLines` with an ellipsis on the last line.
 const wrapText = (text: string, fontSize: number, maxWidth: number, maxLines: number) => {
   const charWidth = fontSize * 0.52
   const maxChars = Math.max(1, Math.floor(maxWidth / charWidth))
@@ -74,13 +67,10 @@ const tspans = (lines: string[], x: number, startY: number, lineHeight: number) 
 const buildSvg = (card: OgCard) => {
   const accent = '#6cb6ff'
   const titleLines = wrapText(card.title, 62, WIDTH - 160, 3)
-  // Keep the card off the footer: a tall 3-line title leaves room for only one
-  // subtitle line, a short title leaves room for two.
   const subtitleLines = wrapText(card.subtitle, 28, WIDTH - 160, titleLines.length >= 3 ? 1 : 2)
   const titleY = 250
   const subtitleY = titleY + titleLines.length * 74 + 30
 
-  // Blueprint grid lines every 48px.
   let grid = ''
   for (let x = 48; x < WIDTH; x += 48) grid += `<line x1="${x}" y1="0" x2="${x}" y2="${HEIGHT}" />`
   for (let y = 48; y < HEIGHT; y += 48) grid += `<line x1="0" y1="${y}" x2="${WIDTH}" y2="${y}" />`
@@ -118,7 +108,6 @@ export const renderOgPng = (card: OgCard): Buffer => {
 
 const author = 'Mohammed Mostafa · Software Engineer'
 
-// Per-post card. Path lives at /og/blog-<slug>.png.
 export const blogCard = (blog: BlogPost): OgCard => ({
   fileName: `blog-${blog.slug}.png`,
   eyebrow: 'L-04 · JOURNAL / ARTICLE',
@@ -129,8 +118,6 @@ export const blogCard = (blog: BlogPost): OgCard => ({
   footerRight: blog.tags.slice(0, 5).join('   ·   '),
 })
 
-// Static-page cards. Paths live at /og/page-<name>.png and are referenced from
-// the matching *SEO exports in src/utils/tags.ts.
 export const staticCards: OgCard[] = [
   {
     fileName: 'page-home.png',
@@ -170,7 +157,6 @@ export const staticCards: OgCard[] = [
   },
 ]
 
-/** Every card rendered at build time: static pages plus one per blog post. */
 export const allCards = (blogs: BlogPost[]): OgCard[] => [...staticCards, ...blogs.map(blogCard)]
 
 let cachedFontCheck = false

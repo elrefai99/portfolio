@@ -9,16 +9,16 @@
     <div class="bp-footer__inner">
       <!-- Social Links -->
       <div flex gap-4 justify-center mb-8>
-        <a class="social-link" href="https://github.com/elrefai99" target="_blank" title="GitHub" aria-label="GitHub">
+        <a class="social-link" href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
           <i class="i-carbon-logo-github social-icon" aria-hidden="true"></i>
         </a>
-        <a class="social-link" href="https://www.linkedin.com/in/elrefai99/" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+        <a class="social-link" href="https://www.linkedin.com/in/elrefai99/" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn">
           <i class="i-carbon-logo-linkedin social-icon" aria-hidden="true"></i>
         </a>
-        <a class="social-link" href="https://x.com/elrefai99" target="_blank" title="X (Twitter)" aria-label="X">
+        <a class="social-link" href="https://x.com/elrefai99" target="_blank" rel="noopener noreferrer" title="X (Twitter)" aria-label="X">
           <i class="i-carbon-logo-x social-icon" aria-hidden="true"></i>
         </a>
-        <a class="social-link" href="https://bsky.app/profile/elrefai.me" target="_blank" title="Bluesky" aria-label="Bluesky">
+        <a class="social-link" href="https://bsky.app/profile/elrefai.me" target="_blank" rel="noopener noreferrer" title="Bluesky" aria-label="Bluesky">
           <i class="i-ri:bluesky-fill social-icon" aria-hidden="true"></i>
         </a>
         <a class="social-link" href="mailto:elrefai99@gmail.com" title="Email" aria-label="Email">

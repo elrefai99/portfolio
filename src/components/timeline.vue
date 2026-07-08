@@ -74,7 +74,7 @@ const timeline = [
               <div class="flex flex-wrap items-start justify-between gap-1 mb-1">
                 <h3 font-bold text-black dark:text-white class="flex items-center gap-2">
                   <img v-if="item.logo" :src="item.logo" :alt="`${item.company} logo`" width="24" height="24" loading="lazy" decoding="async" class="w-6 h-6 rounded-md object-contain shrink-0" />
-                  <a v-if="item.link" :href="item.link" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">{{ item.company }}</a>
+                  <a v-if="item.link" :href="item.link" target="_blank" rel="noopener noreferrer" class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">{{ item.company }}</a>
                   <span v-else>{{ item.company }}</span>
                 </h3>
                 <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ item.period }}</span>

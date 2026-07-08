@@ -9,9 +9,10 @@ const fullText = "Mohammed Mostafa"
 </script>
 
 <template>
-  <section 
+  <!-- No opacity animation on the section: it wraps the h1 (LCP element), and
+       animating it from opacity:0 delays LCP by the animation duration. -->
+  <section
     max-w-4xl mx-auto p-6 md:p-10 space-y-16
-    class="animate-fade-in"
   >
     <!-- Hero Section -->
     <div text-center py-12>
@@ -25,6 +26,7 @@ const fullText = "Mohammed Mostafa"
             Hello, I'm
           </p>
           
+          <!-- LCP element: transform-only entry (no opacity) so paint counts immediately -->
           <h1
             text="5xl md:6xl lg:7xl"
             font-extrabold
@@ -32,7 +34,7 @@ const fullText = "Mohammed Mostafa"
             text-black dark:text-white
             tracking-tight
             my-2
-            class="animate-slide-down"
+            class="animate-slide-down-lcp"
           >
             {{ fullText }}<span class="cursor-blink" aria-hidden="true" text-gray-600 dark:text-gray-400 font-light></span>
           </h1>
@@ -103,8 +105,8 @@ const fullText = "Mohammed Mostafa"
             <i class="i-carbon:email"></i>
             <span>Get in Touch</span>
           </a>
-          <a 
-            href="/resume"
+          <router-link
+            to="/resume"
             inline-flex items-center gap-2
             px-8 py-4 rounded-xl
             bg-transparent
@@ -116,7 +118,7 @@ const fullText = "Mohammed Mostafa"
           >
             <i class="i-carbon:document"></i>
             <span>View Resume</span>
-          </a>
+          </router-link>
         </div>
       </div>
     </div>
@@ -250,6 +252,15 @@ const fullText = "Mohammed Mostafa"
 
 .animate-slide-down {
   animation: slide-down 0.8s ease-out;
+}
+
+/* Transform-only variant for the LCP h1 — never animate its opacity */
+@keyframes slide-down-lcp {
+  from { transform: translateY(-20px); }
+  to { transform: translateY(0); }
+}
+.animate-slide-down-lcp {
+  animation: slide-down-lcp 0.8s ease-out;
 }
 
 .animate-slide-down-delay-1 {

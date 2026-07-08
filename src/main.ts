@@ -1,25 +1,12 @@
 import './assets/main.css'
 import './assets/blueprint.css'
 import { ViteSSG } from 'vite-ssg'
-import { createPinia } from 'pinia'
 import App from './App.vue'
 import { routes } from './router/routes'
 import '@unocss/reset/tailwind.css'
 import 'uno.css'
-import { createI18n } from 'vue-i18n'
-import messages from './locales'
 
-export const createApp = ViteSSG(
-  App,
-  { routes },
-  ({ app }) => {
-    app.use(createPinia())
-    app.use(
-      createI18n({
-        locale: 'en',
-        fallbackLocale: 'en',
-        messages,
-      }),
-    )
-  },
-)
+// pinia and vue-i18n were registered here but nothing in the app used them
+// (no store imports, no $t/useI18n) — dropping them cuts ~50KB of dead JS
+// from the critical bundle on every page. Re-add when a feature needs them.
+export const createApp = ViteSSG(App, { routes })

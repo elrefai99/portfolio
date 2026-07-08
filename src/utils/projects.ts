@@ -39,9 +39,10 @@ export const projects: IProject[] = [
     github: "",
     tagline: "Production B2B/B2C real-estate & automotive marketplace backend",
     desc: [
-      "Developed a B2C and B2B marketplace for real estate and automotive",
-      "Developed key features: payment system (Paymob payment gateway), admin dashboard, user dashboard, chat system, notifications system, email system, SMS/OTP system, traffic system (Puppeteer web scraping), reports, and employee tools",
-      "Deployed and managed the service using Docker and AWS EC2"
+      "Lesoll is a large-scale classifieds marketplace for the Egyptian real estate market, enabling users to buy, sell, and rent residential, commercial, land, and compound properties.",
+      "The platform includes premium listing packages, real-time messaging, a blog, and a complete internal administration system.",
+      "As the primary Backend Engineer, I designed and implemented core backend services, REST APIs, business logic, database architecture, third-party integrations, and performance optimizations.",
+      "I contributed approximately 65% of the backend implementation, building and maintaining features across the listing lifecycle, authentication, payments, notifications, search, analytics, and internal admin services while supporting a production platform serving real users."
     ],
     tags: [
       "Typescript",
@@ -124,9 +125,9 @@ export const projects: IProject[] = [
     github: "",
     tagline: "Property rental & booking platform with a Co-Host marketplace",
     desc: [
-      "Developed a B2C property rental and booking platform for web and mobile",
-      "Developed key features: payment system (Amazon Payment Services (APS) gateway), Co-Host system (lets users host their own properties), cancellation-policy system, booking system, admin dashboard, user dashboard, chat system, notifications system, email system, SMS/OTP system, traffic system (Puppeteer web scraping), reports, and employee tools",
-      "Deployed and managed the service using Docker, AWS EKS (Elastic Kubernetes Service), and Render"
+      "EgyStay is a short-term rental platform for the Egyptian market, allowing guests to book accommodations while hosts and co-hosts manage their properties through dedicated dashboards.",
+      "As the primary Backend Engineer, I architected and developed the backend from the ground up, implementing reservation workflows, availability management, pricing logic, payments, authentication, messaging, notifications, and administrative services.",
+      "I contributed approximately 70% of the project's implementation (614 of 885 commits, excluding CI automation), delivering around 63,000 lines of production code across 600+ source files while focusing on scalability, maintainability, and performance."
     ],
     tags: [
       "Typescript",

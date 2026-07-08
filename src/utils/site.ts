@@ -36,18 +36,6 @@ export const sitemapEntries = [
     priority: '0.7',
     lastmod: staticPagesLastmod,
   },
-  {
-    path: 'https://srvj.elrefai.me/',
-    changefreq: 'monthly',
-    priority: '0.6',
-    lastmod: staticPagesLastmod,
-  },
-  {
-    path: 'https://keepit.elrefai.me/',
-    changefreq: 'monthly',
-    priority: '0.6',
-    lastmod: staticPagesLastmod,
-  },
   ...blogs.map((blog) => ({
     path: `${sitePaths.blogs}/${blog.slug}`,
     changefreq: 'weekly',

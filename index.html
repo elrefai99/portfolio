@@ -21,9 +21,10 @@
   <meta name="title" content="Mohammed Mostafa • Software Engineer">
   <meta name="description"
     content="elrefai99 — Software Engineer at Lesoll, EGYStay backend developer. APIs, payments & cloud systems with Node.js, TypeScript and AWS.">
-  <meta name="author" content="elrefai">
+  <meta name="author" content="elrefai99">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#141413">
+  <meta name="theme-color" content="#faf9f5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141413" media="(prefers-color-scheme: dark)">
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">
@@ -51,8 +52,8 @@
   <meta name="twitter:image" content="https://elrefai.me/og/page-home.png">
   <meta name="twitter:image:alt" content="Mohammed Mostafa • Software Engineer Portfolio">
 
-  <!-- Canonical URL -->
-  <link rel="canonical" href="https://elrefai.me/">
+  <!-- Canonical is set per-route by useHead (src/utils/tags.ts) — no static one
+       here, so pages that must not claim a canonical (the 404) don't inherit it. -->
 
   <!-- Fonts — loaded non-render-blocking (preload as style, swap to stylesheet on load) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,7 +66,7 @@
 
   <!-- Favicon -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="100x100">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 
   <!-- PWA manifest -->
