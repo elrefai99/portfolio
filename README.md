@@ -7,13 +7,16 @@ a Backend Software Engineer based in Cairo, Egypt.
 
 ## About me
 
-I'm a Backend Software Engineer at [Lesoll](https://lesoll.com), specializing in backend
-development, scalable APIs, payment integrations, and production systems with **Node.js** and
-**TypeScript**. I work across Express.js, MongoDB, PostgreSQL, Redis, BullMQ, Docker, and AWS,
-and I've recently expanded into frontend development with Vue.js.
+I'm a Backend Software Engineer with 3+ years of building and operating production payment
+systems and real-time services in **Node.js** and **TypeScript**. At [Lesoll](https://lesoll.com)
+I lead backend work across two live marketplace platforms — shipping multi-provider payment
+integrations (PayMob, Amazon Payment Services, Stripe) with HMAC-verified, idempotent webhooks,
+event-driven background processing on Redis and BullMQ, and SSE/WebSocket notification systems.
+My focus is reliability, idempotency, and performance under real transaction volume.
 
-As a backend developer I built and shipped the systems behind production platforms like
-**[Lesoll](https://lesoll.com)** and **[EGYStay](https://egystay.com)**.
+I work across Express.js, MongoDB, PostgreSQL, Redis, Docker, Kubernetes, and AWS, and I build
+frontend with Vue 3 — including this site and [SRVJ](https://srvj.elrefai.me), a real-time
+collaborative whiteboard built on Yjs CRDTs over a custom WebSocket server.
 
 ## Selected projects
 
@@ -21,6 +24,7 @@ As a backend developer I built and shipped the systems behind production platfor
 | --- | --- | --- |
 | [Lesoll](https://lesoll.com) | Backend developer — B2C/B2B real-estate & automotive marketplace | TypeScript · Express · MongoDB · Paymob · Redis · Docker · AWS |
 | [EGYStay](https://egystay.com) | Backend developer — property rental & booking marketplace | TypeScript · Express · MongoDB · Amazon Payment Services · AWS EKS |
+| [SRVJ](https://srvj.elrefai.me) | Creator — real-time collaborative whiteboard on Yjs CRDTs | TypeScript · Express · PostgreSQL · MongoDB · Redis · WebSockets · PASETO |
 | [0Gosha](https://0gosha.elrefai.me) | Creator — rule-based AI prompt-optimization engine | TypeScript · Express · MongoDB · Redis · BullMQ |
 | [Gen-Import](https://www.npmjs.com/package/gen-import) | Author — TypeScript barrel-file generator | TypeScript · TS Compiler API |
 | [Elrecord](https://github.com/elrefai99/elrecord) | Creator — real-time chat backend (Discord-style) | TypeScript · Express · PostgreSQL · Prisma · Socket.IO |
@@ -30,18 +34,8 @@ See the full list at [elrefai.me/projects](https://elrefai.me/projects).
 ## Tech stack
 
 `TypeScript` · `Node.js` · `Express.js` · `MongoDB` · `PostgreSQL` · `Redis` · `BullMQ` ·
-`Socket.IO` · `Docker` · `AWS (EC2, EKS, S3)` · `Vue 3` · `Vite` · `UnoCSS`
-
-## This repository
-
-The portfolio itself is built with **Vue 3 + Vite + UnoCSS + Vue Router + Pinia + vue-i18n**.
-
-```bash
-npm run dev          # Start the Vite dev server (http://localhost:5173)
-npm run build        # Type-check + build + copy Netlify redirects
-npm run type-check   # Run vue-tsc only
-npm run preview      # Preview the production build locally
-```
+`WebSockets / SSE` · `Socket.IO` · `Docker` · `Kubernetes` · `AWS (EC2, EKS, S3, ECR)` ·
+`Vue 3` · `Vite` · `UnoCSS`
 
 ## Connect
 

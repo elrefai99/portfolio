@@ -7,16 +7,11 @@ import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
 import { defineConfig, type ViteDevServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import type {} from 'vite-ssg'
+import type { } from 'vite-ssg'
 import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
 import { blogs } from './src/utils/blogs'
 import { allCards, ensureFonts, renderOgPng } from './build/og-image'
 
-// Source files whose last git commit date drives a route's <lastmod>. Keeps the
-// sitemap freshness honest instead of relying on a hand-typed constant. Blog
-// posts already carry their own `date`, and absolute (subdomain) URLs are skipped.
-// Files that change the rendered output of *every* route (SEO head, theme,
-// document shell). A commit touching these legitimately refreshes all lastmods.
 const globalSources = ['src/utils/tags.ts', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
 
 const routeSources: Record<string, string[]> = {
@@ -26,8 +21,6 @@ const routeSources: Record<string, string[]> = {
   [sitePaths.resume]: ['src/views/ResumeView.vue', ...globalSources],
 }
 
-// Most recent commit date (YYYY-MM-DD) across the given files, or undefined if
-// git is unavailable (e.g. shallow CI checkout) so callers fall back gracefully.
 const gitLastmod = (files: string[]): string | undefined => {
   const dates = files
     .map((file) => {
@@ -74,9 +67,6 @@ const sitemapPlugin = () => ({
   },
 })
 
-// Renders one blueprint OG PNG per page and per post. Dev: on-demand middleware
-// so social debuggers + local preview work. Build: writes dist/og/*.png so the
-// per-page/post `image` URLs resolve to real files.
 const ogImagePlugin = () => ({
   name: 'generate-og-images',
   configureServer(server: ViteDevServer) {
@@ -127,8 +117,6 @@ export default defineConfig({
     ogImagePlugin(),
   ],
   build: {
-    // Emit source maps so Lighthouse "valid source maps" passes and prod stack
-    // traces are debuggable.
     sourcemap: true,
   },
   ssgOptions: {

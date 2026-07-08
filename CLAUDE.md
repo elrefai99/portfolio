@@ -53,6 +53,8 @@ Content is plain TypeScript data modules under `src/utils/` — no CMS:
 
 A custom Vite plugin in `vite.config.ts` generates `sitemap.xml` (dev: middleware at `/sitemap.xml`; build: `closeBundle` writes `dist/sitemap.xml`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources`, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable. When adding a route: add it to `sitemapEntries` in `site.ts`, and optionally to `routeSources` in `vite.config.ts` for git-driven freshness.
 
+> **Same-host only**: sitemap entries must be `elrefai.me` paths. Subdomain URLs (`srvj.elrefai.me`, `keepit.elrefai.me`) were once listed and had to be removed — the sitemap protocol forbids cross-host URLs and Google ignores them.
+
 ## Styling
 
 UnoCSS with a Tailwind reset — utilities work as in Tailwind. Dark mode is class-based (`presetUno({ dark: 'class' })`), so pair styles with `dark:` variants. Two style layers coexist: the global Blueprint system in `src/assets/blueprint.css`, and UnoCSS shortcuts/animations/theme in **`uno.config.ts`** (`bg-base`, `border-base`, `social-link`, `project-*`/drift keyframes, `theme.colors`).
@@ -60,6 +62,17 @@ UnoCSS with a Tailwind reset — utilities work as in Tailwind. Dark mode is cla
 Icons render via the UnoCSS icon preset (`i-carbon-*`, `i-logos-*`, `i-simple-icons-*`, …) from the installed `@iconify-json/*` collections.
 
 > **Safelist gotcha**: icon classes chosen at runtime (e.g. tech-tag icons resolved through `src/utils/icons.ts`) are not present as literal strings in source, so UnoCSS purges them. Such icons must be added to `safelist` in `uno.config.ts`. When adding a new tech tag with a new icon, update both `icons.ts` and the `safelist`.
+
+## SEO & performance invariants
+
+Established by a full SEO/CWV audit (2026-07); breaking any of these is a regression:
+
+- **Canonicals are per-route only.** `createSeo` in `tags.ts` emits the canonical; `index.html` intentionally has **no** static `<link rel="canonical">` (a static one leaks onto the 404 page, which must not claim a canonical — `notFoundSEO` passes `canonical: false`). Don't re-add one to the template.
+- **The homepage h1 (`aboutme.vue`) is the LCP element.** It must never animate `opacity` — it uses the transform-only `slide-down-lcp` keyframe, and its section wrapper has no fade-in. (A typing effect and an opacity fade have both been removed from it before; each cost ~1s of LCP.)
+- **Image budgets**: `public/projects/*` logos render at ≤24px — keep sources ≤96px (a 944KB srvj.png once shipped for a 20px icon). `public/og-image.png` must stay **<300KB** or WhatsApp drops link previews. `favicon.ico` is a layered 16/32/48 ICO (~2KB) — regenerate from `icon-512.png`, don't drop in a raw export.
+- **`public/llms.txt`** is a hand-maintained index for AI answer engines — update it when adding pages or blog posts.
+- External `target="_blank"` links carry `rel="noopener noreferrer"`.
+- `index.html` has two `theme-color` metas (light `#faf9f5` / dark `#141413` via `media`) — keep both.
 
 ## Theme
 
