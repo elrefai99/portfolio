@@ -36,6 +36,425 @@ export type BlogPost = {
 
 export const blogs: BlogPost[] = [
   {
+    id: 5,
+    slug: 'aws-ec2-s3-kubernetes-production-deployments',
+    ogImage: '/og/blog-aws-ec2-s3-kubernetes-production-deployments.png',
+    title: 'From One EC2 Box to Kubernetes: How SRVJ Actually Deploys on AWS',
+    excerpt:
+      'How SRVJ\'s deployment grew up in three acts — a single EC2 box with NGINX and pm2, Docker Compose, and finally a Kubernetes cluster with kustomize, an NGINX ingress, and an HPA. Plus the S3 patterns that outlived every stage.',
+    metaTitle: 'AWS EC2, S3 & Kubernetes: SRVJ\'s Deployment Journey',
+    metaDescription:
+      'How SRVJ\'s Node.js deployment evolved from one EC2 box with NGINX and pm2 to Docker Compose and Kubernetes — plus S3 avatars and presigned uploads.',
+    category: 'Cloud & DevOps',
+    date: '2026-07-09',
+    readTime: '13 min read',
+    tags: ['AWS', 'EC2', 'S3', 'EKS', 'Kubernetes', 'Docker', 'NGINX', 'CI/CD', 'Node.js', 'DevOps'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'SRVJ — the collaborative diagram tool I keep writing about — runs on AWS, but it didn\'t start on Kubernetes, and it shouldn\'t have. This post is its deployment story in three acts: a single EC2 box with NGINX and pm2, then Docker Compose, then a Kubernetes cluster — plus the S3 patterns that survived every stage untouched.',
+      },
+      {
+        type: 'paragraph',
+        text: 'I\'m writing it this way because most AWS content starts at the end. You get the EKS tutorial with the Terraform modules and the service mesh, and nobody tells you that a $10 EC2 instance with a well-configured NGINX serves real production traffic just fine — or when, exactly, it stops being fine.',
+      },
+      {
+        type: 'heading',
+        text: 'Act one: a box, NGINX, and pm2',
+      },
+      {
+        type: 'paragraph',
+        text: 'SRVJ\'s backend started life the way most Node.js backends do: one EC2 instance, Route 53 pointing at its Elastic IP, NGINX terminating TLS and reverse-proxying to the app, and pm2 keeping the process alive. It\'s unfashionable and it works.',
+      },
+      {
+        type: 'code',
+        language: 'nginx',
+        filename: 'srvj.conf',
+        code:
+          'upstream srvj_backend {\n' +
+          '    server srvj-app:60459;\n' +
+          '    keepalive 32;\n' +
+          '}\n\n' +
+          'limit_req_zone $binary_remote_addr zone=api_limit:10m  rate=30r/s;\n' +
+          'limit_req_zone $binary_remote_addr zone=auth_limit:10m rate=5r/m;\n\n' +
+          'server {\n' +
+          '    listen 443 ssl http2;\n' +
+          '    server_name api.srvj.com;\n' +
+          '    # (TLS, security headers, and Host/X-Forwarded-* lines omitted for brevity)\n\n' +
+          '    # ── API routes ─────────────────────────────────\n' +
+          '    location /api/ {\n' +
+          '        limit_req zone=api_limit burst=50 nodelay;\n' +
+          '        proxy_pass http://srvj_backend;\n' +
+          '        proxy_http_version 1.1;\n' +
+          '        proxy_set_header Connection "";\n' +
+          '        proxy_buffering off;\n' +
+          '    }\n\n' +
+          '    # ── Auth routes (stricter: 5 req/min) ──────────\n' +
+          '    location /api/v1/auth/ {\n' +
+          '        limit_req zone=auth_limit burst=3 nodelay;\n' +
+          '        proxy_pass http://srvj_backend;\n' +
+          '        proxy_http_version 1.1;\n' +
+          '        proxy_set_header Connection "";\n' +
+          '    }\n\n' +
+          '    # ── SSE notifications (long-lived, unbuffered) ─\n' +
+          '    location /api/v1/notifications/stream {\n' +
+          '        proxy_pass http://srvj_backend;\n' +
+          '        proxy_http_version 1.1;\n' +
+          '        proxy_set_header Connection "";\n' +
+          '        proxy_buffering off;\n' +
+          '        proxy_cache off;\n' +
+          '        proxy_request_buffering off;\n' +
+          '        chunked_transfer_encoding off;\n' +
+          '        proxy_read_timeout 86400s;\n' +
+          '        proxy_send_timeout 86400s;\n' +
+          '    }\n\n' +
+          '    # ── WebSockets (collab) ────────────────────────\n' +
+          '    location /socket.io/ {\n' +
+          '        proxy_pass http://srvj_backend;\n' +
+          '        proxy_http_version 1.1;\n' +
+          '        proxy_set_header Upgrade $http_upgrade;\n' +
+          '        proxy_set_header Connection "upgrade";\n' +
+          '        proxy_read_timeout 86400s;\n' +
+          '        proxy_send_timeout 86400s;\n' +
+          '    }\n\n' +
+          '    # ── Metrics (internal only) ────────────────────\n' +
+          '    location /metrics {\n' +
+          '        deny all;\n' +
+          '        return 403;\n' +
+          '    }\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Every non-obvious line here came from a real incident, not a template. The auth routes get their own rate-limit zone — five requests a minute, not thirty a second — so credential stuffing dies at the proxy without Node spending a single cycle on it. The empty Connection "" header is the easiest one to miss: it pairs with keepalive 32 in the upstream block, and without it NGINX silently opens and closes a fresh upstream connection per request, throwing the keepalive pool away.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The SSE location is the paranoid one, and every line earns its place: proxy_buffering, proxy_cache, and proxy_request_buffering all off, chunked_transfer_encoding off, and day-long read/send timeouts so NGINX doesn\'t kill a quiet stream at its 60-second default. With buffering on, NGINX holds your carefully streamed events hostage until its buffer fills, and "real-time" notifications arrive in batches. The WebSocket location needs the opposite treatment — the Upgrade/Connection pair, without which the collab handshake dies at the proxy. And /metrics is a flat deny: Prometheus scrapes from inside the network, the internet gets a 403.',
+      },
+      {
+        type: 'paragraph',
+        text: 'pm2 runs the app in cluster mode — one worker per vCPU behind a shared port:',
+      },
+      {
+        type: 'code',
+        language: 'js',
+        filename: 'ecosystem.config.js',
+        code:
+          'module.exports = {\n' +
+          '  apps: [{\n' +
+          '    name: \'api\',\n' +
+          '    script: \'./dist/server.js\',\n' +
+          '    instances: \'max\',\n' +
+          '    exec_mode: \'cluster\',\n' +
+          '    max_memory_restart: \'512M\',\n' +
+          '    env_production: { NODE_ENV: \'production\' },\n' +
+          '  }],\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Cluster mode has a trap that\'s especially vicious for SRVJ: workers don\'t share memory. The SSE connection registry fragments across workers — solvable with Redis Pub/Sub, which the notification pipeline needed anyway. The Yjs collab rooms are the harder case: a room is an in-memory Y.Doc, and two clients on the same diagram must reach the same process. On the single box that meant keeping the collab-bearing app in one process and scaling vertically — an early taste of exactly the problem act three is about.',
+      },
+      {
+        type: 'paragraph',
+        text: 'What finally hurt wasn\'t performance. It was that the box itself was the deployment artifact. Deploys were SSH-and-pull. The Node version, the system packages, the NGINX config — all hand-applied state that existed nowhere in git. Every month the server drifted a little further from anything I could reproduce, and rollback meant remembering what I\'d changed.',
+      },
+      {
+        type: 'heading',
+        text: 'Act two: same box, but Docker',
+      },
+      {
+        type: 'paragraph',
+        text: 'The fix for drift is making the artifact immutable. GitHub Actions builds a Docker image on every push to main, tags it with the commit SHA, and pushes it to ECR. The EC2 box pulls and restarts. Same hardware, completely different operational story:',
+      },
+      {
+        type: 'list',
+        items: [
+          'The image is the whole runtime — Node version, native deps, everything. "Works on my machine" stops being a sentence anyone says.',
+          'Rollback is re-tagging: pull the previous SHA, restart. Under a minute, no archaeology.',
+          'The box degrades into a dumb Docker host. Nothing on it is precious anymore — I could rebuild it from a short user-data script.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'In SRVJ\'s case the compose file is three containers on a private bridge network: the app, Redis with append-only persistence, and NGINX with the act-one config mounted read-only. That\'s also when the upstream stopped being 127.0.0.1:3000 and became a Docker service name — the srvj-app:60459 you saw in the config above.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This stage is criminally underrated. Docker-on-EC2 has none of Kubernetes\' complexity and buys you 80% of its reproducibility. If SRVJ had stayed a single well-understood process with vertical headroom left on the instance, this is where the story would end — and for most backends, it should.',
+      },
+      {
+        type: 'heading',
+        text: 'The S3 pattern that never changed: presigned uploads',
+      },
+      {
+        type: 'paragraph',
+        text: 'While the compute story kept evolving, file uploads landed on a pattern in week one that has survived every migration since: clients upload directly to S3 with presigned URLs, and the backend never proxies a user\'s file bytes.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The naive version — multipart POST to the API, which streams to S3 — makes your API instance a file proxy. SRVJ\'s uploads are avatars and images dropped onto the canvas; routing those through Express means tying up workers, memory, and bandwidth on traffic that S3 could have absorbed directly. The presigned flow inverts it: the client asks the API for permission, gets a short-lived URL, and does the heavy lifting itself.',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'upload.service.ts',
+        code:
+          'import { S3Client, PutObjectCommand } from \'@aws-sdk/client-s3\'\n' +
+          'import { getSignedUrl } from \'@aws-sdk/s3-request-presigner\'\n' +
+          'import crypto from \'crypto\'\n\n' +
+          'const s3 = new S3Client({ region: process.env.AWS_REGION })\n\n' +
+          'export async function createUploadUrl(userId: string, contentType: string) {\n' +
+          '  if (!ALLOWED_TYPES.has(contentType)) throw new Error(\'Unsupported type\')\n\n' +
+          '  const key = `uploads/${userId}/${crypto.randomUUID()}`\n' +
+          '  const url = await getSignedUrl(\n' +
+          '    s3,\n' +
+          '    new PutObjectCommand({\n' +
+          '      Bucket: process.env.S3_BUCKET!,\n' +
+          '      Key: key,\n' +
+          '      ContentType: contentType,\n' +
+          '    }),\n' +
+          '    { expiresIn: 300 }, // 5 minutes — permission, not possession\n' +
+          '  )\n' +
+          '  return { url, key }\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Three details matter more than the happy path. The key is server-generated — clients never choose where they write, which closes the overwrite-someone-else\'s-file hole. The content type is validated and baked into the signature, so the URL can\'t be reused for a different payload. And the URL expires in minutes, because it\'s a permission slip, not a possession.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Reads go through CloudFront, not S3 directly. The bucket is private; CloudFront gets access through Origin Access Control, and every image URL the API returns is a CDN URL. Users in Cairo hit a nearby edge instead of the bucket\'s region, S3 GET costs drop to near nothing on hot objects, and the bucket itself has no public surface at all.',
+      },
+      {
+        type: 'heading',
+        text: 'The other S3 path: avatars born on the server',
+      },
+      {
+        type: 'paragraph',
+        text: 'Not every object in the bucket arrives through a presigned URL, though. When a new account registers, SRVJ generates the user\'s default avatar on the backend — a colored tile with their initials, rendered with sharp and pushed straight to S3:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'avatar.service.ts',
+        code:
+          'export const avatarProfile = async (firstName: string, lastName: string, id: string) => {\n' +
+          '  const backgroundColor = getRandomColor(colorArray) // 12-color brand palette\n' +
+          '  const textColor = getTextColor(backgroundColor)\n' +
+          '  let initials = buildInitials(firstName, lastName)\n\n' +
+          '  // Arabic initials get spacing — two joined glyphs read as a word, not initials\n' +
+          '  if (await detectScript(`${firstName} ${lastName}`) === \'Arabic\')\n' +
+          '    initials = initials.split(\'\').join(\' \')\n\n' +
+          '  const imageBuffer = await sharp({\n' +
+          '    create: { width: 450, height: 450, channels: 4, background: backgroundColor },\n' +
+          '  })\n' +
+          '    .composite([{\n' +
+          '      input: Buffer.from(`\n' +
+          '        <svg width="450" height="450">\n' +
+          '          <text x="50%" y="60%" font-size="150" font-family="Arial"\n' +
+          '                text-anchor="middle" fill="${textColor}">${initials}</text>\n' +
+          '        </svg>`),\n' +
+          '      top: 0, left: 0,\n' +
+          '    }])\n' +
+          '    .png()\n' +
+          '    .toBuffer()\n\n' +
+          '  const d = new Date()\n' +
+          '  const key = `cdn/user/${d.getFullYear()}/${d.getMonth() + 1}/${id}.png`\n\n' +
+          '  await s3Client.send(new PutObjectCommand({\n' +
+          '    Bucket: process.env.AWS_S3_BUCKET!,\n' +
+          '    Key: key,\n' +
+          '    Body: imageBuffer,\n' +
+          '    ContentType: \'image/png\',\n' +
+          '  }))\n\n' +
+          '  return `${process.env.CDN_CLOUD_URL}${key}` // CloudFront URL, never raw S3\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'The part I\'m fondest of is the text color. Instead of hardcoding white-on-anything, the background\'s perceived brightness is computed with the classic YIQ weights — red, green, and blue don\'t contribute equally to how bright a color looks — and the initials flip to dark slate on light tiles:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'avatar.service.ts',
+        code:
+          'function getTextColor(backgroundColor: string) {\n' +
+          '  const hex = backgroundColor.replace(\'#\', \'\')\n' +
+          '  const red = parseInt(hex.slice(0, 2), 16)\n' +
+          '  const green = parseInt(hex.slice(2, 4), 16)\n' +
+          '  const blue = parseInt(hex.slice(4, 6), 16)\n' +
+          '  const brightness = (red * 299 + green * 587 + blue * 114) / 1000\n' +
+          '  return brightness > 160 ? \'#1F2937\' : \'#F8FAFC\'\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'A few details that matter beyond the pixels. Names in Egypt are Arabic as often as English, so the script detection walks the name\'s Unicode code points (the 0x0600–0x06FF block and friends) rather than assuming Latin initials. The object key is partitioned by year and month — cdn/user/2026/7/… — which keeps prefixes browsable and makes lifecycle rules trivial later. And the function returns the CloudFront URL, not the S3 one, so the private-bucket rule from the previous section holds even for objects the server created itself.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It\'s also the counterpoint to the presigned pattern, and the rule that reconciles them: whoever owns the bytes talks to S3. A user\'s photo upload is theirs — presigned URL, direct to bucket. A generated avatar is the server\'s — PutObjectCommand from the process that made it. Both end up behind the same CDN.',
+      },
+      {
+        type: 'heading',
+        text: 'Act three: SRVJ\'s shape and the case for Kubernetes',
+      },
+      {
+        type: 'paragraph',
+        text: 'SRVJ broke the single-box model for a boring, structural reason: it isn\'t one process. The same image runs twice with different entrypoints — API pods serving REST, SSE streams, and the Yjs collab WebSockets (node dist/src/app.js), and a BullMQ worker draining the notification queue (node dist/src/MessageQueue/index.js). They deploy together but scale apart: a burst of collab sessions needs API capacity, a notification storm needs worker throughput, and on one box all of it shares one blast radius and one scaling knob.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is the actual Kubernetes threshold, in my experience. Not traffic. Shape. The moment your system is several processes with different scaling profiles and you\'re hand-writing systemd units or docker-compose overrides to fake orchestration, you\'re implementing a worse Kubernetes on your own time.',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'srvj-aws.mmd',
+        code:
+          'flowchart LR\n' +
+          '    U[Client] --> R53[Route 53]\n' +
+          '    R53 --> CF[CloudFront]\n' +
+          '    CF -->|images, static| S3[(Private S3 bucket)]\n' +
+          '    CF -->|api + collab| ING[NGINX Ingress]\n' +
+          '    ING --> API[API pods, HPA 2-8]\n' +
+          '    API --> PG[(PostgreSQL)]\n' +
+          '    API --> M[(MongoDB)]\n' +
+          '    API --> RD[(Redis StatefulSet)]\n' +
+          '    W[BullMQ worker] --> RD\n' +
+          '    W --> PG\n' +
+          '    U -.presigned PUT.-> S3',
+      },
+      {
+        type: 'paragraph',
+        text: 'A confession before the YAML: SRVJ\'s cluster today is self-managed on EC2, not EKS — kustomize-applied manifests, an NGINX ingress controller, local-path storage. Running it myself is exactly how I learned what EKS\'s control-plane fee actually buys: etcd care, control-plane upgrades, certificate rotation — the parts of Kubernetes you least want to own at 3 AM. The manifests are portable either way; moving to EKS changes who runs the control plane, not what the app looks like.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The API deployment is where the operational lessons from acts one and two turned into configuration:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        filename: 'k8s/api/deployment.yaml',
+        code:
+          'apiVersion: apps/v1\n' +
+          'kind: Deployment\n' +
+          'metadata:\n' +
+          '  name: srvj-api\n' +
+          '  namespace: srvj\n' +
+          'spec:\n' +
+          '  replicas: 2\n' +
+          '  strategy:\n' +
+          '    rollingUpdate:\n' +
+          '      maxUnavailable: 0   # never dip below capacity mid-deploy\n' +
+          '      maxSurge: 1\n' +
+          '  template:\n' +
+          '    spec:\n' +
+          '      terminationGracePeriodSeconds: 30\n' +
+          '      securityContext:\n' +
+          '        runAsNonRoot: true\n' +
+          '      containers:\n' +
+          '        - name: srvj-api\n' +
+          '          image: srvj-backend:latest\n' +
+          '          command: [node, -r, tsconfig-paths/register, dist/src/app.js]\n' +
+          '          envFrom:\n' +
+          '            - secretRef: { name: srvj-secret }\n' +
+          '          ports:\n' +
+          '            - containerPort: 60459\n' +
+          '          securityContext:\n' +
+          '            allowPrivilegeEscalation: false\n' +
+          '            capabilities: { drop: [ALL] }\n' +
+          '            seccompProfile: { type: RuntimeDefault }\n' +
+          '          resources:\n' +
+          '            requests: { cpu: 200m, memory: 256Mi }\n' +
+          '            limits: { cpu: 1000m, memory: 1Gi }\n' +
+          '          readinessProbe:\n' +
+          '            httpGet: { path: /api/health, port: 60459 }\n' +
+          '            initialDelaySeconds: 10\n' +
+          '          livenessProbe:\n' +
+          '            httpGet: { path: /api/health, port: 60459 }\n' +
+          '            initialDelaySeconds: 20\n' +
+          '          lifecycle:\n' +
+          '            preStop:\n' +
+          '              exec: { command: [/bin/sh, -c, sleep 5] }',
+      },
+      {
+        type: 'paragraph',
+        text: 'Both probes currently point at the same /api/health endpoint, and that deserves an honest note. Readiness and liveness are different questions — "can I serve a request right now" versus "is this process worth keeping alive" — and the dangerous failure mode is a liveness probe that checks dependencies: if MongoDB blips and liveness notices, Kubernetes restart-loops every healthy pod in sympathy with the database. The endpoint is dependency-free today, which keeps that trap shut; splitting it into a ready check that verifies Mongo and Redis and a live check that verifies nothing is the planned refinement.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The preStop sleep plus the 30-second termination grace is the other hard-won pattern. During a rollout the pod is removed from the endpoints list and sent SIGTERM concurrently — without a grace window, in-flight requests and open SSE streams die mid-byte. A few seconds of "keep serving, take nothing new" makes deploys invisible to connected clients. And the security context — runAsNonRoot, all capabilities dropped, no privilege escalation, default seccomp — costs nothing at this stage and is miserable to retrofit later.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The worker is the same image with a different entrypoint and deliberately different rules. Its strategy is Recreate, not RollingUpdate: during an API rollout you want old and new pods overlapping; during a worker rollout, overlap means two workers competing for the same BullMQ jobs mid-deploy. It also gets 60 seconds of termination grace instead of 30, because "finish the job you\'re holding" takes longer than "finish the HTTP request you\'re serving". Scaling is asymmetric too — an HPA takes the API from 2 to 8 replicas on 70% CPU or 80% memory, while the worker stays at one replica until job volume, not traffic, says otherwise. That asymmetry is the whole point of splitting them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And the act-one NGINX config didn\'t die — it migrated into the ingress controller as annotations and snippets. The global rate limit became limit-rps: 30; a server-snippet reproduces the 5-per-minute auth zone; the SSE location moved wholesale, buffering kills and day-long timeouts intact; /metrics is still a flat 403. Same hard-won lines, new address.',
+      },
+      {
+        type: 'heading',
+        text: 'The deploy: one apply, and an honest gap',
+      },
+      {
+        type: 'paragraph',
+        text: 'The whole stack is kustomize-driven — namespace, secrets, the Redis StatefulSet, both Deployments, the HPA, and the ingress are one kubectl apply -k k8s/ away, and the manifest tree in git is the cluster\'s source of truth:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        filename: 'k8s/kustomization.yaml',
+        code:
+          'namespace: srvj\n\n' +
+          'resources:\n' +
+          '  - namespace.yaml\n' +
+          '  - secret.yaml\n' +
+          '  - redis/statefulset.yaml\n' +
+          '  - redis/service.yaml\n' +
+          '  - api/deployment.yaml\n' +
+          '  - api/service.yaml\n' +
+          '  - api/hpa.yaml\n' +
+          '  - worker/deployment.yaml\n' +
+          '  - ingress/configmap.yaml\n' +
+          '  - ingress/ingress.yaml',
+      },
+      {
+        type: 'paragraph',
+        text: 'The honest gap: the image is still srvj-backend:latest with imagePullPolicy: IfNotPresent, which means a rollout doesn\'t reliably pick up a new build — the act-two lesson about immutable SHA-tagged artifacts hasn\'t been fully carried into the cluster yet. It\'s the top of the improvement list, because kubectl rollout undo is only a real rollback when tags are immutable. What already works in my favor: maxUnavailable: 0 means a build whose pods never pass readiness stalls the rollout while the old pods keep serving — a bad deploy degrades into a stuck rollout, not an outage.',
+      },
+      {
+        type: 'heading',
+        text: 'What Kubernetes actually costs (it\'s not just the invoice)',
+      },
+      {
+        type: 'paragraph',
+        text: 'I\'d be lying if I presented act three as pure upside. Self-managing the cluster means I am the control plane\'s administrator — upgrades, certificates, backups — which is precisely the ledger EKS\'s flat fee is weighed against; it doesn\'t remove the YAML, it removes being the etcd administrator, and the nodes are still just EC2 underneath. The in-cluster Redis is a single-replica StatefulSet on local-path storage, which pins it to one node: fine for a rebuildable queue, unacceptable if it ever grows into primary state. And the collab rooms live in-memory inside the API pods, so two clients editing the same diagram can land on different replicas — session affinity papers over it until the Redis fanout between pods lands (the same unsolved item from the CRDTs post).',
+      },
+      {
+        type: 'paragraph',
+        text: 'So the honest decision matrix, from someone running all three stages in production simultaneously:',
+      },
+      {
+        type: 'list',
+        items: [
+          'One service, one team, predictable load → Docker on a single EC2 box. This is most backends, and it\'s where SRVJ lived happily for its first stretch.',
+          'Multiple processes with different scaling profiles, zero-downtime deploys as a requirement → Kubernetes earns its complexity, and a managed control plane (EKS) is the part worth paying for. This is SRVJ today.',
+          'File uploads → presigned S3 URLs behind CloudFront, at every stage, regardless of everything else. The one decision I\'ve never revisited.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The progression matters more than the destination. Every stage solved the specific pain the previous one produced — drift got me to Docker, shape got me to Kubernetes — and each migration was small because the artifact (the image) and the S3 paths were already settled. If there\'s one takeaway: adopt the boring parts early, and let the orchestration wait until your architecture, not your ambition, asks for it.',
+      },
+    ],
+  },
+  {
     id: 4,
     slug: 'crdts-yjs-collaborative-editing-srvj',
     ogImage: '/og/blog-crdts-yjs-collaborative-editing-srvj.png',
@@ -412,36 +831,17 @@ export const blogs: BlogPost[] = [
       'Real-time notifications with SSE, BullMQ, Redis Pub/Sub and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
     category: 'Backend Architecture',
     date: '2026-06-27',
+    updated: '2026-07-09',
     readTime: '9 min read',
     tags: ['SSE', 'Server-Sent Events', 'Real-Time', 'BullMQ', 'Redis', 'PostgreSQL', 'Node.js', 'System Design'],
     blocks: [
       {
         type: 'paragraph',
-        text: 'Before diving into SSE, here\'s a quick overview of SRVJ.',
+        text: 'SRVJ is a collaborative diagram tool I\'ve been building — think Miro, but as a playground for backend architecture. The collaborative canvas itself runs over WebSockets (that story gets its own post), but notifications — board invitations, chat messages, mentions — needed a delivery path of their own.',
       },
       {
         type: 'paragraph',
-        text: 'SRVJ is a side project I\'ve been building to explore and experiment with different technologies and architectural patterns. Inspired by tools like Miro, the project focuses on real-time collaboration and serves as a playground for learning, validating ideas, and gaining hands-on experience with modern backend technologies.',
-      },
-      {
-        type: 'paragraph',
-        text: 'Through SRVJ, I\'ve been experimenting with technologies such as:',
-      },
-      {
-        type: 'list',
-        items: [
-          'CRDTs & Yjs',
-          'Server-Sent Events (SSE)',
-          'Socket.IO / WebSockets',
-          'Docker',
-          'Kubernetes',
-          'PostgreSQL & MongoDB',
-          'Background processing with BullMQ',
-        ],
-      },
-      {
-        type: 'paragraph',
-        text: 'This post is the first in a series where I\'ll share some of the technical decisions behind the project, starting with Server-Sent Events (SSE).',
+        text: 'This post is about that path: why it\'s Server-Sent Events rather than another WebSocket, and the pipeline behind it — BullMQ, PostgreSQL, and Redis Pub/Sub, arranged so notifications survive crashes, reach every open tab, and keep working when the app scales past one instance.',
       },
       {
         type: 'heading',
@@ -449,15 +849,11 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Server-Sent Events (SSE) is an HTTP-based technology that enables servers to push updates to connected clients over a long-lived connection.',
+        text: 'Server-Sent Events is the boring half of real-time: a plain HTTP response the server never finishes. The client opens a request, the server holds the connection open and writes events into it whenever something happens. Communication is strictly one-way — server to client.',
       },
       {
         type: 'paragraph',
-        text: 'Unlike WebSockets, communication is one-way: server → client.',
-      },
-      {
-        type: 'paragraph',
-        text: 'Browsers provide native support through the EventSource API, which makes the client implementation straightforward.',
+        text: 'The client side is almost embarrassingly simple, because browsers ship it natively as the EventSource API: automatic reconnection, named events, last-event-ID tracking — no library required.',
       },
       {
         type: 'heading',
@@ -465,15 +861,11 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Not every real-time feature requires bidirectional communication.',
+        text: 'Because notifications don\'t need a second direction. Collaborative editing is genuinely bidirectional — clients push document updates continuously — so it earns its WebSocket. A notification is different: the server has something to say, and the client just listens.',
       },
       {
         type: 'paragraph',
-        text: 'In SRVJ, collaborative editing relies on WebSockets because users continuously exchange document updates. Notifications, however, are different: clients only need to receive events generated by the server.',
-      },
-      {
-        type: 'paragraph',
-        text: 'For this specific use case, Server-Sent Events (SSE) turned out to be a great fit.',
+        text: 'Paying for a bidirectional protocol — the upgrade handshake, a separate connection lifecycle, load-balancer configuration — to send messages one way is buying capability you\'ll never use. SSE is plain HTTP: it flows through the same middleware, proxies, and auth as every other request.',
       },
       {
         type: 'heading',
@@ -481,7 +873,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'The notification pipeline in SRVJ is intentionally asynchronous.',
+        text: 'The pipeline is persist-then-fan-out, and every stage after the user action is asynchronous:',
       },
       {
         type: 'list',
@@ -496,7 +888,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'This architecture decouples notification generation from delivery and allows the system to scale horizontally.',
+        text: 'Generation and delivery are fully decoupled: the API returns as soon as the job is queued, the worker guarantees the notification lands in PostgreSQL, and Redis answers "which instance holds this user\'s connection" without anyone ever having to ask.',
       },
       {
         type: 'heading',
@@ -521,7 +913,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why these headers?',
+        text: 'Every one of those headers is load-bearing:',
       },
       {
         type: 'list',
@@ -538,11 +930,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'SRVJ allows the same user to be connected from multiple browser tabs or devices simultaneously.',
-      },
-      {
-        type: 'paragraph',
-        text: 'To support this behavior, active connections are stored using:',
+        text: 'The same user is routinely connected from three browser tabs and a phone at once, and the registry has to model that. Each new connection is registered like this:',
       },
       {
         type: 'code',
@@ -568,28 +956,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why use this structure?',
-      },
-      {
-        type: 'paragraph',
-        text: 'Using a Map provides constant-time lookup for all active connections belonging to a user.',
-      },
-      {
-        type: 'paragraph',
-        text: 'Using a Set allows:',
-      },
-      {
-        type: 'list',
-        items: [
-          'Multiple tabs per user.',
-          'Multiple devices per user.',
-          'Efficient connection removal.',
-          'Prevention of duplicate connections.',
-        ],
-      },
-      {
-        type: 'paragraph',
-        text: 'As a result, a user receives notifications across every active session.',
+        text: 'The Map gives constant-time lookup of everything a user has open; the Set inside it gives cheap add/remove and de-duplication as tabs come and go. When a notification arrives for a user, delivery is one lookup and a loop — every tab, every device, one write each.',
       },
       {
         type: 'heading',
@@ -607,11 +974,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why?',
-      },
-      {
-        type: 'paragraph',
-        text: 'This comment frame forces the connection to become active immediately so the browser fires the onopen event without waiting for the first notification.',
+        text: 'That line is an SSE comment — clients ignore its content — but writing it flushes the response and makes the browser fire onopen immediately, instead of leaving the connection in limbo until the first real notification happens to arrive.',
       },
       {
         type: 'heading',
@@ -635,23 +998,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why?',
-      },
-      {
-        type: 'paragraph',
-        text: 'Without cleanup:',
-      },
-      {
-        type: 'list',
-        items: [
-          'Memory usage would continuously grow.',
-          'Dead connections would remain in memory.',
-          'The server would attempt to write to closed responses.',
-        ],
-      },
-      {
-        type: 'paragraph',
-        text: 'Removing stale connections prevents memory leaks.',
+        text: 'Skip this and three things go wrong at once: the registry grows without bound, dead sockets accumulate, and the delivery loop starts writing into closed responses. With long-lived connections, cleanup is a correctness requirement, not hygiene.',
       },
       {
         type: 'heading',
@@ -659,11 +1006,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'SRVJ may run on multiple application instances.',
-      },
-      {
-        type: 'paragraph',
-        text: 'For example:',
+        text: 'Everything so far lives in one process\'s memory — which breaks the moment SRVJ runs more than one instance:',
       },
       {
         type: 'list',
@@ -675,15 +1018,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'A worker should not need to know which instance owns a user\'s SSE connection.',
-      },
-      {
-        type: 'paragraph',
-        text: 'To solve this problem, Redis Pub/Sub acts as the distribution layer.',
-      },
-      {
-        type: 'paragraph',
-        text: 'First, two Redis clients are created:',
+        text: 'The worker on instance C has no idea which instance holds user 1\'s connection — and it shouldn\'t have to. Redis Pub/Sub solves the routing problem by never asking it: the worker publishes once, and whichever instance owns the connection delivers. Two Redis clients are needed:',
       },
       {
         type: 'code',
@@ -695,15 +1030,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why duplicate the Redis client?',
-      },
-      {
-        type: 'paragraph',
-        text: 'Redis connections operating in Pub/Sub mode cannot be used normally for other commands.',
-      },
-      {
-        type: 'paragraph',
-        text: 'Creating a dedicated subscriber connection isolates Pub/Sub traffic from the rest of the application.',
+        text: 'The duplicate isn\'t optional: a Redis connection in subscriber mode can\'t issue normal commands anymore, so Pub/Sub gets its own dedicated connection while the original client keeps serving the rest of the application.',
       },
       {
         type: 'heading',
@@ -742,19 +1069,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why store the notification before publishing?',
-      },
-      {
-        type: 'paragraph',
-        text: 'Persisting first guarantees durability.',
-      },
-      {
-        type: 'paragraph',
-        text: 'If a user is offline, notifications remain available and can later be retrieved using the REST API.',
-      },
-      {
-        type: 'paragraph',
-        text: 'Publishing after persistence ensures that no delivered notification is lost.',
+        text: 'The ordering is the whole design: persist first, publish second. PostgreSQL is the source of truth — an offline user finds the notification waiting when they fetch via the REST API, and a crash between the two steps loses only a realtime push, never the notification itself. Flip the order and the failure mode inverts: a user could see a notification that was never stored.',
       },
       {
         type: 'heading',
@@ -789,7 +1104,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why this approach?',
+        text: 'The elegance is in what each part doesn\'t need to know:',
       },
       {
         type: 'list',
@@ -809,7 +1124,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Notification delivery is executed asynchronously through BullMQ.',
+        text: 'The front of the pipeline matters as much as the delivery end: the API never creates notifications inline. It drops a job on BullMQ and returns.',
       },
       {
         type: 'code',
@@ -830,7 +1145,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Why use BullMQ?',
+        text: 'The queue buys the usual things, and every one of them matters here:',
       },
       {
         type: 'list',
@@ -995,15 +1310,15 @@ export const blogs: BlogPost[] = [
     id: 2,
     slug: 'paymob-amazon-payment-services-integration',
     ogImage: '/og/blog-paymob-amazon-payment-services-integration.png',
-    title: 'PayMob, Amazon Payment Services',
+    title: 'PayMob & Amazon Payment Services: What the Docs Don\'t Cover',
     excerpt:
-      'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace • the adapter, payment state machine, and webhook pipeline',
+      'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace, distilled — the provider adapter, the payment state machine, the verify-then-enqueue webhook pipeline, and the reconciliation job that catches everything else.',
     metaTitle: 'PayMob & Amazon Payment Services (PayFort) Integration',
     metaDescription:
       'Integrating PayMob and Amazon Payment Services (PayFort) in production — the adapter pattern, payment state machine, webhook pipeline and reconciliation.',
     category: 'Payment Integration',
     date: '2026-06-12',
-    updated: '2026-07-06',
+    updated: '2026-07-09',
     readTime: '12 min read',
     tags: ['Payments', 'Paymob', 'Amazon Payment Services', 'PayFort', 'Webhooks', 'BullMQ', 'Node.js', 'TypeScript'],
     blocks: [
@@ -1261,14 +1576,15 @@ export const blogs: BlogPost[] = [
     id: 1,
     slug: 'jwt-vs-paseto-tokens',
     ogImage: '/og/blog-jwt-vs-paseto-tokens.png',
-    title: 'JWT vs PASETO',
+    title: 'JWT vs PASETO: Choosing the Right Token for the Job',
     excerpt:
-      'I have shipped JWT in production, gotten burned by it, switched to PASETO for auth and payments, and learned that most teams never question the default.',
+      'I shipped JWT in production, got burned, and switched to PASETO for auth and payments — but the real lesson is token taxonomy: signed vs encrypted vs opaque, and which job each one actually belongs to.',
     metaTitle: 'JWT vs PASETO: Choosing the Right Token Type',
     metaDescription:
       'JWT vs PASETO for auth and payments — signed vs encrypted vs opaque tokens, algorithm safety, revocation, and picking the right token type for each job.',
     category: 'Backend Security',
     date: '2026-05-12',
+    updated: '2026-07-09',
     readTime: '14 min read',
     tags: ['Security', 'JWT', 'PASETO', 'Auth', 'Tokens', 'Node.js', 'TypeScript'],
     blocks: [
@@ -1752,19 +2068,3 @@ export const blogReadMinutes = (blog: BlogPost) => {
   const match = blog.readTime.match(/\d+/)
   return match ? Number(match[0]) : Math.max(1, Math.round(blogWordCount(blog) / 200))
 }
-
-/**
- * Topically-nearest other posts, ranked by shared tags (+2 for same category).
- * Powers in-content internal links, which spread crawl equity and topical authority.
- */
-export const getRelatedBlogs = (blog: BlogPost, limit = 3) =>
-  blogs
-    .filter((candidate) => candidate.slug !== blog.slug)
-    .map((candidate) => {
-      const sharedTags = candidate.tags.filter((tag) => blog.tags.includes(tag)).length
-      const sameCategory = candidate.category === blog.category ? 2 : 0
-      return { blog: candidate, score: sharedTags + sameCategory }
-    })
-    .sort((a, b) => b.score - a.score || (a.blog.date < b.blog.date ? 1 : -1))
-    .slice(0, limit)
-    .map((entry) => entry.blog)

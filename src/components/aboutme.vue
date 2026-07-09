@@ -56,9 +56,9 @@ const fullText = "Mohammed Mostafa"
             class="animate-slide-down-delay-3"
           >
             <span text-sm text-gray-600 dark:text-gray-400 font-medium>
-              Software Engineer at
+              Software Engineer II 
             </span>
-            <a 
+            <!-- <a 
               href="https://lesoll.com" 
               target="_blank" 
               rel="noopener noreferrer" 
@@ -68,7 +68,7 @@ const fullText = "Mohammed Mostafa"
             >
               <img :src="logo" alt="Lesoll Logo" decoding="async" width="20" height="20" w-5 h-auto/>
               <span font-bold text-black dark:text-white>Lesoll</span>
-            </a>
+            </a> -->
           </div>
 
           <!-- Location -->

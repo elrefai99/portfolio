@@ -1,30 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { useHead } from '@vueuse/head'
 import { blogs } from '../utils/blogs'
 import { blogsSEO } from '../utils/tags'
 
 useHead(blogsSEO)
 
-const selectedCategory = ref('All')
-
-const categories = computed(() => [
-  'All',
-  ...Array.from(new Set(blogs.map((blog) => blog.category))),
-])
-
-const filteredBlogs = computed(() => {
-  if (selectedCategory.value === 'All') {
-    return blogs
-  }
-
-  return blogs.filter((blog) => blog.category === selectedCategory.value)
-})
-
 const shellClass = 'bp-card animate-project-rise overflow-hidden'
-const chipClass = 'animate-project-tab bp-tab'
-const inactiveChipClass = ''
-const activeChipClass = 'is-active'
 const tagClass = 'bp-chip'
 </script>
 
@@ -40,22 +21,9 @@ const tagClass = 'bp-chip'
           </p>
         </div>
 
-        <div class="category-tabs" flex gap-3 mb-8 flex-wrap>
-          <button
-            v-for="(category, index) in categories"
-            :key="category"
-            type="button"
-            :class="[chipClass, selectedCategory === category ? activeChipClass : inactiveChipClass]"
-            :style="{ animationDelay: `${index * 0.1}s` }"
-            @click="selectedCategory = category"
-          >
-            {{ category }}
-          </button>
-        </div>
-
         <div class="grid grid-cols-1 gap-4">
           <router-link
-            v-for="(blog, index) in filteredBlogs"
+            v-for="(blog, index) in blogs"
             :key="blog.slug"
             :to="`/blogs/${blog.slug}`"
             :class="shellClass"

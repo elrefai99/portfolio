@@ -31,6 +31,7 @@ useHead(resumeSEO)
           <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-1">Mohammed Mostafa</h1>
           <p class="text-base font-semibold text-gray-600 dark:text-gray-400 mb-3">Software Engineer</p>
           <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <span class="text-gray-300 dark:text-gray-600">•</span>
             <span>Banha, Al Qalyubia</span>
             <span class="text-gray-300 dark:text-gray-600">•</span>
             <a href="mailto:mohamed.mostafa0699@gmail.com" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
@@ -76,7 +77,7 @@ useHead(resumeSEO)
                 <span class="text-sm text-gray-400">|</span>
                 <a href="https://lesoll.com" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:underline">Lesoll</a>
               </div>
-              <span class="text-xs text-gray-500 dark:text-gray-400">Jun 2023 – Present · Cairo, Egypt · On-site</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Jun 2023 – Jul 2026 · Cairo, Egypt · On-site</span>
             </div>
             <ul class="list-disc pl-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
               <li>Leading backend architecture and development for large-scale hospitality platforms.</li>

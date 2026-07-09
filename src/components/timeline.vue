@@ -5,8 +5,8 @@ import modernAcademyLogo from '../../public/projects/modern-academy.png'
 const timeline = [
   {
     company: "Lesoll",
-    role: "Software Engineer",
-    period: "2023 - Present",
+    role: "Software Engineer II",
+    period: "2023 - 2026",
     logo: lesollLogo,
     desc: [
       "Leading backend development and architecture decisions for Lesoll and EGYStay, including system design, technology choices, and production operations.",

@@ -19,6 +19,7 @@ background job processing, and real-time notification infrastructure.
 
 ## Blog posts
 
+- [From one EC2 box to Kubernetes](https://elrefai.me/blogs/aws-ec2-s3-kubernetes-production-deployments): SRVJ's AWS deployment evolution — EC2 + NGINX + pm2, Docker Compose, Kubernetes (kustomize, ingress, HPA), and S3 avatars + presigned uploads
 - [CRDTs, Yjs, and collaborative editing](https://elrefai.me/blogs/crdts-yjs-collaborative-editing-srvj): CRDT theory and a production Yjs WebSocket relay
 - [Server-Sent Events for real-time notifications](https://elrefai.me/blogs/server-sent-events-real-time-notifications-srvj): SSE with Redis pub/sub fan-out
 - [PayMob & Amazon Payment Services integration](https://elrefai.me/blogs/paymob-amazon-payment-services-integration): HMAC-verified idempotent payment webhooks
