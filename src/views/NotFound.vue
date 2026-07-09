@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
 import { sitePaths } from '../utils/site'
-import { notFoundSEO } from '../utils/tags'
+import { notFoundSEO } from '../utils/seo/shared'
 
 const route = useRoute()
 const router = useRouter()

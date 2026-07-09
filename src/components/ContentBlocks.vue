@@ -65,9 +65,33 @@ const typeKeywords = new Set([
 
 const constants = new Set(['false', 'Infinity', 'NaN', 'null', 'true', 'undefined'])
 
-// Splits text on `backtick` spans so inline code renders as highlighted chips.
-const parseInline = (text: string) =>
-  text.split('`').map((part, index) => ({ text: part, code: index % 2 === 1 }))
+type InlinePart = { text: string; code?: boolean; href?: string }
+
+// Splits text on `backtick` spans (inline-code chips) and [label](url)
+// spans (links — internal paths or absolute URLs) inside the plain segments.
+const linkPattern = /\[([^\]]+)\]\(([^)\s]+)\)/g
+
+const parseInline = (text: string): InlinePart[] => {
+  const parts: InlinePart[] = []
+  text.split('`').forEach((segment, index) => {
+    if (index % 2 === 1) {
+      parts.push({ text: segment, code: true })
+      return
+    }
+    let lastIndex = 0
+    for (const match of segment.matchAll(linkPattern)) {
+      if (match.index! > lastIndex) parts.push({ text: segment.slice(lastIndex, match.index) })
+      parts.push({ text: match[1], href: match[2] })
+      lastIndex = match.index! + match[0].length
+    }
+    if (lastIndex < segment.length) parts.push({ text: segment.slice(lastIndex) })
+  })
+  return parts
+}
+
+const isExternal = (href: string) => /^https?:\/\//.test(href)
+
+const inlineLinkClass = 'font-medium text-black underline underline-offset-3 decoration-black/30 hover:decoration-black/80 dark:text-white dark:decoration-white/30 dark:hover:decoration-white/80'
 
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (char) => {
@@ -151,7 +175,7 @@ const isMermaidCode = (block: BlogBlock) =>
         v-if="block.type === 'paragraph'"
         class="text-base leading-8 text-black dark:text-gray-400"
       >
-        <template v-for="(part, partIndex) in parseInline(block.text)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><template v-else>{{ part.text }}</template></template>
+        <template v-for="(part, partIndex) in parseInline(block.text)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><a v-else-if="part.href" :href="part.href" :class="inlineLinkClass" :target="isExternal(part.href) ? '_blank' : undefined" :rel="isExternal(part.href) ? 'noopener noreferrer' : undefined">{{ part.text }}</a><template v-else>{{ part.text }}</template></template>
       </p>
 
       <h2
@@ -166,7 +190,7 @@ const isMermaidCode = (block: BlogBlock) =>
         class="list-disc space-y-2 pl-5 text-base leading-7 text-black dark:text-gray-400"
       >
         <li v-for="item in block.items" :key="item">
-          <template v-for="(part, partIndex) in parseInline(item)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><template v-else>{{ part.text }}</template></template>
+          <template v-for="(part, partIndex) in parseInline(item)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><a v-else-if="part.href" :href="part.href" :class="inlineLinkClass" :target="isExternal(part.href) ? '_blank' : undefined" :rel="isExternal(part.href) ? 'noopener noreferrer' : undefined">{{ part.text }}</a><template v-else>{{ part.text }}</template></template>
         </li>
       </ul>
 

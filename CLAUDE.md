@@ -32,26 +32,29 @@ The whole site is themed as an architectural blueprint / building elevation. Thi
 
 ### 3. Build-time OG image generation
 
-Every page and blog post gets its own branded 1200×630 blueprint PNG Open Graph card — no runtime image service. The renderer is **`build/og-image.ts`**: it builds an SVG (blueprint grid, corner marks, chip, wrapped title/subtitle) and rasterizes it with `@resvg/resvg-js`, using the Inter `.ttf` files in `build/fonts/` (resvg does not wrap text, so `wrapText` estimates Inter's advance width to break lines). Cards come from `staticCards` (home/projects/blogs/resume) plus one `blogCard` per post; `allCards(blogs)` is the full set.
+Every page, blog post, and case study gets its own branded 1200×630 blueprint PNG Open Graph card — no runtime image service. The renderer is **`build/og-image.ts`**: it builds an SVG (blueprint grid, corner marks, chip, wrapped title/subtitle) and rasterizes it with `@resvg/resvg-js`, using the Inter `.ttf` files in `build/fonts/` (resvg does not wrap text, so `wrapText` estimates Inter's advance width to break lines). Cards come from `staticCards` (home/projects/blogs/resume) plus one `blogCard` per post and one `projectCard` per case study; `allCards(blogs)` is the full set.
 
-`ogImagePlugin` in `vite.config.ts` wires it in two modes: **dev** serves `/og/(page|blog)-<name>.png` on demand via middleware (so social debuggers + local preview work); **build** writes every card to `dist/og/*.png` in `closeBundle`. The URLs are referenced from the `*SEO` exports in `src/utils/tags.ts` (`image:` fields point at `/og/page-*.png`; per-post `ogImage`). So: adding a blog post auto-adds its OG card, but **changing OG copy/layout means editing `build/og-image.ts`, not a template**. New static page → add a card to `staticCards` and point its `tags.ts` `image` at the matching `/og/page-*.png`.
+`ogImagePlugin` in `vite.config.ts` wires it in two modes: **dev** serves `/og/(page|blog|project)-<name>.png` on demand via middleware (so social debuggers + local preview work); **build** writes every card to `dist/og/*.png` in `closeBundle`. The URLs are referenced from the SEO modules in `src/utils/seo/` (`image:` fields point at `/og/page-*.png`; per-post `ogImage`). So: adding a blog post or case study auto-adds its OG card, but **changing OG copy/layout means editing `build/og-image.ts`, not a template**. New static page → add a card to `staticCards` and point its SEO module's `image` at the matching `/og/page-*.png`.
 
 ## Routes & data
 
-Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all.
+Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/projects/:slug` (case studies), `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all. Home and NotFound are statically imported; **every other view is a lazy `() => import(...)`** so its content data stays out of the entry chunk.
 
 Content is plain TypeScript data modules under `src/utils/` — no CMS:
 
 - **`projects.ts`** — portfolio project data (title, description, tags, links, image).
-- **`blogs.ts`** — blog posts as structured content blocks (`paragraph`, `heading`, `list`, `code`); post metadata (`slug`, `title`, `excerpt`, `category`, `tags`, `readTime`, optional `ogImage`) feeds routing, the prerender set, SEO, and OG cards. `slug` drives routing. A `code` block with `language: 'mermaid'` is rendered as a live diagram by `MermaidDiagram.vue` in `BlogPostView.vue` (mermaid is lazy-`import()`ed on first use, theme-aware).
-- **`site.ts`** — canonical `siteUrl`, `sitePaths`, and `sitemapEntries`.
-- **`tags.ts`** — per-route SEO `<head>` (OpenGraph, Twitter, JSON-LD schema); consumed via `useHead(...)` in each view.
+- **`caseStudies.ts`** — long-form project deep dives rendered by `ProjectCaseView.vue`; `relatedBlogSlugs` powers the case→blog "Further Reading" links **and** the reverse blog→case links in `BlogPostView.vue`.
+- **`blogs.ts`** — blog posts as structured content blocks (`paragraph`, `heading`, `list`, `code`); post metadata (`slug`, `title`, `excerpt`, `category`, `tags`, `readTime`, optional `ogImage`) feeds routing, the prerender set, SEO, and OG cards. `slug` drives routing. Paragraph/list text supports `` `inline code` `` and `[label](url)` links (rendered by `ContentBlocks.vue`). A `code` block with `language: 'mermaid'` is rendered as a live diagram by `MermaidDiagram.vue` in `BlogPostView.vue` (mermaid is lazy-`import()`ed on first use, theme-aware).
+- **`site.ts`** — canonical `siteUrl` and `sitePaths` **only**. It is imported by every page, so it must stay dependency-free — never import content modules here.
+- **`sitemap.ts`** — `sitemapEntries` (build-time only, consumed by `vite.config.ts`); imports the blog/case-study corpus, which is exactly why it lives apart from `site.ts`.
+- **`seo/`** — per-route SEO `<head>` modules (OpenGraph, Twitter, JSON-LD schema), consumed via `useHead(...)`: `shared.ts` (createSeo factory, Person/WebSite schemas, notFoundSEO), `home.ts`, `projects.ts`, `case-study.ts`, `blog.ts`, `resume.ts`. **Split on purpose**: a view imports only its own module so e.g. the homepage chunk never pulls the blog corpus (`seo/blog.ts` is the only one allowed to import `blogs.ts`).
 - **`icons.ts`** — maps tech-tag strings → Iconify icon ids for project cards.
-- **`spotify.ts`** — static Spotify embed-iframe descriptors (not an API); edit the embed URLs to change tracks.
 
 ## Sitemap
 
-A custom Vite plugin in `vite.config.ts` generates `sitemap.xml` (dev: middleware at `/sitemap.xml`; build: `closeBundle` writes `dist/sitemap.xml`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources`, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable. When adding a route: add it to `sitemapEntries` in `site.ts`, and optionally to `routeSources` in `vite.config.ts` for git-driven freshness.
+A custom Vite plugin in `vite.config.ts` generates `sitemap.xml` (dev: middleware at `/sitemap.xml`; build: `closeBundle` writes `dist/sitemap.xml`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources`, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable. When adding a route: add it to `sitemapEntries` in `src/utils/sitemap.ts`, and optionally to `routeSources` in `vite.config.ts` for git-driven freshness.
+
+A sibling `rssPlugin` generates **`/rss.xml`** (RSS 2.0, all blog posts, newest first) the same way — dev middleware + `closeBundle`. It reads only blog metadata, so new posts appear automatically; `index.html` carries the `<link rel="alternate" type="application/rss+xml">` for discovery.
 
 > **Same-host only**: sitemap entries must be `elrefai.me` paths. Subdomain URLs (`srvj.elrefai.me`, `keepit.elrefai.me`) were once listed and had to be removed — the sitemap protocol forbids cross-host URLs and Google ignores them.
 
@@ -67,7 +70,9 @@ Icons render via the UnoCSS icon preset (`i-carbon-*`, `i-logos-*`, `i-simple-ic
 
 Established by a full SEO/CWV audit (2026-07); breaking any of these is a regression:
 
-- **Canonicals are per-route only.** `createSeo` in `tags.ts` emits the canonical; `index.html` intentionally has **no** static `<link rel="canonical">` (a static one leaks onto the 404 page, which must not claim a canonical — `notFoundSEO` passes `canonical: false`). Don't re-add one to the template.
+- **Canonicals are per-route only.** `createSeo` in `src/utils/seo/shared.ts` emits the canonical; `index.html` intentionally has **no** static `<link rel="canonical">` (a static one leaks onto the 404 page, which must not claim a canonical — `notFoundSEO` passes `canonical: false`). Don't re-add one to the template.
+- **The entry chunk must not contain the blog corpus.** `site.ts` stays dependency-free, sitemap data lives in `sitemap.ts`, and only `seo/blog.ts` + the lazy blog views may import `blogs.ts`. (Before this split the homepage shipped every article as JS: 111KB → 67KB gzip.)
+- **Hashed assets are cached immutable** via the `/assets/(.*)` header in `vercel.json` — safe only because Vite content-hashes filenames; never emit unhashed files into `dist/assets/`.
 - **The homepage h1 (`aboutme.vue`) is the LCP element.** It must never animate `opacity` — it uses the transform-only `slide-down-lcp` keyframe, and its section wrapper has no fade-in. (A typing effect and an opacity fade have both been removed from it before; each cost ~1s of LCP.)
 - **Image budgets**: `public/projects/*` logos render at ≤24px — keep sources ≤96px (a 944KB srvj.png once shipped for a 20px icon). `public/og-image.png` must stay **<300KB** or WhatsApp drops link previews. `favicon.ico` is a layered 16/32/48 ICO (~2KB) — regenerate from `icon-512.png`, don't drop in a raw export.
 - **`public/llms.txt`** is a hand-maintained index for AI answer engines — update it when adding pages or blog posts.
@@ -76,11 +81,11 @@ Established by a full SEO/CWV audit (2026-07); breaking any of these is a regres
 
 ## Theme
 
-`src/composables/useTheme.ts` handles dark/light/auto, persists to the `theme-mode` localStorage key, and toggles the `dark` class on `<html>`. To avoid FOUC, an inline script in `index.html` reads `theme-mode` synchronously before paint and applies `dark` (mirroring the composable's logic). `theme-mode` is the single source of truth.
+The navbar toggle (`src/components/darkmode.vue`) uses vueuse `useDark({ storageKey: 'theme-mode' })`, which toggles the `dark` class on `<html>` and persists to the `theme-mode` localStorage key. To avoid FOUC, an inline script in `index.html` reads the same `theme-mode` key synchronously before paint. **The `storageKey` option and the inline script must always agree** — the toggle once used vueuse's default key (`vueuse-color-scheme`) and every reload flashed the wrong theme.
 
-## i18n (current state)
+## i18n / stores (current state)
 
-vue-i18n and pinia are **not registered** — both were removed from `src/main.ts` because nothing used them (no `$t`/`useI18n`, no store imports) and they added ~50KB of dead JS to every page. The packages remain in `package.json`, and `src/locales/` (`lang/{en,ar}.json`) plus `src/stores/counter.ts` still exist as dormant scaffolding. If a task needs localized copy or a store, re-registering the plugin in `main.ts` is part of the work.
+There is no i18n and no store: vue-i18n and pinia were fully removed (packages, `src/locales/`, `src/stores/`) because nothing used them and they added ~50KB of dead JS to every page. If a task needs localized copy or a store, installing and registering the plugin in `main.ts` is part of the work.
 
 ## Auto-imports
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { projectsSEO } from '../utils/tags';
+import { projectsSEO } from '../utils/seo/projects';
 import { projects } from '../utils/projects';
 import { caseStudies } from '../utils/caseStudies';
 import { sitePaths } from '../utils/site';

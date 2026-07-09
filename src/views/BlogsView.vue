@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useHead } from '@vueuse/head'
 import { blogs } from '../utils/blogs'
-import { blogsSEO } from '../utils/tags'
+import { blogsSEO } from '../utils/seo/blog'
 
 useHead(blogsSEO)
 

@@ -4,6 +4,7 @@
     "src/utils/blogs.ts",
     "src/utils/caseStudies.ts",
     "src/utils/site.ts",
+    "src/utils/sitemap.ts",
     "build/og-image.ts",
     "vite.config.*",
     "vitest.config.*",

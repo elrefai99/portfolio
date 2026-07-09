@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHead } from '@vueuse/head'
-import { resumeSEO } from '../utils/tags'
+import { resumeSEO } from '../utils/seo/resume'
 
 useHead(resumeSEO)
 </script>
@@ -34,8 +34,8 @@ useHead(resumeSEO)
             <span class="text-gray-300 dark:text-gray-600">•</span>
             <span>Banha, Al Qalyubia</span>
             <span class="text-gray-300 dark:text-gray-600">•</span>
-            <a href="mailto:mohamed.mostafa0699@gmail.com" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
-              mohamed.mostafa0699@gmail.com
+            <a href="mailto:elrefai99@gmail.com" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+              elrefai99@gmail.com
             </a>
             <span class="text-gray-300 dark:text-gray-600">•</span>
             <a href="tel:+201142314446" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">

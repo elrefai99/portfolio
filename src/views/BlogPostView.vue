@@ -3,7 +3,9 @@ import { computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
 import { getBlogBySlug } from '../utils/blogs'
-import { createBlogPostSEO, notFoundSEO } from '../utils/tags'
+import { caseStudies } from '../utils/caseStudies'
+import { createBlogPostSEO } from '../utils/seo/blog'
+import { notFoundSEO } from '../utils/seo/shared'
 
 const route = useRoute()
 
@@ -11,6 +13,12 @@ const slug = computed(() => String(route.params.slug || ''))
 const blog = computed(() => getBlogBySlug(slug.value))
 
 useHead(computed(() => (blog.value ? createBlogPostSEO(blog.value) : notFoundSEO)))
+
+// Reverse of the case studies' relatedBlogSlugs: link back to the deep dives
+// this post supports, so posts aren't internal-link dead ends.
+const relatedCaseStudies = computed(() =>
+  caseStudies.filter((cs) => cs.relatedBlogSlugs?.includes(slug.value)),
+)
 
 const panelClass = 'bp-card'
 const tagClass = 'bp-chip'
@@ -48,6 +56,23 @@ const tagClass = 'bp-chip'
         <section :class="`${panelClass} p-6 md:p-8`">
           <ContentBlocks :blocks="blog.blocks" />
         </section>
+
+        <!-- Project deep dives this post supports -->
+        <aside v-if="relatedCaseStudies.length" :class="`${panelClass} p-6 md:p-8`" aria-label="Related project deep dives">
+          <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            From the projects behind this post
+          </p>
+          <ul class="mt-4 space-y-4">
+            <li v-for="cs in relatedCaseStudies" :key="cs.slug">
+              <router-link :to="`/projects/${cs.slug}`" class="group block">
+                <span class="block text-lg font-semibold text-black transition-opacity group-hover:opacity-70 dark:text-gray-300">
+                  {{ cs.name }} — deep dive
+                </span>
+                <span class="mt-1 block text-sm leading-6 text-gray-700 dark:text-gray-400">{{ cs.summary }}</span>
+              </router-link>
+            </li>
+          </ul>
+        </aside>
 
       </article>
 

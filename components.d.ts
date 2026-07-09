@@ -8,26 +8,19 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AboutCV: typeof import('./src/components/cv/aboutCV.vue')['default']
     Aboutme: typeof import('./src/components/aboutme.vue')['default']
     BackGround: typeof import('./src/components/BackGround.vue')['default']
     BlueprintBackground: typeof import('./src/components/BlueprintBackground.vue')['default']
     BlueprintLogo: typeof import('./src/components/BlueprintLogo.vue')['default']
-    BranchBackground: typeof import('./src/components/BranchBackground.vue')['default']
     ContentBlocks: typeof import('./src/components/ContentBlocks.vue')['default']
     Darkmode: typeof import('./src/components/darkmode.vue')['default']
     FloorSection: typeof import('./src/components/FloorSection.vue')['default']
     Footer: typeof import('./src/components/footer.vue')['default']
-    GridGlowBackground: typeof import('./src/components/GridGlowBackground.vue')['default']
-    HeaderCV: typeof import('./src/components/cv/headerCV.vue')['default']
     MermaidDiagram: typeof import('./src/components/MermaidDiagram.vue')['default']
-    ModelView: typeof import('./src/components/modelView.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectedProjects: typeof import('./src/components/SelectedProjects.vue')['default']
-    Songs: typeof import('./src/components/songs.vue')['default']
-    StarBackground: typeof import('./src/components/StarBackground.vue')['default']
     Timeline: typeof import('./src/components/timeline.vue')['default']
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { homeSEO } from '../utils/tags';
+import { homeSEO } from '../utils/seo/home';
 import { useHead } from '@vueuse/head';
 
 useHead(homeSEO)

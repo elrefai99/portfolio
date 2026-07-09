@@ -8,12 +8,13 @@ import UnoCSS from 'unocss/vite'
 import { defineConfig, type ViteDevServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import type { } from 'vite-ssg'
-import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
+import { sitePaths, siteUrl } from './src/utils/site'
+import { sitemapEntries } from './src/utils/sitemap'
 import { blogs } from './src/utils/blogs'
 import { caseStudies } from './src/utils/caseStudies'
 import { allCards, ensureFonts, renderOgPng } from './build/og-image'
 
-const globalSources = ['src/utils/tags.ts', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
+const globalSources = ['src/utils/seo', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
 
 const routeSources: Record<string, string[]> = {
   [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/timeline.vue', ...globalSources],
@@ -74,6 +75,61 @@ const sitemapPlugin = () => ({
   },
 })
 
+const escapeXml = (value: string) =>
+  value.replace(/[&<>"']/g, (char) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string,
+  )
+
+const createRssXml = () => {
+  const sorted = [...blogs].sort((a, b) => b.date.localeCompare(a.date))
+  const lastBuildDate = new Date(
+    sorted
+      .map((post) => post.updated ?? post.date)
+      .sort()
+      .at(-1)!,
+  ).toUTCString()
+  const items = sorted
+    .map((post) => {
+      const url = new URL(`${sitePaths.blogs}/${post.slug}`, siteUrl).toString()
+      return `    <item>
+      <title>${escapeXml(post.title)}</title>
+      <link>${url}</link>
+      <guid isPermaLink="true">${url}</guid>
+      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <category>${escapeXml(post.category)}</category>
+      <description>${escapeXml(post.metaDescription ?? post.excerpt)}</description>
+    </item>`
+    })
+    .join('\n')
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mohammed Mostafa — Backend Engineering Blog</title>
+    <link>${new URL(sitePaths.blogs, siteUrl).toString()}</link>
+    <atom:link href="${new URL('/rss.xml', siteUrl).toString()}" rel="self" type="application/rss+xml"/>
+    <description>Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.</description>
+    <language>en</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
+${items}
+  </channel>
+</rss>
+`
+}
+
+const rssPlugin = () => ({
+  name: 'generate-rss',
+  configureServer(server: ViteDevServer) {
+    server.middlewares.use('/rss.xml', (_req: IncomingMessage, res: ServerResponse) => {
+      res.setHeader('Content-Type', 'application/rss+xml')
+      res.end(createRssXml())
+    })
+  },
+  closeBundle() {
+    writeFileSync(resolve(process.cwd(), 'dist', 'rss.xml'), createRssXml(), 'utf8')
+  },
+})
+
 const ogImagePlugin = () => ({
   name: 'generate-og-images',
   configureServer(server: ViteDevServer) {
@@ -122,11 +178,9 @@ export default defineConfig({
     }),
     UnoCSS(),
     sitemapPlugin(),
+    rssPlugin(),
     ogImagePlugin(),
   ],
-  build: {
-    sourcemap: true,
-  },
   ssgOptions: {
     formatting: 'minify',
     includedRoutes(paths: string[]) {

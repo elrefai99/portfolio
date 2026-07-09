@@ -104,7 +104,6 @@ export const caseStudies: CaseStudy[] = [
       'AWS',
       'Docker',
       'NGINX',
-      "..."
     ],
     link: 'https://lesoll.com',
     overview: [
@@ -226,7 +225,7 @@ export const caseStudies: CaseStudy[] = [
     security: [],
     lessons: [],
     result: [],
-    metaTitle: 'Lesoll Deep Dive — Real-Estate Marketplace Backend | Mohammed Mostafa',
+    metaTitle: 'Lesoll Deep Dive — Real-Estate Marketplace Backend',
     metaDescription:
       'How I built Lesoll’s production real-estate marketplace backend: MongoDB search at scale, Paymob payments and subscriptions, Socket.IO chat, and BullMQ jobs.',
     datePublished: '2026-07-09',
@@ -290,7 +289,6 @@ export const caseStudies: CaseStudy[] = [
       'Paymob',
       'AWS',
       'Docker',
-      "..."
     ],
     link: 'https://egystay.com',
     overview: [
@@ -416,7 +414,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     lessons: [],
     result: [],
-    metaTitle: 'EGYStay Deep Dive — Booking Platform Backend | Mohammed Mostafa',
+    metaTitle: 'EGYStay Deep Dive — Booking Platform Backend',
     metaDescription:
       'How I built EGYStay’s booking backend from the ground up: atomic reservations with zero double bookings, a centralized pricing engine, and APS + Paymob payments.',
     datePublished: '2026-07-09',
@@ -457,7 +455,6 @@ export const caseStudies: CaseStudy[] = [
       'BullMQ',
       'Docker',
       'Vue.js',
-      "..."
     ],
     link: 'https://srvj.elrefai.me/',
     overview: [
@@ -554,7 +551,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     lessons: [],
     result: [],
-    metaTitle: 'SRVJ Deep Dive — Real-Time CRDT Collaboration Backend | Mohammed Mostafa',
+    metaTitle: 'SRVJ Deep Dive — Real-Time CRDT Collaboration Backend',
     metaDescription:
       'Deep dive into SRVJ, a real-time collaborative diagram editor: Yjs CRDT sync, PASETO-authenticated WebSockets, dual-snapshot persistence, and SSE notifications.',
     datePublished: '2026-07-09',
