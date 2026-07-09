@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Resvg } from '@resvg/resvg-js'
 import type { BlogPost } from '../src/utils/blogs'
+import { caseStudies, type CaseStudy } from '../src/utils/caseStudies'
 
 const WIDTH = 1200
 const HEIGHT = 630
@@ -118,6 +119,16 @@ export const blogCard = (blog: BlogPost): OgCard => ({
   footerRight: blog.tags.slice(0, 5).join('   ·   '),
 })
 
+export const projectCard = (cs: CaseStudy): OgCard => ({
+  fileName: `project-${cs.slug}.png`,
+  eyebrow: 'L-03 · PROJECT / DEEP DIVE',
+  chip: cs.category,
+  title: cs.name,
+  subtitle: cs.summary,
+  footerLeft: author,
+  footerRight: cs.stack.slice(0, 4).join('   ·   '),
+})
+
 export const staticCards: OgCard[] = [
   {
     fileName: 'page-home.png',
@@ -157,7 +168,11 @@ export const staticCards: OgCard[] = [
   },
 ]
 
-export const allCards = (blogs: BlogPost[]): OgCard[] => [...staticCards, ...blogs.map(blogCard)]
+export const allCards = (blogs: BlogPost[]): OgCard[] => [
+  ...staticCards,
+  ...caseStudies.map(projectCard),
+  ...blogs.map(blogCard),
+]
 
 let cachedFontCheck = false
 export const ensureFonts = () => {

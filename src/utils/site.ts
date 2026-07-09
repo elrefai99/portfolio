@@ -1,4 +1,5 @@
 import { blogs } from './blogs'
+import { caseStudies } from './caseStudies'
 
 export const siteUrl = 'https://elrefai.me'
 
@@ -36,6 +37,12 @@ export const sitemapEntries = [
     priority: '0.7',
     lastmod: staticPagesLastmod,
   },
+  ...caseStudies.map((cs) => ({
+    path: `${sitePaths.projects}/${cs.slug}`,
+    changefreq: 'monthly',
+    priority: '0.8',
+    lastmod: '2026-07-09',
+  })),
   ...blogs.map((blog) => ({
     path: `${sitePaths.blogs}/${blog.slug}`,
     changefreq: 'weekly',

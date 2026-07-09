@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { projectsSEO } from '../utils/tags';
 import { projects } from '../utils/projects';
+import { caseStudies } from '../utils/caseStudies';
+import { sitePaths } from '../utils/site';
 import { useHead } from '@vueuse/head';
 import { getTagIcon } from '../utils/icons';
 
@@ -30,6 +32,10 @@ const toggleDescription = (id: number) => {
 }
 
 const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
+
+const caseStudySlugs = new Set(caseStudies.map((cs) => cs.slug))
+const hasCaseStudy = (slug: string) => caseStudySlugs.has(slug)
+const casePath = (slug: string) => `${sitePaths.projects}/${slug}`
 
 const heroLinkClass = 'bp-link'
 const categoryChipClass = 'animate-project-tab bp-tab'
@@ -102,6 +108,15 @@ const tagChipClass = 'bp-chip'
                 </div>
 
                 <p v-if="project.tagline" text-sm text-gray-600 dark:text-gray-400 mb-4>{{ project.tagline }}</p>
+
+                <!-- Deep dive link -->
+                <router-link
+                  v-if="hasCaseStudy(project.slug)"
+                  :to="casePath(project.slug)"
+                  class="case-nav-link inline-flex items-center gap-1 mb-4"
+                >
+                  Read the deep dive →
+                </router-link>
 
                 <!-- Technologies -->
                 <div>

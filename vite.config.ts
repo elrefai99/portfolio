@@ -10,15 +10,22 @@ import vue from '@vitejs/plugin-vue'
 import type { } from 'vite-ssg'
 import { sitemapEntries, sitePaths, siteUrl } from './src/utils/site'
 import { blogs } from './src/utils/blogs'
+import { caseStudies } from './src/utils/caseStudies'
 import { allCards, ensureFonts, renderOgPng } from './build/og-image'
 
 const globalSources = ['src/utils/tags.ts', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
 
 const routeSources: Record<string, string[]> = {
   [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/timeline.vue', ...globalSources],
-  [sitePaths.projects]: ['src/views/projectsView.vue', 'src/utils/projects.ts', ...globalSources],
+  [sitePaths.projects]: ['src/views/projectsView.vue', 'src/utils/projects.ts', 'src/utils/caseStudies.ts', ...globalSources],
   [sitePaths.blogs]: ['src/views/BlogsView.vue', 'src/utils/blogs.ts', ...globalSources],
   [sitePaths.resume]: ['src/views/ResumeView.vue', ...globalSources],
+  ...Object.fromEntries(
+    caseStudies.map((cs) => [
+      `${sitePaths.projects}/${cs.slug}`,
+      ['src/views/ProjectCaseView.vue', 'src/utils/caseStudies.ts', ...globalSources],
+    ]),
+  ),
 }
 
 const gitLastmod = (files: string[]): string | undefined => {
@@ -71,7 +78,7 @@ const ogImagePlugin = () => ({
   name: 'generate-og-images',
   configureServer(server: ViteDevServer) {
     server.middlewares.use((req: IncomingMessage, res: ServerResponse, next: () => void) => {
-      const match = req.url?.match(/^\/og\/((?:page|blog)-[a-z0-9-]+\.png)(?:\?.*)?$/)
+      const match = req.url?.match(/^\/og\/((?:page|blog|project)-[a-z0-9-]+\.png)(?:\?.*)?$/)
       if (!match) return next()
       const card = allCards(blogs).find((c) => c.fileName === match[1])
       if (!card) return next()
@@ -95,6 +102,7 @@ const ogImagePlugin = () => ({
 })
 
 const blogRoutes = blogs.map((blog) => `${sitePaths.blogs}/${blog.slug}`)
+const caseStudyRoutes = caseStudies.map((cs) => `${sitePaths.projects}/${cs.slug}`)
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -123,7 +131,7 @@ export default defineConfig({
     formatting: 'minify',
     includedRoutes(paths: string[]) {
       const staticPaths = paths.filter((p) => !p.includes(':'))
-      return Array.from(new Set([...staticPaths, ...blogRoutes]))
+      return Array.from(new Set([...staticPaths, ...caseStudyRoutes, ...blogRoutes]))
     },
   },
 })

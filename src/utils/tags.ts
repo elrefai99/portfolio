@@ -1,6 +1,7 @@
 import { sitePaths, siteUrl } from './site'
 import { projects } from './projects'
 import { blogs, blogReadMinutes, blogWordCount, type BlogPost } from './blogs'
+import { caseStudies, caseStudyWordCount, type CaseStudy } from './caseStudies'
 
 const author = 'elrefai99'
 const siteName = 'Mohammed Mostafa Portfolio'
@@ -223,11 +224,11 @@ const createSeo = ({
     },
     link: canonical
       ? [
-          {
-            rel: 'canonical',
-            href: url,
-          },
-        ]
+        {
+          rel: 'canonical',
+          href: url,
+        },
+      ]
       : [],
     meta: [
       { name: 'title', content: title },
@@ -325,15 +326,22 @@ type ProjectShape = {
   npm?: string
   desc: string | string[]
   tags: string[]
+  keywords?: string | string[]
 }
 
 const projectDescriptionText = (desc: string | string[]) =>
   Array.isArray(desc) ? desc.join(' ') : desc
 
+const caseStudySlugs = new Set(caseStudies.map((cs) => cs.slug))
+
 const projectListItems = (projects as ProjectShape[]).map((project, index) => {
   const projectUrl = project.link || project.github || project.npm
+  // Projects with a full case study point at their own page; the rest at
+  // their anchor on the index.
   const anchorUrl = project.slug
-    ? `${new URL(sitePaths.projects, siteUrl).toString()}#${project.slug}`
+    ? project.slug && caseStudySlugs.has(project.slug)
+      ? new URL(`${sitePaths.projects}/${project.slug}`, siteUrl).toString()
+      : `${new URL(sitePaths.projects, siteUrl).toString()}#${project.slug}`
     : undefined
   return {
     '@type': 'ListItem',
@@ -391,6 +399,90 @@ export const projectsSEO = createSeo({
     ]),
   ],
 })
+
+export const createCaseStudySEO = (cs: CaseStudy) => {
+  const path = `${sitePaths.projects}/${cs.slug}`
+  const url = new URL(path, siteUrl).toString()
+  const ogImage = `${siteUrl}/og/project-${cs.slug}.png`
+  const modifiedDate = cs.dateModified ?? cs.datePublished
+  // The matching projects.ts entry carries the richest, hand-curated keyword
+  // list for this product — reuse it instead of duplicating in caseStudies.ts.
+  const projectEntry = (projects as ProjectShape[]).find((p) => p.slug === cs.slug)
+  const projectKeywords = projectEntry?.keywords
+    ? Array.isArray(projectEntry.keywords)
+      ? projectEntry.keywords
+      : [projectEntry.keywords]
+    : []
+
+  return createSeo({
+    title: cs.metaTitle ?? `Mohammed Mostafa • ${cs.name}`,
+    description: cs.metaDescription,
+    path,
+    image: ogImage,
+    ogType: 'article',
+    imageAlt: `${cs.name} • Backend Engineering Deep Dive`,
+    keywords: uniqueKeywords([
+      cs.name,
+      `${cs.name} deep dive`,
+      `${cs.name} case study`,
+      `${cs.name} backend`,
+      `${cs.name} architecture`,
+      `${cs.name} engineering`,
+      ...brandKeywords,
+      ...projectKeywords,
+      ...cs.keywords,
+      ...cs.stack,
+      'Backend engineering deep dive',
+      'Backend engineering case study',
+      'Production backend architecture',
+      'Node.js case study',
+      'Real-world backend engineering',
+    ]),
+    extraMeta: [
+      { property: 'article:published_time', content: toIsoDateTime(cs.datePublished) },
+      { property: 'article:modified_time', content: toIsoDateTime(modifiedDate) },
+      { property: 'article:author', content: author },
+      { property: 'article:section', content: 'Engineering Deep Dive' },
+      ...cs.stack.map((tech) => ({ property: 'article:tag', content: tech })),
+    ],
+    schema: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'TechArticle',
+        mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+        headline: cs.metaTitle ?? `${cs.name} — Backend Engineering Deep Dive`,
+        name: `${cs.name} — Backend Engineering Deep Dive`,
+        description: cs.metaDescription,
+        image: ogImage,
+        url,
+        datePublished: cs.datePublished,
+        dateModified: modifiedDate,
+        author: personSchema,
+        publisher: personSchema,
+        inLanguage: 'en',
+        articleSection: 'Engineering Deep Dive',
+        wordCount: caseStudyWordCount(cs),
+        keywords: cs.keywords,
+        isPartOf: { '@id': websiteId },
+        about: {
+          '@type': 'SoftwareApplication',
+          name: cs.name,
+          applicationCategory: 'DeveloperApplication',
+          operatingSystem: 'Web',
+          ...(cs.link ? { sameAs: cs.link } : {}),
+          ...(cs.github ? { codeRepository: cs.github } : {}),
+          keywords: cs.stack,
+          author: { '@id': personId },
+        },
+      },
+      createBreadcrumb([
+        { name: 'Home', path: sitePaths.home },
+        { name: 'Projects', path: sitePaths.projects },
+        { name: cs.name, path },
+      ]),
+    ],
+  })
+}
 
 export const blogsSEO = createSeo({
   title: 'Mohammed Mostafa • Blog',

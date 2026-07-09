@@ -17,6 +17,12 @@ background job processing, and real-time notification infrastructure.
 - [Blog](https://elrefai.me/blogs): Backend engineering articles
 - [Resume](https://elrefai.me/resume): Experience, skills, and education
 
+## Project case studies
+
+- [Lesoll](https://elrefai.me/projects/lesoll): Production real-estate classifieds marketplace backend — Express.js, MongoDB, Redis, BullMQ, Paymob payments, Socket.IO messaging, AWS
+- [EGYStay](https://elrefai.me/projects/egystay): Short-term rental booking backend built from the ground up — reservations, availability, pricing, Amazon Payment Services
+- [SRVJ](https://elrefai.me/projects/srvj): Real-time collaborative diagram editor — Yjs CRDT sync server, PASETO-authenticated WebSockets, dual-snapshot persistence, SSE + Redis pub/sub
+
 ## Blog posts
 
 - [From one EC2 box to Kubernetes](https://elrefai.me/blogs/aws-ec2-s3-kubernetes-production-deployments): SRVJ's AWS deployment evolution — EC2 + NGINX + pm2, Docker Compose, Kubernetes (kustomize, ingress, HPA), and S3 avatars + presigned uploads

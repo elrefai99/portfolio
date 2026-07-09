@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { projects } from '../utils/projects'
+import { caseStudies } from '../utils/caseStudies'
 import { getTagIcon } from '../utils/icons'
+
+const caseStudySlugs = new Set(caseStudies.map((cs) => cs.slug))
 
 // Top 4 live projects only
 const selectedProjects = computed(() =>
@@ -76,7 +79,15 @@ const footerLinkClass = 'bp-link'
         </div>
 
         <!-- Footer link -->
-        <div class="mt-auto pt-5">
+        <div class="mt-auto pt-5 flex items-center gap-5">
+          <router-link
+            v-if="caseStudySlugs.has(project.slug)"
+            :to="`/projects/${project.slug}`"
+            :class="footerLinkClass"
+          >
+            Deep Dive
+            <i class="i-carbon:arrow-right w-4 h-4" />
+          </router-link>
           <a
             v-if="project.link"
             :href="project.link"
