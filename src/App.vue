@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Analytics } from '@vercel/analytics/vue'
+import { SpeedInsights } from '@vercel/speed-insights/vue'
 </script>
 
 <template>
@@ -16,6 +17,7 @@ import { Analytics } from '@vercel/analytics/vue'
   <RouterView />
   <Footer />
   <Analytics />
+  <SpeedInsights />
 </template>
 
 <style>
