@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import logo from "../../public/projects/lesoll-logo.png"
-import egystayLogo from "../../public/projects/egy-stay-logo.png"
+// Public-path strings (not imports from ../../public) so Vite doesn't emit a
+// second hashed copy of each logo into dist/assets.
+const logo = "/projects/lesoll-logo.png"
+const egystayLogo = "/projects/egy-stay-logo.png"
 
 // Static text — this H1 is the homepage's LCP element. It used to be wiped
 // to '' on mount and retyped letter-by-letter, which delayed LCP by ~1.6s
@@ -187,9 +189,10 @@ const fullText = "Mohammed Mostafa"
         bg="black/2 dark:white/1"
         rounded-2xl
       >
-        <a 
-          href="https://github.com/elrefai99" 
+        <a
+          href="https://github.com/elrefai99"
           target="_blank"
+          rel="noopener noreferrer"
           block
         >
           <img

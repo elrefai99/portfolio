@@ -6,6 +6,7 @@ useHead(resumeSEO)
 </script>
 
 <template>
+  <main>
   <FloorSection level="L-05" name="Dossier / Curriculum Vitae" elevation="+0.00 m" :top-slab="false" eager>
   <div max-w-4xl mx-auto min-h-screen text-black dark:text-white px-4 py-8>
 
@@ -154,4 +155,5 @@ useHead(resumeSEO)
 
   </div>
   </FloorSection>
+  </main>
 </template>

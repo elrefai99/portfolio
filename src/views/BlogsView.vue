@@ -10,6 +10,7 @@ const tagClass = 'bp-chip'
 </script>
 
 <template>
+  <main>
   <FloorSection level="L-04" name="Journal / Field Notes" elevation="+0.00 m" :top-slab="false" eager>
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
     <div w-full max-w-4xl p-4 md:p-10>
@@ -58,4 +59,5 @@ const tagClass = 'bp-chip'
     </div>
   </div>
   </FloorSection>
+  </main>
 </template>

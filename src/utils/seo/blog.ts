@@ -1,7 +1,6 @@
 import { sitePaths, siteUrl } from '../site'
 import { blogs, blogReadMinutes, blogWordCount, type BlogPost } from '../blogs'
 import {
-  author,
   brandKeywords,
   createBreadcrumb,
   createSeo,
@@ -124,7 +123,8 @@ export const createBlogPostSEO = (blog: BlogPost) => {
     extraMeta: [
       { property: 'article:published_time', content: toIsoDateTime(blog.date) },
       { property: 'article:modified_time', content: toIsoDateTime(modifiedDate) },
-      { property: 'article:author', content: author },
+      // The OG protocol wants a profile URL here, not a name string.
+      { property: 'article:author', content: siteUrl },
       { property: 'article:section', content: blog.category },
       ...blog.tags.map((tag) => ({ property: 'article:tag', content: tag })),
     ],

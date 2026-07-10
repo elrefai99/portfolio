@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import lesollLogo from '../../public/projects/lesoll-logo.png'
-import modernAcademyLogo from '../../public/projects/modern-academy.png'
+// Public-path strings (not imports from ../../public) so Vite doesn't emit a
+// second hashed copy of each logo into dist/assets.
+const lesollLogo = '/projects/lesoll-logo.png'
+const modernAcademyLogo = '/projects/modern-academy.png'
 
 const timeline = [
   {
@@ -31,7 +33,7 @@ const timeline = [
     company: ".md",
     role: "Founder",
     period: "2019 - Present",
-    desc: "A freelance with my friend in academy",
+    desc: "Freelance software projects built together with a friend from the academy.",
     color: "bg-blue-500 dark:bg-blue-400"
   }
 ]

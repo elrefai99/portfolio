@@ -80,6 +80,7 @@ onUnmounted(() => observer?.disconnect())
 </script>
 
 <template>
+  <main>
   <FloorSection level="L-03" name="Project / Deep Dive" elevation="+0.00 m" :top-slab="false" eager>
     <div class="min-h-screen text-black dark:text-white">
       <article v-if="cs" class="mx-auto w-full max-w-3xl px-4 py-8 md:px-6 md:py-14">
@@ -370,6 +371,7 @@ onUnmounted(() => observer?.disconnect())
       </section>
     </div>
   </FloorSection>
+  </main>
 </template>
 
 <!-- Styles live in src/assets/blueprint.css under "Editorial case-study system". -->

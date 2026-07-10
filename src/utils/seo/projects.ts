@@ -1,19 +1,16 @@
 import { sitePaths, siteUrl } from '../site'
 import { projects, type IProject } from '../projects'
-import { caseStudies } from '../caseStudies'
 import { brandKeywords, createBreadcrumb, createSeo, personSchema } from './shared'
 
 export const projectDescriptionText = (desc: string | string[]) =>
   Array.isArray(desc) ? desc.join(' ') : desc
 
-const caseStudySlugs = new Set(caseStudies.map((cs) => cs.slug))
-
 const projectListItems = projects.map((project: IProject, index) => {
   const projectUrl = project.link || project.github || project.npm
-  // Projects with a full case study point at their own page; the rest at
-  // their anchor on the index.
+  // Projects with a full case study (caseStudy flag — see projects.ts) point
+  // at their own page; the rest at their anchor on the index.
   const anchorUrl = project.slug
-    ? caseStudySlugs.has(project.slug)
+    ? project.caseStudy
       ? new URL(`${sitePaths.projects}/${project.slug}`, siteUrl).toString()
       : `${new URL(sitePaths.projects, siteUrl).toString()}#${project.slug}`
     : undefined

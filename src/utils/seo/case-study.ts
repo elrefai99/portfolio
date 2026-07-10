@@ -2,7 +2,6 @@ import { sitePaths, siteUrl } from '../site'
 import { projects } from '../projects'
 import { caseStudyWordCount, type CaseStudy } from '../caseStudies'
 import {
-  author,
   brandKeywords,
   createBreadcrumb,
   createSeo,
@@ -28,7 +27,7 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
     : []
 
   return createSeo({
-    title: cs.metaTitle ?? `Mohammed Mostafa • ${cs.name}`,
+    title: `${cs.name} • Mohammed Mostafa`,
     description: cs.metaDescription,
     path,
     image: ogImage,
@@ -54,7 +53,8 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
     extraMeta: [
       { property: 'article:published_time', content: toIsoDateTime(cs.datePublished) },
       { property: 'article:modified_time', content: toIsoDateTime(modifiedDate) },
-      { property: 'article:author', content: author },
+      // The OG protocol wants a profile URL here, not a name string.
+      { property: 'article:author', content: siteUrl },
       { property: 'article:section', content: 'Engineering Deep Dive' },
       ...cs.stack.map((tech) => ({ property: 'article:tag', content: tech })),
     ],

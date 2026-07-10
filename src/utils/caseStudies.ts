@@ -401,7 +401,7 @@ export const caseStudies: CaseStudy[] = [
     result: [],
     metaTitle: 'EGYStay Deep Dive • Booking Platform Backend',
     metaDescription:
-      'How I built EGYStay’s booking backend from the ground up: atomic reservations with zero double bookings, a centralized pricing engine, and APS + Paymob payments.',
+      'How I built EGYStay’s booking backend: atomic reservations with zero double bookings, a centralized pricing engine, and APS + Paymob payments.',
     datePublished: '2026-07-09',
     relatedBlogSlugs: ['paymob-amazon-payment-services-integration'],
     keywords: [

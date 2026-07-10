@@ -1,9 +1,12 @@
-import lesoll from '../../public/projects/lesoll-logo.png'
-import egystay from "../../public/projects/egy-stay-logo.png"
-import keepits from "../../public/projects/keepits.png"
-import Gosha0 from "../../public/projects/0Gosha.png"
-import GenImport from '../../public/projects/Gen-Import.jpg'
-import srvj from '../../public/projects/srvj.png'
+// Logos are referenced as public-path strings (files in public/ are served
+// as-is). Importing them from ../../public would make Vite emit a second,
+// hashed copy of each file into dist/assets — every logo shipped twice.
+const lesoll = '/projects/lesoll-logo.png'
+const egystay = '/projects/egy-stay-logo.png'
+const keepits = '/projects/keepits.png'
+const Gosha0 = '/projects/0Gosha.png'
+const GenImport = '/projects/Gen-Import.jpg'
+const srvj = '/projects/srvj.png'
 
 export interface IProject {
   id: number
@@ -17,6 +20,13 @@ export interface IProject {
   link?: string
   github?: string
   npm?: string
+  /**
+   * True when a long-form case study exists at /projects/<slug>.
+   * Kept as a flag (not derived from caseStudies.ts) so components rendered
+   * in the entry chunk never import the case-study corpus just for slugs —
+   * vite.config.ts asserts at build time that flags and caseStudies agree.
+   */
+  caseStudy?: boolean
   /** One-line descriptor shown under the project name on the index. */
   tagline?: string
   desc: string | string[]
@@ -31,6 +41,7 @@ export const projects: IProject[] = [
     name: "Lesoll",
     slug: "lesoll",
     category: "Live",
+    caseStudy: true,
     logo: lesoll,
     logoWidth: 288,
     logoHeight: 288,
@@ -117,6 +128,7 @@ export const projects: IProject[] = [
     name: "EGYStay",
     slug: "egystay",
     category: "Live",
+    caseStudy: true,
     logo: egystay,
     logoWidth: 73,
     logoHeight: 19,
@@ -209,6 +221,7 @@ export const projects: IProject[] = [
     name: "SRVJ",
     slug: "srvj",
     category: "Live",
+    caseStudy: true,
     logo: srvj,
     logoWidth: 1254,
     logoHeight: 1254,

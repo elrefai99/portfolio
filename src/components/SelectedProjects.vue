@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { projects } from '../utils/projects'
-import { caseStudies } from '../utils/caseStudies'
 import { getTagIcon } from '../utils/icons'
 
-const caseStudySlugs = new Set(caseStudies.map((cs) => cs.slug))
+// This component renders in the entry chunk (home page). Never import
+// caseStudies here — the `caseStudy` flag on projects.ts carries the
+// "has a deep dive" fact without dragging the corpus into every page.
 
 // Top 4 live projects only
 const selectedProjects = computed(() =>
@@ -81,7 +82,7 @@ const footerLinkClass = 'bp-link'
         <!-- Footer link -->
         <div class="mt-auto pt-5 flex items-center gap-5">
           <router-link
-            v-if="caseStudySlugs.has(project.slug)"
+            v-if="project.caseStudy"
             :to="`/projects/${project.slug}`"
             :class="footerLinkClass"
           >

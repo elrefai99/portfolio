@@ -3,6 +3,7 @@
   "include": [
     "src/utils/blogs.ts",
     "src/utils/caseStudies.ts",
+    "src/utils/projects.ts",
     "src/utils/site.ts",
     "src/utils/sitemap.ts",
     "build/og-image.ts",

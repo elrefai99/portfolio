@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Apply stored theme before paint to avoid FOUC. Source of truth: `theme-mode` (see src/composables/useTheme.ts) -->
+  <!-- Apply stored theme before paint to avoid FOUC. Source of truth: the `theme-mode`
+       localStorage key — must match useDark({ storageKey }) in src/components/darkmode.vue -->
   <script>
     (function () {
       try {
@@ -52,17 +53,30 @@
   <meta name="twitter:image" content="https://elrefai.me/og/page-home.png">
   <meta name="twitter:image:alt" content="Mohammed Mostafa • Software Engineer Portfolio">
 
-  <!-- Canonical is set per-route by useHead (src/utils/tags.ts) — no static one
-       here, so pages that must not claim a canonical (the 404) don't inherit it. -->
+  <!-- Canonical is set per-route by useHead (createSeo in src/utils/seo/shared.ts) — no static
+       one here, so pages that must not claim a canonical (the 404) don't inherit it. -->
 
-  <!-- Fonts — loaded non-render-blocking (preload as style, swap to stylesheet on load) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap" rel="stylesheet">
-  </noscript>
+  <!-- Fonts — self-hosted Alexandria variable font (latin + latin-ext subsets from
+       Google Fonts v6). No fonts.googleapis.com round-trip; swap keeps text visible. -->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/alexandria-latin.woff2" crossorigin>
+  <style>
+    @font-face {
+      font-family: 'Alexandria';
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url('/fonts/alexandria-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Alexandria';
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url('/fonts/alexandria-latin-ext.woff2') format('woff2');
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+  </style>
 
   <!-- Favicon -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">

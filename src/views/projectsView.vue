@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { projectsSEO } from '../utils/seo/projects';
 import { projects } from '../utils/projects';
-import { caseStudies } from '../utils/caseStudies';
 import { sitePaths } from '../utils/site';
 import { useHead } from '@vueuse/head';
 import { getTagIcon } from '../utils/icons';
@@ -33,8 +32,6 @@ const toggleDescription = (id: number) => {
 
 const isDescriptionExpanded = (id: number) => expandedDescriptions.value.has(id)
 
-const caseStudySlugs = new Set(caseStudies.map((cs) => cs.slug))
-const hasCaseStudy = (slug: string) => caseStudySlugs.has(slug)
 const casePath = (slug: string) => `${sitePaths.projects}/${slug}`
 
 const heroLinkClass = 'bp-link'
@@ -47,6 +44,7 @@ const tagChipClass = 'bp-chip'
 </script>
 
 <template>
+  <main>
   <FloorSection level="L-03" name="Project Archive" elevation="+0.00 m" :top-slab="false" eager>
   <div max-w-4xl mx-auto space-y-10 min-h-screen text-black dark:text-white flex justify-center items-start>
     <div w-full max-w-4xl p-4 md:p-10>
@@ -59,6 +57,7 @@ const tagChipClass = 'bp-chip'
           <a
             href="https://github.com/elrefai99"
             target="_blank"
+            rel="noopener noreferrer"
             :class="heroLinkClass"
           >
             <i class="i-carbon:logo-github w-4 h-4" />
@@ -111,7 +110,7 @@ const tagChipClass = 'bp-chip'
 
                 <!-- Deep dive link -->
                 <router-link
-                  v-if="hasCaseStudy(project.slug)"
+                  v-if="project.caseStudy"
                   :to="casePath(project.slug)"
                   class="case-nav-link inline-flex items-center gap-1 mb-4"
                 >
@@ -163,4 +162,5 @@ const tagChipClass = 'bp-chip'
     </div>
   </div>
   </FloorSection>
+  </main>
 </template>

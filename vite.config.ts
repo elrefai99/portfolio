@@ -12,7 +12,24 @@ import { sitePaths, siteUrl } from './src/utils/site'
 import { sitemapEntries } from './src/utils/sitemap'
 import { blogs } from './src/utils/blogs'
 import { caseStudies } from './src/utils/caseStudies'
+import { projects } from './src/utils/projects'
 import { allCards, ensureFonts, renderOgPng } from './build/og-image'
+
+// The `caseStudy` flag on projects.ts exists so entry-chunk components never
+// import the case-study corpus just to know a deep dive exists. Fail the
+// build (and dev server) the moment the flag and the corpus disagree.
+{
+  const corpusSlugs = new Set(caseStudies.map((cs) => cs.slug))
+  const flaggedSlugs = new Set(projects.filter((p) => p.caseStudy).map((p) => p.slug))
+  const missingFlag = [...corpusSlugs].filter((slug) => !flaggedSlugs.has(slug))
+  const staleFlag = [...flaggedSlugs].filter((slug) => !corpusSlugs.has(slug))
+  if (missingFlag.length || staleFlag.length) {
+    throw new Error(
+      `projects.ts caseStudy flags out of sync with caseStudies.ts — ` +
+      `missing flag: [${missingFlag.join(', ')}], stale flag: [${staleFlag.join(', ')}]`,
+    )
+  }
+}
 
 const globalSources = ['src/utils/seo', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
 
