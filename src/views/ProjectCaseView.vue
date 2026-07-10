@@ -102,7 +102,7 @@ onUnmounted(() => observer?.disconnect())
               decoding="async"
             />
             <p class="case-label">
-              Deep Dive · {{ cs.category }}<template v-if="cs.timeline"> · {{ cs.timeline }}</template>
+              Deep Dive • {{ cs.category }}<template v-if="cs.timeline"> • {{ cs.timeline }}</template>
             </p>
           </div>
           <h1 class="mt-6 text-5xl font-bold leading-[1.04] tracking-tight md:text-7xl">

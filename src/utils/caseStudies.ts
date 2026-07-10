@@ -6,7 +6,6 @@ export interface CaseBuiltItem {
   outcome?: string
 }
 
-/** A real production incident: what broke, why, and how it was fixed. */
 export interface CaseIncident {
   title: string
   problem: string
@@ -15,14 +14,12 @@ export interface CaseIncident {
   result: string
 }
 
-/** An engineering decision and the tradeoff it accepted. */
 export interface CaseDecision {
   title: string
   reasoning: string
   tradeoff?: string
 }
 
-/** Titled note used by Challenges / Performance / Security / Lessons. */
 export interface CaseNote {
   title: string
   body: string
@@ -32,17 +29,10 @@ export interface CaseStudy {
   slug: string
   name: string
   category: string
-  /**
-   * Public-path URL of the project logo (e.g. '/projects/lesoll-logo.png').
-   * Must stay a plain string — this module is loaded by vite.config.ts, so
-   * asset imports would break the config. Files in public/ are served as-is.
-   */
   logo?: string
-  /** One line under the title in the hero. */
   summary: string
   role: string
   timeline?: string
-  /** Curated short stack for the hero meta row (full tags live on the index). */
   stack: string[]
   link?: string
   github?: string
@@ -55,19 +45,14 @@ export interface CaseStudy {
   security: CaseNote[]
   lessons: CaseNote[]
   result: string[]
-  /** SERP title, ≤60 chars ideally. Falls back to "{name} • Case Study". */
   metaTitle?: string
   metaDescription: string
   keywords: string[]
-  /** ISO date the case study went live — feeds TechArticle schema + article meta. */
   datePublished: string
-  /** Bump when the study's content meaningfully changes. */
   dateModified?: string
-  /** Related blog-post slugs: rendered as "Further reading" internal links. */
   relatedBlogSlugs?: string[]
 }
 
-/** Word count across all prose fields — feeds TechArticle schema. */
 export const caseStudyWordCount = (cs: CaseStudy) => {
   const texts: string[] = [
     ...cs.overview,
@@ -225,7 +210,7 @@ export const caseStudies: CaseStudy[] = [
     security: [],
     lessons: [],
     result: [],
-    metaTitle: 'Lesoll Deep Dive — Real-Estate Marketplace Backend',
+    metaTitle: 'Lesoll Deep Dive • Real-Estate Marketplace Backend',
     metaDescription:
       'How I built Lesoll’s production real-estate marketplace backend: MongoDB search at scale, Paymob payments and subscriptions, Socket.IO chat, and BullMQ jobs.',
     datePublished: '2026-07-09',
@@ -414,26 +399,62 @@ export const caseStudies: CaseStudy[] = [
     ],
     lessons: [],
     result: [],
-    metaTitle: 'EGYStay Deep Dive — Booking Platform Backend',
+    metaTitle: 'EGYStay Deep Dive • Booking Platform Backend',
     metaDescription:
       'How I built EGYStay’s booking backend from the ground up: atomic reservations with zero double bookings, a centralized pricing engine, and APS + Paymob payments.',
     datePublished: '2026-07-09',
     relatedBlogSlugs: ['paymob-amazon-payment-services-integration'],
     keywords: [
-      'EGYStay',
-      'Booking Platform Backend',
-      'Reservation System',
-      'Short-Term Rental Platform',
-      'Availability Management',
-      'Express.js',
-      'MongoDB',
-      'Redis',
-      'BullMQ',
-      'Amazon Payment Services',
-      'Paymob',
-      'Payment Gateway Integration',
-      'Production Backend',
-      'Backend Case Study',
+      "EGYStay",
+      "EGYStay Booking Platform",
+      "Property Rental Platform",
+      "Vacation Rental Platform",
+      "Property Booking System",
+      "Hotel Booking Alternative",
+      "Short-Term Rental Platform",
+      "Rental Marketplace",
+      "Booking Engine",
+      "Reservation System",
+      "Co-Host Management",
+      "Property Management",
+      "Cancellation Policy",
+      "Marketplace Backend",
+      "Booking Platform Backend",
+      "TypeScript",
+      "Node.js",
+      "Express.js",
+      "Modular Monolith Architecture",
+      "MongoDB",
+      "Redis",
+      "BullMQ",
+      "Amazon Payment Services",
+      "APS Payment Gateway",
+      "Payment Gateway Integration",
+      "OTP Authentication",
+      "SMS Verification",
+      "Email Notifications",
+      "Real-time Chat",
+      "Socket.IO",
+      "Admin Dashboard",
+      "Host Dashboard",
+      "User Dashboard",
+      "Notification System",
+      "Background Jobs",
+      "Puppeteer Web Scraping",
+      "Docker",
+      "NGINX",
+      "AWS EC2",
+      "AWS EKS",
+      "AWS S3",
+      "AWS CloudFront",
+      "AWS Route 53",
+      "AWS SQS",
+      "GitHub Actions",
+      "CI/CD",
+      "REST API",
+      "Scalable Backend",
+      "Production Backend",
+      "Cloud Deployment"
     ],
   },
   {
@@ -443,7 +464,7 @@ export const caseStudies: CaseStudy[] = [
     category: 'Real-time',
     summary:
       'A real-time collaborative diagram editor: CRDT synchronization, presence, and persistence built from protocol level up.',
-    role: 'Solo — design and implementation, backend and frontend',
+    role: 'Solo • design and implementation, backend and frontend',
     stack: [
       'TypeScript',
       'Express.js',
@@ -551,7 +572,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     lessons: [],
     result: [],
-    metaTitle: 'SRVJ Deep Dive — Real-Time CRDT Collaboration Backend',
+    metaTitle: 'SRVJ Deep Dive • Real-Time CRDT Collaboration Backend',
     metaDescription:
       'Deep dive into SRVJ, a real-time collaborative diagram editor: Yjs CRDT sync, PASETO-authenticated WebSockets, dual-snapshot persistence, and SSE notifications.',
     datePublished: '2026-07-09',
@@ -562,22 +583,48 @@ export const caseStudies: CaseStudy[] = [
       'aws-ec2-s3-kubernetes-production-deployments',
     ],
     keywords: [
-      'SRVJ',
-      'Real-time Collaborative Editor',
-      'Collaborative Diagram Editor',
-      'Yjs',
-      'CRDT',
-      'WebSocket Authentication',
-      'PASETO',
-      'RBAC',
-      'Server-Sent Events',
-      'Redis Pub/Sub',
-      'PostgreSQL',
-      'Prisma',
-      'MongoDB',
-      'BullMQ',
-      'Distributed Systems',
-      'Backend Case Study',
+      "SRVJ",
+      "Real-time collaborative editor",
+      "Collaborative diagram editor",
+      "Multiplayer diagram editor",
+      "Yjs",
+      "CRDT",
+      "Conflict-free Replicated Data Types",
+      "Real-time synchronization",
+      "Server-Sent Events",
+      "SSE",
+      "Socket.IO",
+      "Express.js",
+      "TypeScript",
+      "Node.js",
+      "Monolithic Modular Architecture",
+      "MongoDB",
+      "PostgreSQL",
+      "Prisma",
+      "Redis",
+      "BullMQ",
+      "Docker",
+      "Kubernetes",
+      "NGINX",
+      "AWS EC2",
+      "AWS S3",
+      "AWS CloudFront",
+      "AWS Route 53",
+      "GitHub Actions",
+      "Vitest",
+      "Vue.js",
+      "Vue Flow",
+      "Vite",
+      "Pinia",
+      "UnoCSS",
+      "Role-Based Access Control",
+      "RBAC",
+      "PASETO",
+      "WebSocket Authentication",
+      "Backend Architecture",
+      "Distributed Systems",
+      "Real-time Backend",
+      "Collaborative Software"
     ],
   },
 ]

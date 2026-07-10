@@ -64,7 +64,7 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
         '@type': 'TechArticle',
         mainEntityOfPage: { '@type': 'WebPage', '@id': url },
         headline: cs.metaTitle ?? `${cs.name} — Backend Engineering Deep Dive`,
-        name: `${cs.name} — Backend Engineering Deep Dive`,
+        name: `${cs.name} • Backend Engineering Deep Dive`,
         description: cs.metaDescription,
         image: ogImage,
         url,
