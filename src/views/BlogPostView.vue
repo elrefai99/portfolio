@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
-import { getBlogBySlug } from '../utils/blogs'
+import { getBlogBySlug, type BlogPost } from '../utils/blogs'
 import { caseStudies } from '../utils/caseStudies'
 import { createBlogPostSEO } from '../utils/seo/blog'
 import { notFoundSEO } from '../utils/seo/shared'
@@ -18,6 +18,15 @@ useHead(computed(() => (blog.value ? createBlogPostSEO(blog.value) : notFoundSEO
 // this post supports, so posts aren't internal-link dead ends.
 const relatedCaseStudies = computed(() =>
   caseStudies.filter((cs) => cs.relatedBlogSlugs?.includes(slug.value)),
+)
+
+// Post-to-post internal links (relatedSlugs in blogs.ts). The anchor text is
+// the full post title — keyword-rich anchors are a ranking signal for the
+// linked post's target terms.
+const relatedPosts = computed(() =>
+  (blog.value?.relatedSlugs ?? [])
+    .map((relatedSlug) => getBlogBySlug(relatedSlug))
+    .filter((post): post is BlogPost => Boolean(post)),
 )
 
 const panelClass = 'bp-card'
@@ -56,6 +65,23 @@ const tagClass = 'bp-chip'
         <section :class="`${panelClass} p-6 md:p-8`">
           <ContentBlocks :blocks="blog.blocks" />
         </section>
+
+        <!-- Related posts: keyword-rich internal links between articles -->
+        <aside v-if="relatedPosts.length" :class="`${panelClass} p-6 md:p-8`" aria-label="Related blog posts">
+          <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            Related notes
+          </p>
+          <ul class="mt-4 space-y-4">
+            <li v-for="related in relatedPosts" :key="related.slug">
+              <router-link :to="`/blogs/${related.slug}`" class="group block">
+                <span class="block text-lg font-semibold text-black transition-opacity group-hover:opacity-70 dark:text-gray-300">
+                  {{ related.title }}
+                </span>
+                <span class="mt-1 block text-sm leading-6 text-gray-700 dark:text-gray-400">{{ related.excerpt }}</span>
+              </router-link>
+            </li>
+          </ul>
+        </aside>
 
         <!-- Project deep dives this post supports -->
         <aside v-if="relatedCaseStudies.length" :class="`${panelClass} p-6 md:p-8`" aria-label="Related project deep dives">

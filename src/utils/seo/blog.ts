@@ -1,5 +1,5 @@
 import { sitePaths, siteUrl } from '../site'
-import { blogs, blogReadMinutes, blogWordCount, type BlogPost } from '../blogs'
+import { blogs, blogReadMinutes, blogWordCount, type BlogEntity, type BlogPost } from '../blogs'
 import {
   brandKeywords,
   createBreadcrumb,
@@ -86,6 +86,16 @@ export const blogsSEO = createSeo({
   ],
 })
 
+// Entity SEO: emit each post's named topics as schema.org Things with
+// authoritative sameAs URLs (Wikipedia/spec/docs) so search and AI engines can
+// tie the article to the exact concept — first three are the primary `about`
+// topics, the rest are `mentions`.
+const toSchemaThing = (entity: BlogEntity) => ({
+  '@type': 'Thing',
+  name: entity.name,
+  sameAs: entity.sameAs,
+})
+
 export const createBlogPostSEO = (blog: BlogPost) => {
   const path = `${sitePaths.blogs}/${blog.slug}`
   const url = new URL(path, siteUrl).toString()
@@ -151,6 +161,14 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         isPartOf: { '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog` },
         inLanguage: 'en',
         keywords,
+        ...(blog.entities?.length
+          ? {
+            about: blog.entities.slice(0, 3).map(toSchemaThing),
+            ...(blog.entities.length > 3
+              ? { mentions: blog.entities.slice(3).map(toSchemaThing) }
+              : {}),
+          }
+          : {}),
       },
       createBreadcrumb([
         { name: 'Home', path: sitePaths.home },

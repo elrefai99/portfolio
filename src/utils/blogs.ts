@@ -18,6 +18,16 @@ export type BlogBlock =
     code: string
   }
 
+/**
+ * A named entity the post is about, with authoritative URLs (Wikipedia, spec,
+ * official docs). Feeds BlogPosting `about`/`mentions` in JSON-LD so search
+ * and AI engines can disambiguate the topic (entity SEO).
+ */
+export type BlogEntity = {
+  name: string
+  sameAs: string | string[]
+}
+
 export type BlogPost = {
   id: number
   slug: string
@@ -30,6 +40,10 @@ export type BlogPost = {
   updated?: string
   readTime: string
   tags: string[]
+  /** Primary topics first — the first three become schema `about`, the rest `mentions`. */
+  entities?: BlogEntity[]
+  /** Slugs of related posts — rendered as "Related notes" internal links on the post page. */
+  relatedSlugs?: string[]
   blocks: BlogBlock[]
   ogImage?: string
 }
@@ -47,12 +61,22 @@ export const blogs: BlogPost[] = [
       'How SRVJ\'s Node.js deployment evolved from one EC2 box with NGINX and pm2 to Docker Compose and Kubernetes — plus S3 avatars and presigned uploads.',
     category: 'Cloud & DevOps',
     date: '2026-07-09',
+    updated: '2026-07-10',
     readTime: '13 min read',
     tags: ['AWS', 'EC2', 'S3', 'EKS', 'Kubernetes', 'Docker', 'NGINX', 'CI/CD', 'Node.js', 'DevOps'],
+    entities: [
+      { name: 'Amazon Web Services', sameAs: ['https://en.wikipedia.org/wiki/Amazon_Web_Services', 'https://aws.amazon.com'] },
+      { name: 'Amazon EC2', sameAs: 'https://en.wikipedia.org/wiki/Amazon_Elastic_Compute_Cloud' },
+      { name: 'Kubernetes', sameAs: ['https://en.wikipedia.org/wiki/Kubernetes', 'https://kubernetes.io'] },
+      { name: 'Amazon S3', sameAs: 'https://en.wikipedia.org/wiki/Amazon_S3' },
+      { name: 'Docker', sameAs: 'https://en.wikipedia.org/wiki/Docker_(software)' },
+      { name: 'NGINX', sameAs: 'https://en.wikipedia.org/wiki/Nginx' },
+    ],
+    relatedSlugs: ['crdts-yjs-collaborative-editing-srvj', 'server-sent-events-real-time-notifications-srvj'],
     blocks: [
       {
         type: 'paragraph',
-        text: 'SRVJ — the collaborative diagram tool I keep writing about — runs on AWS, but it didn\'t start on Kubernetes, and it shouldn\'t have. This post is its deployment story in three acts: a single EC2 box with NGINX and pm2, then Docker Compose, then a Kubernetes cluster — plus the S3 patterns that survived every stage untouched.',
+        text: 'SRVJ — the [collaborative diagram tool](/projects/srvj) I keep writing about — runs on AWS, but it didn\'t start on Kubernetes, and it shouldn\'t have. This post is its deployment story in three acts: a single EC2 box with NGINX and pm2, then Docker Compose, then a Kubernetes cluster — plus the S3 patterns that survived every stage untouched.',
       },
       {
         type: 'paragraph',
@@ -434,7 +458,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'I\'d be lying if I presented act three as pure upside. Self-managing the cluster means I am the control plane\'s administrator — upgrades, certificates, backups — which is precisely the ledger EKS\'s flat fee is weighed against; it doesn\'t remove the YAML, it removes being the etcd administrator, and the nodes are still just EC2 underneath. The in-cluster Redis is a single-replica StatefulSet on local-path storage, which pins it to one node: fine for a rebuildable queue, unacceptable if it ever grows into primary state. And the collab rooms live in-memory inside the API pods, so two clients editing the same diagram can land on different replicas — session affinity papers over it until the Redis fanout between pods lands (the same unsolved item from the CRDTs post).',
+        text: 'I\'d be lying if I presented act three as pure upside. Self-managing the cluster means I am the control plane\'s administrator — upgrades, certificates, backups — which is precisely the ledger EKS\'s flat fee is weighed against; it doesn\'t remove the YAML, it removes being the etcd administrator, and the nodes are still just EC2 underneath. The in-cluster Redis is a single-replica StatefulSet on local-path storage, which pins it to one node: fine for a rebuildable queue, unacceptable if it ever grows into primary state. And the collab rooms live in-memory inside the API pods, so two clients editing the same diagram can land on different replicas — session affinity papers over it until the Redis fanout between pods lands (the same unsolved item from the [CRDTs post](/blogs/crdts-yjs-collaborative-editing-srvj)).',
       },
       {
         type: 'paragraph',
@@ -466,8 +490,17 @@ export const blogs: BlogPost[] = [
       'How CRDTs and Yjs power conflict-free collaborative editing in SRVJ — G-Counter, LWW-Register and OR-Set explained, plus an authenticated WebSocket relay.',
     category: 'Distributed Systems',
     date: '2026-07-06',
+    updated: '2026-07-10',
     readTime: '13 min read',
     tags: ['CRDT', 'Yjs', 'Collaborative Editing', 'Real-Time', 'Distributed Systems', 'WebSocket', 'TypeScript', 'Node.js'],
+    entities: [
+      { name: 'Conflict-free replicated data type', sameAs: ['https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type', 'https://crdt.tech'] },
+      { name: 'Yjs', sameAs: ['https://github.com/yjs/yjs', 'https://docs.yjs.dev'] },
+      { name: 'Collaborative real-time editor', sameAs: 'https://en.wikipedia.org/wiki/Collaborative_real-time_editor' },
+      { name: 'Operational transformation', sameAs: 'https://en.wikipedia.org/wiki/Operational_transformation' },
+      { name: 'WebSocket', sameAs: 'https://en.wikipedia.org/wiki/WebSocket' },
+    ],
+    relatedSlugs: ['server-sent-events-real-time-notifications-srvj', 'aws-ec2-s3-kubernetes-production-deployments'],
     blocks: [
       {
         type: 'paragraph',
@@ -807,7 +840,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Horizontal scaling. Rooms are in-memory, per instance. Two users on the same diagram must land on the same instance, which is fine today and a real constraint tomorrow. The known fix is a Redis pub/sub fanout between instances so a room can span processes — the same pattern SRVJ already uses for notification delivery — but the collab layer hasn\'t crossed that bridge yet.',
+        text: 'Horizontal scaling. Rooms are in-memory, per instance. Two users on the same diagram must land on the same instance, which is fine today and a real constraint tomorrow. The known fix is a Redis pub/sub fanout between instances so a room can span processes — the same pattern SRVJ already uses for [notification delivery](/blogs/server-sent-events-real-time-notifications-srvj) — but the collab layer hasn\'t crossed that bridge yet.',
       },
       {
         type: 'paragraph',
@@ -831,13 +864,21 @@ export const blogs: BlogPost[] = [
       'Real-time notifications with SSE, BullMQ, Redis Pub/Sub and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
     category: 'Backend Architecture',
     date: '2026-06-27',
-    updated: '2026-07-09',
+    updated: '2026-07-10',
     readTime: '9 min read',
     tags: ['SSE', 'Server-Sent Events', 'Real-Time', 'BullMQ', 'Redis', 'PostgreSQL', 'Node.js', 'System Design'],
+    entities: [
+      { name: 'Server-sent events', sameAs: ['https://en.wikipedia.org/wiki/Server-sent_events', 'https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events'] },
+      { name: 'Redis', sameAs: ['https://en.wikipedia.org/wiki/Redis', 'https://redis.io'] },
+      { name: 'Publish–subscribe pattern', sameAs: 'https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern' },
+      { name: 'WebSocket', sameAs: 'https://en.wikipedia.org/wiki/WebSocket' },
+      { name: 'PostgreSQL', sameAs: 'https://en.wikipedia.org/wiki/PostgreSQL' },
+    ],
+    relatedSlugs: ['crdts-yjs-collaborative-editing-srvj', 'aws-ec2-s3-kubernetes-production-deployments'],
     blocks: [
       {
         type: 'paragraph',
-        text: 'SRVJ is a collaborative diagram tool I\'ve been building — think Miro, but as a playground for backend architecture. The collaborative canvas itself runs over WebSockets (that story gets its own post), but notifications — board invitations, chat messages, mentions — needed a delivery path of their own.',
+        text: 'SRVJ is a collaborative diagram tool I\'ve been building — think Miro, but as a playground for backend architecture. The collaborative canvas itself runs over WebSockets ([that story gets its own post](/blogs/crdts-yjs-collaborative-editing-srvj)), but notifications — board invitations, chat messages, mentions — needed a delivery path of their own.',
       },
       {
         type: 'paragraph',
@@ -1321,6 +1362,14 @@ export const blogs: BlogPost[] = [
     updated: '2026-07-09',
     readTime: '12 min read',
     tags: ['Payments', 'Paymob', 'Amazon Payment Services', 'PayFort', 'Webhooks', 'BullMQ', 'Node.js', 'TypeScript'],
+    entities: [
+      { name: 'Paymob', sameAs: 'https://paymob.com' },
+      { name: 'Amazon Payment Services', sameAs: 'https://paymentservices.amazon.com' },
+      { name: 'Webhook', sameAs: 'https://en.wikipedia.org/wiki/Webhook' },
+      { name: 'HMAC', sameAs: 'https://en.wikipedia.org/wiki/HMAC' },
+      { name: 'Idempotence', sameAs: 'https://en.wikipedia.org/wiki/Idempotence' },
+    ],
+    relatedSlugs: ['jwt-vs-paseto-tokens'],
     blocks: [
       {
         type: 'paragraph',
@@ -1587,6 +1636,13 @@ export const blogs: BlogPost[] = [
     updated: '2026-07-09',
     readTime: '14 min read',
     tags: ['Security', 'JWT', 'PASETO', 'Auth', 'Tokens', 'Node.js', 'TypeScript'],
+    entities: [
+      { name: 'JSON Web Token', sameAs: ['https://en.wikipedia.org/wiki/JSON_Web_Token', 'https://datatracker.ietf.org/doc/html/rfc7519'] },
+      { name: 'PASETO', sameAs: ['https://paseto.io', 'https://github.com/paseto-standard/paseto-spec'] },
+      { name: 'EdDSA', sameAs: 'https://en.wikipedia.org/wiki/EdDSA' },
+      { name: 'Authenticated encryption', sameAs: 'https://en.wikipedia.org/wiki/Authenticated_encryption' },
+    ],
+    relatedSlugs: ['paymob-amazon-payment-services-integration'],
     blocks: [
       {
         type: 'paragraph',
