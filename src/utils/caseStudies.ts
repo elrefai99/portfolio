@@ -28,6 +28,8 @@ export interface CaseNote {
 export interface CaseStudy {
   slug: string
   name: string
+  /** Short descriptor rendered inside the h1 under the brand name (e.g. "Real-Estate Marketplace Backend"). */
+  subtitle?: string
   category: string
   logo?: string
   summary: string
@@ -73,6 +75,7 @@ export const caseStudies: CaseStudy[] = [
     slug: 'lesoll',
     logo: '/projects/lesoll-logo.png',
     name: 'Lesoll',
+    subtitle: 'Real-Estate Marketplace Backend',
     category: 'Production',
     summary:
       'Backend of a large-scale real-estate classifieds marketplace serving real users in the Egyptian market.',
@@ -259,6 +262,7 @@ export const caseStudies: CaseStudy[] = [
     slug: 'egystay',
     logo: '/projects/egy-stay-logo.png',
     name: 'EGYStay',
+    subtitle: 'Booking Platform Backend',
     category: 'Production',
     summary:
       'Booking and reservation backend for a short-term rental platform, built from the ground up.',
@@ -461,6 +465,7 @@ export const caseStudies: CaseStudy[] = [
     slug: 'srvj',
     logo: '/projects/srvj.png',
     name: 'SRVJ',
+    subtitle: 'Real-Time CRDT Collaboration Backend',
     category: 'Real-time',
     summary:
       'A real-time collaborative diagram editor: CRDT synchronization, presence, and persistence built from protocol level up.',

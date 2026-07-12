@@ -18,6 +18,8 @@ const projectListItems = projects.map((project: IProject, index) => {
     item: {
       '@type': project.npm ? 'SoftwareSourceCode' : 'SoftwareApplication',
       name: project.name,
+      ...(project.altNames?.length ? { alternateName: project.altNames } : {}),
+      ...(project.logo ? { image: new URL(project.logo, siteUrl).toString() } : {}),
       description: projectDescriptionText(project.desc),
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',

@@ -80,6 +80,8 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
         about: {
           '@type': 'SoftwareApplication',
           name: cs.name,
+          ...(projectEntry?.altNames?.length ? { alternateName: projectEntry.altNames } : {}),
+          ...(cs.logo ? { image: new URL(cs.logo, siteUrl).toString() } : {}),
           applicationCategory: 'DeveloperApplication',
           operatingSystem: 'Web',
           ...(cs.link ? { sameAs: cs.link } : {}),

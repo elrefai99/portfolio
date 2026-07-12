@@ -29,6 +29,12 @@ export interface IProject {
   caseStudy?: boolean
   /** One-line descriptor shown under the project name on the index. */
   tagline?: string
+  /**
+   * Brand-name variants (spacing, domain form, Arabic spellings) emitted as
+   * schema.org alternateName so search engines match variant queries to the
+   * same entity.
+   */
+  altNames?: string[]
   desc: string | string[]
   tags: string | string[]
   keywords?: string | string[]
@@ -49,6 +55,7 @@ export const projects: IProject[] = [
     class: "w-5 h-auto",
     github: "",
     tagline: "Production B2B/B2C real-estate & automotive marketplace backend",
+    altNames: ["Lesoll.com", "Lesoll Egypt", "Lesoll Real Estate", "ليسول"],
     desc: [
       "Lesoll is a large-scale classifieds marketplace for the Egyptian real estate market, enabling users to buy, sell, and rent residential, commercial, land, and compound properties.",
       "The platform includes premium listing packages, real-time messaging, a blog, and a complete internal administration system.",
@@ -136,6 +143,7 @@ export const projects: IProject[] = [
     link: "https://egystay.com",
     github: "",
     tagline: "Property rental & booking platform with a Co-Host marketplace",
+    altNames: ["EgyStay", "Egy Stay", "EGYStay.com", "إيجي ستاي", "ايجي ستاي"],
     desc: [
       "EgyStay is a short-term rental platform for the Egyptian market, allowing guests to book accommodations while hosts and co-hosts manage their properties through dedicated dashboards.",
       "As the primary Backend Engineer, I architected and developed the backend from the ground up, implementing reservation workflows, availability management, pricing logic, payments, authentication, messaging, notifications, and administrative services.",

@@ -114,6 +114,12 @@ onUnmounted(() => observer?.disconnect())
           </div>
           <h1 class="mt-6 text-5xl font-bold leading-[1.04] tracking-tight md:text-7xl">
             {{ cs.name }}
+            <span
+              v-if="cs.subtitle"
+              class="mt-3 block text-2xl font-semibold tracking-tight text-gray-600 dark:text-gray-400 md:text-3xl"
+            >
+              {{ cs.subtitle }}
+            </span>
           </h1>
           <p class="mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-gray-400 md:text-xl">
             {{ cs.summary }}
