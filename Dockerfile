@@ -1,7 +1,7 @@
-# Multi-stage Dockerfile for Vue 3 + Vite Portfolio
+# Multi-stage Dockerfile for the Nuxt 4 (static) Portfolio
 
 # Stage 1: Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -18,8 +18,8 @@ RUN pnpm install --frozen-lockfile
 # Copy all project files
 COPY . .
 
-# Build the application
-RUN pnpm run build
+# Statically generate the site to .output/public
+RUN pnpm run generate
 
 # Stage 2: Production stage with Nginx
 FROM nginx:alpine AS production
@@ -27,8 +27,8 @@ FROM nginx:alpine AS production
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy built files from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copy generated static output from builder stage
+COPY --from=builder /app/.output/public /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
@@ -37,7 +37,7 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
 # Stage 3: Development stage
-FROM node:20-alpine AS development
+FROM node:22-alpine AS development
 
 # Set working directory
 WORKDIR /app
@@ -54,8 +54,8 @@ RUN pnpm install --frozen-lockfile
 # Copy all project files
 COPY . .
 
-# Expose Vite dev server port
-EXPOSE 5173
+# Expose Nuxt dev server port
+EXPOSE 3000
 
 # Start development server
 CMD ["pnpm", "run", "dev", "--host"]

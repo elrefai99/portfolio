@@ -1,11 +1,10 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ],
+  // Nuxt generates .nuxt/tsconfig.json (paths, auto-import globals, Vue setup).
+  // `nuxt typecheck` drives vue-tsc from this config.
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    // Match the pre-migration strictness (@vue/tsconfig did not enable this).
+    // Nuxt turns it on by default; keeping it off preserves behavior parity.
+    "noUncheckedIndexedAccess": false
+  }
 }
