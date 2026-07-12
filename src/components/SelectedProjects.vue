@@ -47,6 +47,8 @@ const footerLinkClass = 'bp-link'
               :src="project.logo"
               :alt="`${project.name} logo`"
               class="w-5 h-5 object-contain shrink-0"
+              :width="project.logoWidth"
+              :height="project.logoHeight"
               loading="lazy"
               decoding="async"
             />

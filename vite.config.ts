@@ -10,7 +10,7 @@ import vue from '@vitejs/plugin-vue'
 import type { } from 'vite-ssg'
 import { sitePaths, siteUrl } from './src/utils/site'
 import { sitemapEntries } from './src/utils/sitemap'
-import { blogs } from './src/utils/blogs'
+import { blogs, type BlogBlock } from './src/utils/blogs'
 import { caseStudies } from './src/utils/caseStudies'
 import { projects } from './src/utils/projects'
 import { allCards, ensureFonts, renderOgPng } from './build/og-image'
@@ -31,10 +31,22 @@ import { allCards, ensureFonts, renderOgPng } from './build/og-image'
   }
 }
 
-const globalSources = ['src/utils/seo', 'src/assets/blueprint.css', 'uno.config.ts', 'index.html']
+// Every route renders through these — a change to any of them changes every
+// page's HTML, so they feed every route's <lastmod>.
+const globalSources = [
+  'src/utils/seo',
+  'src/assets/blueprint.css',
+  'src/assets/main.css',
+  'src/App.vue',
+  'src/components/NavBar.vue',
+  'src/components/footer.vue',
+  'src/components/FloorSection.vue',
+  'uno.config.ts',
+  'index.html',
+]
 
 const routeSources: Record<string, string[]> = {
-  [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/timeline.vue', ...globalSources],
+  [sitePaths.home]: ['src/views/HomeView.vue', 'src/components/aboutme.vue', 'src/components/SelectedProjects.vue', 'src/components/timeline.vue', 'src/utils/projects.ts', ...globalSources],
   [sitePaths.projects]: ['src/views/projectsView.vue', 'src/utils/projects.ts', 'src/utils/caseStudies.ts', ...globalSources],
   [sitePaths.blogs]: ['src/views/BlogsView.vue', 'src/utils/blogs.ts', ...globalSources],
   [sitePaths.resume]: ['src/views/ResumeView.vue', ...globalSources],
@@ -97,6 +109,35 @@ const escapeXml = (value: string) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string,
   )
 
+// Render the block content model to plain HTML for the feed's full-text
+// content:encoded — same inline rules as ContentBlocks.vue (`code`, [label](url)).
+const inlineHtml = (text: string) =>
+  text
+    .split('`')
+    .map((segment, index) => {
+      if (index % 2 === 1) return `<code>${escapeXml(segment)}</code>`
+      return escapeXml(segment).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => {
+        const abs = /^https?:\/\//.test(href) ? href : new URL(href, siteUrl).toString()
+        return `<a href="${abs}">${label}</a>`
+      })
+    })
+    .join('')
+
+const blockToHtml = (block: BlogBlock): string => {
+  switch (block.type) {
+    case 'paragraph':
+      return `<p>${inlineHtml(block.text)}</p>`
+    case 'heading': {
+      const level = block.level ?? 2
+      return `<h${level}>${escapeXml(block.text)}</h${level}>`
+    }
+    case 'list':
+      return `<ul>${block.items.map((item) => `<li>${inlineHtml(item)}</li>`).join('')}</ul>`
+    case 'code':
+      return `<pre><code>${escapeXml(block.code)}</code></pre>`
+  }
+}
+
 const createRssXml = () => {
   const sorted = [...blogs].sort((a, b) => b.date.localeCompare(a.date))
   const lastBuildDate = new Date(
@@ -108,6 +149,7 @@ const createRssXml = () => {
   const items = sorted
     .map((post) => {
       const url = new URL(`${sitePaths.blogs}/${post.slug}`, siteUrl).toString()
+      const fullHtml = post.blocks.map(blockToHtml).join('').replaceAll(']]>', ']]&gt;')
       return `    <item>
       <title>${escapeXml(post.title)}</title>
       <link>${url}</link>
@@ -115,14 +157,15 @@ const createRssXml = () => {
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       <category>${escapeXml(post.category)}</category>
       <description>${escapeXml(post.metaDescription ?? post.excerpt)}</description>
+      <content:encoded><![CDATA[${fullHtml}]]></content:encoded>
     </item>`
     })
     .join('\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Mohammed Mostafa — Backend Engineering Blog</title>
+    <title>Blogs • Mohammed Mostafa</title>
     <link>${new URL(sitePaths.blogs, siteUrl).toString()}</link>
     <atom:link href="${new URL('/rss.xml', siteUrl).toString()}" rel="self" type="application/rss+xml"/>
     <description>Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.</description>

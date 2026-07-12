@@ -1,14 +1,12 @@
 import { sitePaths, siteUrl } from '../site'
 import { projects, type IProject } from '../projects'
-import { brandKeywords, createBreadcrumb, createSeo, personSchema } from './shared'
+import { brandKeywords, createBreadcrumb, createSeo, personId, personSchema } from './shared'
 
 export const projectDescriptionText = (desc: string | string[]) =>
   Array.isArray(desc) ? desc.join(' ') : desc
 
 const projectListItems = projects.map((project: IProject, index) => {
   const projectUrl = project.link || project.github || project.npm
-  // Projects with a full case study (caseStudy flag — see projects.ts) point
-  // at their own page; the rest at their anchor on the index.
   const anchorUrl = project.slug
     ? project.caseStudy
       ? new URL(`${sitePaths.projects}/${project.slug}`, siteUrl).toString()
@@ -27,8 +25,8 @@ const projectListItems = projects.map((project: IProject, index) => {
       ...(projectUrl ? { sameAs: projectUrl } : {}),
       ...(project.github ? { codeRepository: project.github } : {}),
       keywords: project.tags,
-      author: personSchema,
-      creator: personSchema,
+      author: { '@id': personId },
+      creator: { '@id': personId },
     },
   }
 })
@@ -57,13 +55,14 @@ export const projectsSEO = createSeo({
       name: 'Mohammed Mostafa Projects',
       url: new URL(sitePaths.projects, siteUrl).toString(),
       about: 'Backend, API, cloud, payment, and developer tooling projects by Elrefai (Mohammed Mostafa).',
-      author: personSchema,
+      author: { '@id': personId },
       mainEntity: {
         '@type': 'ItemList',
         numberOfItems: projectListItems.length,
         itemListElement: projectListItems,
       },
     },
+    personSchema,
     createBreadcrumb([
       { name: 'Home', path: sitePaths.home },
       { name: 'Projects', path: sitePaths.projects },

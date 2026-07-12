@@ -6,6 +6,8 @@ export type BlogBlock =
   | {
     type: 'heading'
     text: string
+    /** 2 (default) for sections, 3 for subsections nested under the previous h2. */
+    level?: 2 | 3
   }
   | {
     type: 'list'
@@ -581,6 +583,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'G-Counter (grow-only counter)',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -625,6 +628,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'LWW-Register (last-writer-wins register)',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -664,6 +668,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'OR-Set (observed-remove set)',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1213,6 +1218,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Scaling the Fan-Out: Per-User Channels',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1257,6 +1263,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Idempotent Worker Writes',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1290,6 +1297,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Surviving Reconnections',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1883,6 +1891,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Auth tokens — short-lived, asymmetrically signed',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1901,6 +1910,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Refresh tokens — opaque, always',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1926,6 +1936,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Payment tokens — encrypted, always',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -1986,6 +1997,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'API keys — prefixed opaque strings',
+        level: 3,
       },
       {
         type: 'paragraph',
@@ -2021,6 +2033,7 @@ export const blogs: BlogPost[] = [
       {
         type: 'heading',
         text: 'Email verification and password reset — also opaque',
+        level: 3,
       },
       {
         type: 'paragraph',

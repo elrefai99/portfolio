@@ -49,6 +49,7 @@ const sameAs = [
   'https://x.com/elrefai99',
   // Must match the footer link exactly — entity reconciliation keys on exact URLs.
   'https://bsky.app/profile/elrefai.me',
+  'https://orcid.org/0009-0003-3680-2750',
 ]
 
 export const personId = `${siteUrl}/#person`
@@ -58,7 +59,9 @@ export const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   '@id': personId,
-  name: 'Mohammed Mostafa • Software Engineer',
+  // Entity name must be the person's literal name — the role lives in
+  // jobTitle. A decorated name breaks knowledge-graph reconciliation.
+  name: 'Mohammed Mostafa',
   alternateName: [
     'Mohamed Mostafa',
     'Mohammed Elrefai',
@@ -259,8 +262,6 @@ export const createSeo = ({
 export const notFoundSEO = createSeo({
   title: 'Mohammed Mostafa • 404',
   description: 'The requested page could not be found on Mohammed Mostafa’s portfolio.',
-  // The 404 must not claim another page's URL: no canonical, and og:url
-  // points at the error route itself rather than the homepage.
   path: '/404',
   imageAlt: 'Mohammed Mostafa • Software Engineer Portfolio',
   robots: 'noindex, follow',

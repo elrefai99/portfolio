@@ -70,8 +70,8 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
         url,
         datePublished: cs.datePublished,
         dateModified: modifiedDate,
-        author: personSchema,
-        publisher: personSchema,
+        author: { '@id': personId },
+        publisher: { '@id': personId },
         inLanguage: 'en',
         articleSection: 'Engineering Deep Dive',
         wordCount: caseStudyWordCount(cs),
@@ -88,6 +88,7 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
           author: { '@id': personId },
         },
       },
+      personSchema,
       createBreadcrumb([
         { name: 'Home', path: sitePaths.home },
         { name: 'Projects', path: sitePaths.projects },

@@ -30,7 +30,8 @@ const blogTopicKeywords = [
 ]
 
 export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa • Blog',
+  // Mirrors the page h1 so the title carries topic keywords, not just brand.
+  title: 'Blog • Mohammed Mostafa',
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
@@ -51,7 +52,7 @@ export const blogsSEO = createSeo({
       description:
         'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
       url: new URL(sitePaths.blogs, siteUrl).toString(),
-      author: personSchema,
+      author: { '@id': personId },
       inLanguage: 'en',
       keywords: blogTopicKeywords,
       // Enumerate the posts so crawlers see the collection's members and dates.
@@ -79,6 +80,7 @@ export const blogsSEO = createSeo({
         'Production architecture',
       ],
     },
+    personSchema,
     createBreadcrumb([
       { name: 'Home', path: sitePaths.home },
       { name: 'Blog', path: sitePaths.blogs },
@@ -153,8 +155,8 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         datePublished: blog.date,
         dateModified: modifiedDate,
         url,
-        author: personSchema,
-        publisher: personSchema,
+        author: { '@id': personId },
+        publisher: { '@id': personId },
         articleSection: blog.category,
         wordCount: blogWordCount(blog),
         timeRequired: `PT${blogReadMinutes(blog)}M`,
@@ -170,6 +172,7 @@ export const createBlogPostSEO = (blog: BlogPost) => {
           }
           : {}),
       },
+      personSchema,
       createBreadcrumb([
         { name: 'Home', path: sitePaths.home },
         { name: 'Blog', path: sitePaths.blogs },

@@ -439,7 +439,7 @@ export const projects: IProject[] = [
     logoWidth: 765,
     logoHeight: 771,
     class: "w-5 h-5",
-    github: "https://github.com/0G0sha/gen-import",
+    github: "https://github.com/elrefai99/Gen-Import",
     npm: "https://www.npmjs.com/package/gen-import",
     tagline: "TypeScript barrel-file generator built on the TypeScript compiler API",
     desc: [

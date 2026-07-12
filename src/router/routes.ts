@@ -1,12 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import NotFound from '../views/NotFound.vue'
 import { sitePaths } from '../utils/site'
 
-// Home and NotFound stay statically imported: home is the landing chunk, and
-// the catch-all must render without an extra network round-trip. Every other
-// view is lazy so its content data (blog corpus, case studies) ships only on
-// the pages that render it.
+// Home stays statically imported: it is the landing chunk. Every other view —
+// including NotFound — is lazy so its code, scoped styles, and content data
+// (blog corpus, case studies) ship only on the pages that render them.
+// Direct hits on bad URLs still render instantly: Vercel/Nginx serve the
+// prerendered dist/404.html, which already references the NotFound chunk.
+const NotFound = () => import('../views/NotFound.vue')
 export const routes: RouteRecordRaw[] = [
   {
     path: sitePaths.home,

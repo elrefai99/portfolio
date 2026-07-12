@@ -38,10 +38,16 @@ const tagClass = 'bp-chip'
   <div max-w-4xl mx-auto min-h-screen text-black dark:text-white flex justify-center items-start>
     <main w-full max-w-4xl p-4 md:p-10>
       <article v-if="blog" class="space-y-6">
-        <router-link to="/blogs" class="bp-tab inline-flex items-center gap-2">
-          <i class="i-carbon:arrow-left w-4 h-4" />
-          Blogs
-        </router-link>
+        <!-- Visible breadcrumb corroborating the BreadcrumbList JSON-LD -->
+        <nav aria-label="Breadcrumb" class="bp-mono text-xs">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li><router-link to="/" class="bp-tab">Home</router-link></li>
+            <li aria-hidden="true">/</li>
+            <li><router-link to="/blogs" class="bp-tab">Blogs</router-link></li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="max-w-56 truncate opacity-70 sm:max-w-md">{{ blog.title }}</li>
+          </ol>
+        </nav>
 
         <header :class="`${panelClass} overflow-hidden p-6 md:p-8`">
           <div class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -55,6 +61,16 @@ const tagClass = 'bp-chip'
           <h1 class="text-4xl font-bold leading-tight text-black dark:text-gray-300 md:text-5xl">{{ blog.title }}</h1>
           <p class="mt-4 max-w-3xl text-base leading-7 text-black dark:text-gray-400 md:text-lg">
             {{ blog.excerpt }}
+          </p>
+
+          <!-- Visible authorship + freshness (E-E-A-T: schema dates need on-page corroboration) -->
+          <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            By
+            <router-link to="/" class="font-semibold text-black underline underline-offset-3 dark:text-gray-200">Mohammed Mostafa</router-link>
+            · Published <time :datetime="blog.date">{{ blog.date }}</time>
+            <template v-if="blog.updated && blog.updated !== blog.date">
+              · Updated <time :datetime="blog.updated">{{ blog.updated }}</time>
+            </template>
           </p>
 
           <div class="mt-6 flex flex-wrap gap-2">

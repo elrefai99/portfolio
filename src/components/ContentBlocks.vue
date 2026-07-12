@@ -178,12 +178,15 @@ const isMermaidCode = (block: BlogBlock) =>
         <template v-for="(part, partIndex) in parseInline(block.text)" :key="partIndex"><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code><a v-else-if="part.href" :href="part.href" :class="inlineLinkClass" :target="isExternal(part.href) ? '_blank' : undefined" :rel="isExternal(part.href) ? 'noopener noreferrer' : undefined">{{ part.text }}</a><template v-else>{{ part.text }}</template></template>
       </p>
 
-      <h2
+      <component
+        :is="block.level === 3 ? 'h3' : 'h2'"
         v-else-if="block.type === 'heading'"
-        class="pt-2 text-2xl font-semibold text-black dark:text-gray-300"
+        :class="block.level === 3
+          ? 'pt-1 text-xl font-semibold text-black dark:text-gray-300'
+          : 'pt-2 text-2xl font-semibold text-black dark:text-gray-300'"
       >
         {{ block.text }}
-      </h2>
+      </component>
 
       <ul
         v-else-if="block.type === 'list'"
@@ -264,7 +267,8 @@ const isMermaidCode = (block: BlogBlock) =>
 }
 
 .vitesse-code :deep(.v-token-comment) {
-  color: #758575dd;
+  /* Opaque — the old #758575dd blended to ~3.9:1 on #121212; this is 6.9:1 (WCAG AA). */
+  color: #8fa38f;
   font-style: italic;
 }
 </style>

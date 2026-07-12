@@ -1,6 +1,7 @@
 import { sitePaths, siteUrl } from '../site'
 import {
   brandKeywords,
+  createBreadcrumb,
   createSeo,
   personId,
   personSchema,
@@ -32,5 +33,9 @@ export const resumeSEO = createSeo({
       mainEntity: { '@id': personId },
       about: { '@id': personId },
     },
+    createBreadcrumb([
+      { name: 'Home', path: sitePaths.home },
+      { name: 'Resume', path: sitePaths.resume },
+    ]),
   ],
 })

@@ -38,7 +38,7 @@ Every page, blog post, and case study gets its own branded 1200×630 blueprint P
 
 ## Routes & data
 
-Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/projects/:slug` (case studies), `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all. Home and NotFound are statically imported; **every other view is a lazy `() => import(...)`** so its content data stays out of the entry chunk.
+Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/projects/:slug` (case studies), `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all. Home is statically imported (landing chunk); **every other view — including NotFound — is a lazy `() => import(...)`** so its code and content data stay out of the entry chunk (direct 404 hits are served by the prerendered `dist/404.html`).
 
 Content is plain TypeScript data modules under `src/utils/` — no CMS:
 
