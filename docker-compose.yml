@@ -9,19 +9,20 @@ services:
       target: development
     container_name: portfolio-dev
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
       # Mount source code for hot reload
-      - ./src:/app/src
+      - ./app:/app/app
+      - ./shared:/app/shared
+      - ./server:/app/server
       - ./public:/app/public
-      - ./index.html:/app/index.html
-      - ./vite.config.ts:/app/vite.config.ts
+      - ./build:/app/build
+      - ./nuxt.config.ts:/app/nuxt.config.ts
       - ./uno.config.ts:/app/uno.config.ts
       - ./tsconfig.json:/app/tsconfig.json
-      - ./tsconfig.app.json:/app/tsconfig.app.json
-      - ./tsconfig.node.json:/app/tsconfig.node.json
-      # Prevent node_modules from being overwritten
+      # Prevent node_modules and the Nuxt build dir from being overwritten
       - /app/node_modules
+      - /app/.nuxt
     environment:
       - NODE_ENV=development
     networks:

@@ -5,94 +5,112 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # Vite dev server (http://localhost:5173)
-npm run build        # run-p: type-check AND vite-ssg build, in parallel
-npm run build-only   # vite-ssg build, no type-check
-npm run type-check   # vue-tsc --build --force
-npm run preview      # Serve the production build locally
+pnpm dev          # Nuxt dev server (http://localhost:3000)
+pnpm build        # nuxt build (server build; not used for deploy)
+pnpm generate     # nuxt generate → fully static output in .output/public
+pnpm preview      # serve the generated build locally
+pnpm type-check   # nuxt typecheck (vue-tsc)
 ```
 
-No test suite exists. `npm run type-check && npm run build` is the validation baseline before a PR.
+No test suite exists. `pnpm type-check && pnpm generate` is the validation baseline before a PR. The lockfile is `pnpm-lock.yaml`; use `pnpm`. `pnpm install` runs `nuxt prepare` (postinstall) to regenerate `.nuxt/` types.
 
-`npm run build` uses `run-p` (npm-run-all2), so `type-check` and the SSG build run **concurrently** — the command fails if either fails, but a type error does not stop the build from also running. The lockfile is `pnpm-lock.yaml`; prefer `pnpm` to keep it in sync (the scripts are standard and work with either).
+> **Build-scripts gate**: `pnpm-workspace.yaml` lists `esbuild`, `vue-demi`, `@parcel/watcher` under `onlyBuiltDependencies`/`allowBuilds`. If pnpm reports `ERR_PNPM_IGNORED_BUILDS`, add the flagged package there — otherwise `nuxt typecheck`'s dependency check aborts.
 
 ## Big picture
 
-This is a static-site-generated (SSG) Vue 3 portfolio, prerendered to HTML at build time and deployed on **Vercel**. Three ideas drive most of the code and are not obvious from any single file:
+This is a **Nuxt 4** portfolio, statically generated (`nuxt generate`, Nitro `preset: 'static'`) to `.output/public` and deployed on **Vercel** (secondary: Docker/Nginx). Three ideas drive most of the code:
 
-### 1. vite-ssg prerendering
+### 1. Nitro static prerendering
 
-The entry point is `ViteSSG`, not `createApp` (`src/main.ts`). Every route is prerendered to static HTML at build time. `ssgOptions.includedRoutes` in `vite.config.ts` drops `:param` routes and explicitly enumerates blog routes, so **each blog slug gets its own prerendered HTML file** — adding a blog to `src/utils/blogs.ts` automatically extends the prerender set. The `/404` route is a literal (non-`:param`) path so it prerenders to `dist/404.html`, which Vercel auto-serves with a real 404 status.
+`ssr: true` + `nitro.preset: 'static'` in `nuxt.config.ts`. Every route is prerendered to static HTML at build time. `nitro.prerender.routes` **explicitly enumerates** all pages plus every blog/case-study slug and every OG image URL, computed from the TS content modules — so adding a blog to `shared/utils/blogs.ts` (or a case study to `caseStudies.ts`) automatically extends the prerender set. `crawlLinks: true` is a safety net; `failOnError: true` fails the build on any prerender error (bad OG render, broken link).
+
+Unknown routes get a **genuine HTTP 404**: unlisted slugs are never prerendered, so the host serves `404.html` with a 404 status (no SPA 200 fallback). `app/pages/blogs/[slug].vue` and `projects/[slug].vue` `throw createError({ statusCode: 404, fatal: true })` for unknown slugs, which renders `app/error.vue` (the branded NotFound page, `notFoundSEO` → `noindex`, no canonical). Nginx uses `error_page 404 /404.html`; Vercel auto-serves `404.html`.
+
+> Nitro emits `404.html`/`200.html` as hydrating shells (not fully baked HTML). The 404 **HTTP status** is authoritative for crawlers; `error.vue` injects `noindex` on hydration. Don't add `robots: noindex` to the global `app.head` — it would leak onto every page.
 
 ### 2. The "Blueprint" architectural design system
 
-The whole site is themed as an architectural blueprint / building elevation. This is the dominant visual language and lives in **`src/assets/blueprint.css`** (imported globally in `main.ts`): `--bp-*` CSS custom properties and `bp-*` component classes (`bp-nav`, `bp-floor`, `bp-card`, `bp-slab`, `bp-chip`, `bp-tab`, `bp-mono`, `bp-roof`, `bp-footer`, …). Dark mode is "blueprint" (near-black), light mode is "paper blueprint" — both defined via `--bp-*` vars on `:root` / `:root:not(.dark)`.
+Unchanged from before the Nuxt migration. The whole site is themed as an architectural blueprint / building elevation, living in **`app/assets/blueprint.css`** (loaded via `nuxt.config.ts` `css`): `--bp-*` CSS custom properties and `bp-*` component classes (`bp-nav`, `bp-floor`, `bp-card`, `bp-slab`, `bp-chip`, `bp-tab`, `bp-mono`, `bp-roof`, `bp-footer`, …). Dark mode is "blueprint" (near-black), light mode is "paper blueprint".
 
-`App.vue` frames the page as a building: roof datum (top) → floors → foundation (footer). Each page section is a **`<FloorSection>`** (`src/components/FloorSection.vue`) with a level code (`L-04`), name, elevation annotation, concrete-slab separators, corner registration marks, and IntersectionObserver scroll-reveal (`eager` disables the reveal for the above-the-fold LCP floor). Build new pages as floors to stay consistent — `BlogsView.vue` is a clean reference.
+`app/app.vue` frames the page as a building: roof datum (top) → `<NuxtPage />` (floors) → foundation (footer). Each page section is a **`<FloorSection>`** (`app/components/FloorSection.vue`) with a level code (`L-04`), name, elevation annotation, slab separators, corner marks, and IntersectionObserver scroll-reveal (`eager` disables the reveal for the above-the-fold LCP floor). Build new pages as floors — `app/pages/blogs/index.vue` is a clean reference.
 
-### 3. Build-time OG image generation
+### 3. Build-time OG image generation (server route)
 
-Every page, blog post, and case study gets its own branded 1200×630 blueprint PNG Open Graph card — no runtime image service. The renderer is **`build/og-image.ts`**: it builds an SVG (blueprint grid, corner marks, chip, wrapped title/subtitle) and rasterizes it with `@resvg/resvg-js`, using the Inter `.ttf` files in `build/fonts/` (resvg does not wrap text, so `wrapText` estimates Inter's advance width to break lines). Cards come from `staticCards` (home/projects/blogs/resume) plus one `blogCard` per post and one `projectCard` per case study; `allCards(blogs)` is the full set.
-
-`ogImagePlugin` in `vite.config.ts` wires it in two modes: **dev** serves `/og/(page|blog|project)-<name>.png` on demand via middleware (so social debuggers + local preview work); **build** writes every card to `dist/og/*.png` in `closeBundle`. The URLs are referenced from the SEO modules in `src/utils/seo/` (`image:` fields point at `/og/page-*.png`; per-post `ogImage`). So: adding a blog post or case study auto-adds its OG card, but **changing OG copy/layout means editing `build/og-image.ts`, not a template**. New static page → add a card to `staticCards` and point its SEO module's `image` at the matching `/og/page-*.png`.
+Every page, blog post, and case study gets its own branded 1200×630 blueprint PNG Open Graph card. The renderer is **`server/utils/og-image.ts`** (SVG → `@resvg/resvg-js`, using the Inter `.ttf` files in `build/fonts/`). It is exposed by the Nitro server route **`server/routes/og/[name].ts`** (`/og/<card>.png`): served on demand in `nuxt dev` (social debuggers + local preview) and **prerendered to `.output/public/og/*.png`** because every card URL is in `nitro.prerender.routes`. `@resvg/resvg-js` is `nitro.externals.external` — server-only, never in the browser bundle. Changing OG copy/layout means editing `server/utils/og-image.ts` (`staticCards` / `blogCard` / `projectCard`), not a template.
 
 ## Routes & data
 
-Routes are in **`src/router/routes.ts`** (not `index.ts`); path strings are centralized in `src/utils/site.ts` (`sitePaths`). Current routes: `/` (Home), `/projects`, `/projects/:slug` (case studies), `/blogs`, `/blogs/:slug`, `/resume`, `/404`, catch-all. Home is statically imported (landing chunk); **every other view — including NotFound — is a lazy `() => import(...)`** so its code and content data stay out of the entry chunk (direct 404 hits are served by the prerendered `dist/404.html`).
+Routing is Nuxt file-based under **`app/pages/`**: `index.vue` (`/`), `projects/index.vue`, `projects/[slug].vue` (case studies), `blogs/index.vue`, `blogs/[slug].vue`, `resume.vue`. `app/error.vue` handles 404s. Path strings are centralized in `shared/utils/site.ts` (`sitePaths`). Home is the landing chunk; Nuxt code-splits every page automatically.
 
-Content is plain TypeScript data modules under `src/utils/` — no CMS:
+Content is plain TypeScript data modules under **`shared/utils/`** (importable from app, server, and `nuxt.config.ts` via the `~~/shared/...` alias) — no CMS:
 
-- **`projects.ts`** — portfolio project data (title, description, tags, links, image).
-- **`caseStudies.ts`** — long-form project deep dives rendered by `ProjectCaseView.vue`; `relatedBlogSlugs` powers the case→blog "Further Reading" links **and** the reverse blog→case links in `BlogPostView.vue`.
-- **`blogs.ts`** — blog posts as structured content blocks (`paragraph`, `heading`, `list`, `code`); post metadata (`slug`, `title`, `excerpt`, `category`, `tags`, `readTime`, optional `ogImage`) feeds routing, the prerender set, SEO, and OG cards. `slug` drives routing. Paragraph/list text supports `` `inline code` `` and `[label](url)` links (rendered by `ContentBlocks.vue`). A `code` block with `language: 'mermaid'` is rendered as a live diagram by `MermaidDiagram.vue` in `BlogPostView.vue` (mermaid is lazy-`import()`ed on first use, theme-aware).
-- **`site.ts`** — canonical `siteUrl` and `sitePaths` **only**. It is imported by every page, so it must stay dependency-free — never import content modules here.
-- **`sitemap.ts`** — `sitemapEntries` (build-time only, consumed by `vite.config.ts`); imports the blog/case-study corpus, which is exactly why it lives apart from `site.ts`.
-- **`seo/`** — per-route SEO `<head>` modules (OpenGraph, Twitter, JSON-LD schema), consumed via `useHead(...)`: `shared.ts` (createSeo factory, Person/WebSite schemas, notFoundSEO), `home.ts`, `projects.ts`, `case-study.ts`, `blog.ts`, `resume.ts`. **Split on purpose**: a view imports only its own module so e.g. the homepage chunk never pulls the blog corpus (`seo/blog.ts` is the only one allowed to import `blogs.ts`).
-- **`icons.ts`** — maps tech-tag strings → Iconify icon ids for project cards.
+- **`projects.ts`** — portfolio project data (title, description, tags, links, image, `altNames`, `caseStudy` flag).
+- **`caseStudies.ts`** — long-form deep dives rendered by `projects/[slug].vue`; `relatedBlogSlugs` powers case→blog "Further Reading" **and** the reverse blog→case links in `blogs/[slug].vue`.
+- **`blogs.ts`** — blog posts as structured content blocks (`paragraph`, `heading`, `list`, `code`); metadata feeds routing, the prerender set, SEO, and OG cards. Paragraph/list text supports `` `inline code` `` and `[label](url)` links (rendered by `ContentBlocks.vue`). A `code` block with `language: 'mermaid'` is rendered live by `MermaidDiagram.vue` (mermaid lazy-`import()`ed, theme-aware).
+- **`site.ts`** — canonical `siteUrl` and `sitePaths` **only**. Imported everywhere, so it must stay dependency-free — never import content modules here.
+- **`sitemap.ts`** — `sitemapEntries`, consumed only by the sitemap server route; imports the corpus, which is why it lives apart from `site.ts`.
+- **`seo/`** — per-route SEO `<head>` modules consumed via Nuxt's auto-imported `useHead(...)`: `shared.ts` (createSeo factory, Person/WebSite schemas, notFoundSEO), `home.ts`, `projects.ts`, `case-study.ts`, `blog.ts`, `resume.ts`. **Split on purpose**: a page imports only its own module so e.g. the homepage never pulls the blog corpus (`seo/blog.ts` is the only SEO module allowed to import `blogs.ts`).
+- **`icons.ts`** — maps tech-tag strings → Iconify icon ids.
 
-## Sitemap
+## Sitemap / RSS (server routes)
 
-A custom Vite plugin in `vite.config.ts` generates `sitemap.xml` (dev: middleware at `/sitemap.xml`; build: `closeBundle` writes `dist/sitemap.xml`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources`, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable. When adding a route: add it to `sitemapEntries` in `src/utils/sitemap.ts`, and optionally to `routeSources` in `vite.config.ts` for git-driven freshness.
+**`server/routes/sitemap.xml.ts`** generates `sitemap.xml` and **`server/routes/rss.xml.ts`** generates `rss.xml` (RSS 2.0, full `content:encoded`, newest first). Both are prerendered into `.output/public` (and served live in `nuxt dev`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources` in the sitemap route, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable (uncommitted files, Docker builds that exclude `.git`). When adding a route: add it to `sitemapEntries`, and optionally to `routeSources`. The RSS discovery `<link>` lives in `nuxt.config.ts` `app.head`.
 
-A sibling `rssPlugin` generates **`/rss.xml`** (RSS 2.0, all blog posts, newest first) the same way — dev middleware + `closeBundle`. It reads only blog metadata, so new posts appear automatically; `index.html` carries the `<link rel="alternate" type="application/rss+xml">` for discovery.
-
-> **Same-host only**: sitemap entries must be `elrefai.me` paths. Subdomain URLs (`srvj.elrefai.me`, `keepit.elrefai.me`) were once listed and had to be removed — the sitemap protocol forbids cross-host URLs and Google ignores them.
+> **Same-host only**: sitemap entries must be `elrefai.me` paths. Subdomain URLs (`srvj.elrefai.me`, `keepit.elrefai.me`) are forbidden — the sitemap protocol bans cross-host URLs and Google ignores them.
 
 ## Styling
 
-UnoCSS with a Tailwind reset — utilities work as in Tailwind. Dark mode is class-based (`presetUno({ dark: 'class' })`), so pair styles with `dark:` variants. Two style layers coexist: the global Blueprint system in `src/assets/blueprint.css`, and UnoCSS shortcuts/animations/theme in **`uno.config.ts`** (`bg-base`, `border-base`, `social-link`, `project-*`/drift keyframes, `theme.colors`).
+UnoCSS via **`@unocss/nuxt`**, reading the unchanged **`uno.config.ts`** (`presetUno({ dark: 'class' })`, `presetAttributify`, `presetIcons`; shortcuts, theme colors, animations, safelist). `@unocss/reset/tailwind.css` is in the `nuxt.config.ts` `css` array. Utilities and attributify syntax work as before. Icons render via the UnoCSS icon preset from the installed `@iconify-json/*` collections.
 
-Icons render via the UnoCSS icon preset (`i-carbon-*`, `i-logos-*`, `i-simple-icons-*`, …) from the installed `@iconify-json/*` collections.
-
-> **Safelist gotcha**: icon classes chosen at runtime (e.g. tech-tag icons resolved through `src/utils/icons.ts`) are not present as literal strings in source, so UnoCSS purges them. Such icons must be added to `safelist` in `uno.config.ts`. When adding a new tech tag with a new icon, update both `icons.ts` and the `safelist`.
+> **Safelist gotcha**: icon classes chosen at runtime (tech-tag icons via `shared/utils/icons.ts`) aren't literal strings in source, so UnoCSS purges them. Such icons must be in `safelist` in `uno.config.ts`. New tech tag with a new icon → update both `icons.ts` and the `safelist`.
 
 ## SEO & performance invariants
 
-Established by a full SEO/CWV audit (2026-07); breaking any of these is a regression:
+Breaking any of these is a regression:
 
-- **Canonicals are per-route only.** `createSeo` in `src/utils/seo/shared.ts` emits the canonical; `index.html` intentionally has **no** static `<link rel="canonical">` (a static one leaks onto the 404 page, which must not claim a canonical — `notFoundSEO` passes `canonical: false`). Don't re-add one to the template.
-- **The entry chunk must not contain the blog corpus.** `site.ts` stays dependency-free, sitemap data lives in `sitemap.ts`, and only `seo/blog.ts` + the lazy blog views may import `blogs.ts`. (Before this split the homepage shipped every article as JS: 111KB → 67KB gzip.)
-- **Hashed assets are cached immutable** via the `/assets/(.*)` header in `vercel.json` — safe only because Vite content-hashes filenames; never emit unhashed files into `dist/assets/`.
-- **The homepage h1 (`aboutme.vue`) is the LCP element.** It must never animate `opacity` — it uses the transform-only `slide-down-lcp` keyframe, and its section wrapper has no fade-in. (A typing effect and an opacity fade have both been removed from it before; each cost ~1s of LCP.)
-- **Image budgets**: `public/projects/*` logos render at ≤24px — keep sources ≤96px (a 944KB srvj.png once shipped for a 20px icon). `public/og-image.png` must stay **<300KB** or WhatsApp drops link previews. `favicon.ico` is a layered 16/32/48 ICO (~2KB) — regenerate from `icon-512.png`, don't drop in a raw export.
+- **Canonicals are per-route only.** `createSeo` in `shared/utils/seo/shared.ts` emits the canonical; the global `app.head` in `nuxt.config.ts` has **no** static canonical (a static one would leak onto the 404 page — `notFoundSEO` passes `canonical: false`).
+- **The entry chunk must not contain the blog corpus.** `site.ts` stays dependency-free; only `seo/blog.ts` + the blog pages import `blogs.ts`. Verify after a build: none of the JS chunks referenced by `.output/public/index.html` should contain blog/case-study body strings.
+- **Hashed assets are cached immutable** via the `/_nuxt/(.*)` header in `vercel.json` — safe because Nuxt content-hashes those filenames.
+- **The homepage h1 (`app/components/aboutme.vue`) is the LCP element.** It must never animate `opacity` — it uses the transform-only `slide-down-lcp` keyframe, and its floor is `eager` (no fade-in). No page transition is configured; don't add one that fades the homepage.
+- **Image budgets**: `public/projects/*` logos render at ≤24px — keep sources ≤96px. `public/og-image.png` must stay **<300KB** or WhatsApp drops previews. Generated `/og/*.png` cards are ~60–80KB. `favicon.ico` is a layered 16/32/48 ICO (~2KB).
 - **`public/llms.txt`** is a hand-maintained index for AI answer engines — update it when adding pages or blog posts.
 - External `target="_blank"` links carry `rel="noopener noreferrer"`.
-- `index.html` has two `theme-color` metas (light `#faf9f5` / dark `#141413` via `media`) — keep both.
+- `nuxt.config.ts` `app.head` has two `theme-color` metas (light `#faf9f5` / dark `#141413` via `media`) — keep both.
 
 ## Theme
 
-The navbar toggle (`src/components/darkmode.vue`) uses vueuse `useDark({ storageKey: 'theme-mode' })`, which toggles the `dark` class on `<html>` and persists to the `theme-mode` localStorage key. To avoid FOUC, an inline script in `index.html` reads the same `theme-mode` key synchronously before paint. **The `storageKey` option and the inline script must always agree** — the toggle once used vueuse's default key (`vueuse-color-scheme`) and every reload flashed the wrong theme.
+The navbar toggle (`app/components/darkmode.vue`) uses `useDark({ storageKey: 'theme-mode' })` (from `@vueuse/core`, auto-imported via `@vueuse/nuxt`), which toggles the `dark` class on `<html>` and persists to `theme-mode`. To avoid FOUC, an inline script in `nuxt.config.ts` `app.head` (`tagPriority: 'critical'`) reads the same `theme-mode` key synchronously before paint. **The `storageKey` and the inline script must always agree.** The `dark` class lives on `<html>` (outside the Vue app root), so there's no hydration mismatch and Unhead doesn't manage it.
 
-## i18n / stores (current state)
+## Mermaid
 
-There is no i18n and no store: vue-i18n and pinia were fully removed (packages, `src/locales/`, `src/stores/`) because nothing used them and they added ~50KB of dead JS to every page. If a task needs localized copy or a store, installing and registering the plugin in `main.ts` is part of the work.
+`app/components/MermaidDiagram.vue` dynamically `import()`s mermaid only when a diagram nears the viewport (IntersectionObserver, `400px` rootMargin), keeping the ~600KB bundle off the critical path. It is **not** `ClientOnly`: the `<pre><code>` source fallback renders during prerender (the component only upgrades to SVG after mount + intersection), so crawlers and no-JS clients get the code. A MutationObserver re-renders on theme toggle.
 
 ## Auto-imports
 
-Vue Composition API helpers (`ref`, `computed`, `onMounted`, …), `@vueuse/core`, composables in `src/composables/`, and components in `src/components/` are auto-imported (`unplugin-auto-import` + `unplugin-vue-components`). No explicit imports needed for these; `auto-imports.d.ts` and `components.d.ts` are generated — don't hand-edit.
+Nuxt auto-imports: Vue Composition API (`ref`, `computed`, `onMounted`, …), Nuxt composables (`useHead`, `useRoute`, `createError`, `navigateTo`, `useRequestURL`, …), `@vueuse/core` (via `@vueuse/nuxt`), components in `app/components/`, and `shared/utils/**`. Components keep their file-based names — lowercase filenames resolve PascalCase (`footer.vue` → `<Footer>`, `darkmode.vue` → `<Darkmode>`, `aboutme.vue` → `<Aboutme>`, `timeline.vue` → `<Timeline>`). Content/SEO modules are imported **explicitly** (`~~/shared/utils/...`) to keep the chunk-split invariant obvious, even though they're auto-importable. `.nuxt/` type decls are generated — don't hand-edit.
 
 ## Deployment
 
-- **Vercel** (primary): `vercel.json` — `cleanUrls`, `trailingSlash: false`, `/github` + `/gh` redirects, and security headers. `@vercel/analytics` mounts in `App.vue`.
-- **Docker** (secondary): multi-stage `Dockerfile` builds and serves `dist/` via Nginx (`nginx.conf`); `docker-compose.yml` has dev/prod stages.
-- `_dist_redirects` is legacy Netlify config and is **not** copied by the current build.
+- **Vercel** (primary): `vercel.json` — `buildCommand: pnpm run generate`, `outputDirectory: .output/public`, `framework: null` (forces the static output; no SPA catch-all rewrite), `cleanUrls`, `trailingSlash: false`, `/github` + `/gh` redirects, security headers, `/_nuxt/(.*)` immutable cache. `@vercel/analytics` + `@vercel/speed-insights` mount in `app.vue` (inside `<ClientOnly>`).
+- **Docker** (secondary): multi-stage `Dockerfile` (Node 22 + pnpm) runs `pnpm run generate` and serves `.output/public` via Nginx (`nginx.conf`: `try_files $uri $uri.html $uri/ =404` + `error_page 404 /404.html`). `docker-compose.yml` dev stage runs `nuxt dev` on port 3000.
+
+## Nuxt structure
+
+```
+nuxt.config.ts        modules, css, app.head, nitro prerender, caseStudy-flag assertion
+app/
+  app.vue             building frame (NavBar, roof, <NuxtPage>, Footer, analytics)
+  error.vue           branded 404 (notFoundSEO)
+  router.options.ts   scrollBehavior (saved position / smooth hash / instant top)
+  assets/             blueprint.css, main.css (+ Alexandria @font-face)
+  components/          all UI components (auto-imported)
+  pages/               file-based routes
+shared/utils/          site, projects, caseStudies, blogs, sitemap, icons, seo/
+server/
+  utils/og-image.ts    OG renderer (@resvg, build/fonts/*.ttf)
+  routes/              sitemap.xml.ts, rss.xml.ts, og/[name].ts (all prerendered)
+public/                static assets (favicons, fonts, projects logos, llms.txt, robots.txt)
+build/fonts/           Inter *.ttf for OG rendering (read at prerender via process.cwd())
+```
+
+There is no i18n and no store. If a task needs localized copy or state, install and register the module in `nuxt.config.ts`.
