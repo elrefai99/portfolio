@@ -63,7 +63,7 @@ export const blogs: BlogPost[] = [
       'How SRVJ\'s Node.js deployment evolved from one EC2 box with NGINX and pm2 to Docker Compose and Kubernetes — plus S3 avatars and presigned uploads.',
     category: 'Cloud & DevOps',
     date: '2026-07-09',
-    updated: '2026-07-10',
+    updated: '2026-07-11',
     readTime: '13 min read',
     tags: ['AWS', 'EC2', 'S3', 'EKS', 'Kubernetes', 'Docker', 'NGINX', 'CI/CD', 'Node.js', 'DevOps'],
     entities: [
@@ -869,7 +869,7 @@ export const blogs: BlogPost[] = [
       'Real-time notifications with SSE, BullMQ, Redis Pub/Sub and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
     category: 'Backend Architecture',
     date: '2026-06-27',
-    updated: '2026-07-10',
+    updated: '2026-07-12',
     readTime: '9 min read',
     tags: ['SSE', 'Server-Sent Events', 'Real-Time', 'BullMQ', 'Redis', 'PostgreSQL', 'Node.js', 'System Design'],
     entities: [
