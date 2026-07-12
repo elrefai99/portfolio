@@ -29,12 +29,23 @@ const tagClass = "bp-chip";
         items-start
       >
         <div w-full max-w-4xl p-4 md:p-10>
+          <!-- Visible breadcrumb corroborating the Blog BreadcrumbList JSON-LD -->
+          <nav aria-label="Breadcrumb" class="bp-mono mb-6 text-xs">
+            <ol class="flex flex-wrap items-center gap-2">
+              <li><router-link to="/" class="bp-tab">Home</router-link></li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" class="opacity-70">Blog</li>
+            </ol>
+          </nav>
           <section>
             <div class="mb-6 flex flex-col items-center text-center">
               <h1 text-5xl font-bold mb-2 text-black dark:text-white>Blog</h1>
-              <p text-sm text-gray-500 dark:text-gray-400 mb-4>
-                Notes about backend architecture, TypeScript, queues, APIs, and the small
-                decisions behind reliable software.
+              <p text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl>
+                Backend engineering notes by Mohammed Mostafa on Node.js, TypeScript,
+                Express.js, API architecture, message queues (BullMQ / Redis),
+                authentication and payment-token security, and real-time systems
+                (WebSockets, SSE, CRDTs) on AWS. Practical write-ups with code and diagrams
+                from real projects like Lesoll, EGYStay, and SRVJ.
               </p>
             </div>
 

@@ -162,6 +162,11 @@ export const createBlogPostSEO = (blog: BlogPost) => {
         timeRequired: `PT${blogReadMinutes(blog)}M`,
         isPartOf: { '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog` },
         inLanguage: 'en',
+        // Voice / answer-engine hint: read the headline and the article body.
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', '.blog-content'],
+        },
         keywords,
         ...(blog.entities?.length
           ? {

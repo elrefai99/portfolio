@@ -63,12 +63,33 @@ const tagChipClass = "bp-chip";
         items-start
       >
         <div w-full max-w-4xl p-4 md:p-10>
+          <!-- Visible breadcrumb corroborating the CollectionPage BreadcrumbList JSON-LD -->
+          <nav aria-label="Breadcrumb" class="bp-mono mb-6 text-xs">
+            <ol class="flex flex-wrap items-center gap-2">
+              <li><router-link to="/" class="bp-tab">Home</router-link></li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" class="opacity-70">Projects</li>
+            </ol>
+          </nav>
           <section>
             <div class="flex flex-col items-center text-center mb-6">
               <h1 text-5xl font-bold mb-2 text-black dark:text-white>Projects</h1>
-              <p text-sm text-gray-500 dark:text-gray-400 mb-4>
+              <p text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl>
                 Backend, API, payment, and developer tooling projects built with Node.js,
-                TypeScript, AWS, Docker, Redis, and PostgreSQL.
+                TypeScript, Express.js, AWS, Docker, Redis, and PostgreSQL. Includes
+                in-depth engineering case studies for
+                <router-link to="/projects/lesoll" class="underline underline-offset-2"
+                  >Lesoll</router-link
+                >
+                and
+                <router-link to="/projects/egystay" class="underline underline-offset-2"
+                  >EGYStay</router-link
+                >
+                — production marketplace and booking backends — plus
+                <router-link to="/projects/srvj" class="underline underline-offset-2"
+                  >SRVJ</router-link
+                >, a real-time CRDT collaboration server. Each deep dive covers the
+                architecture, production incidents, and engineering decisions behind it.
               </p>
               <a
                 href="https://github.com/elrefai99"
