@@ -370,19 +370,19 @@ const fullText = "Mohammed Mostafa";
 }
 
 .animate-slide-down-delay-2 {
-  animation: slide-down 0.6s ease-out 0.3s backwards;
+  animation: slide-down 0.6s ease-out 0.2s backwards;
 }
 
 .animate-slide-down-delay-3 {
-  animation: slide-down 0.6s ease-out 0.4s backwards;
+  animation: slide-down 0.6s ease-out 0.2s backwards;
 }
 
 .animate-slide-down-delay-4 {
-  animation: slide-down 0.6s ease-out 0.6s backwards;
+  animation: slide-down 0.6s ease-out 0.2s backwards;
 }
 
 .animate-slide-up-delay-5 {
-  animation: slide-up 0.8s ease-out 0.7s backwards;
+  animation: slide-up 0.8s ease-out 0.2s backwards;
 }
 
 .animate-slide-up-delay-6 {
