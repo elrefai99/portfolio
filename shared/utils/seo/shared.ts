@@ -81,6 +81,15 @@ export const personSchema = {
     name: 'Lesoll',
     url: 'https://lesoll.com',
   },
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Modern Academy in Maadi',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Cairo',
+      addressCountry: 'EG',
+    },
+  },
   hasOccupation: {
     '@type': 'Occupation',
     name: 'Software Engineer',
@@ -188,7 +197,7 @@ export const createSeo = ({
   imageWidth = '1200',
   imageHeight = '630',
   ogType = 'website',
-  robots = 'index, follow, max-image-preview:large',
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
   keywords = [],
   extraMeta = [],
   schema,

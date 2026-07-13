@@ -2,9 +2,9 @@ import { blogs } from './blogs'
 import { caseStudies } from './caseStudies'
 import { sitePaths } from './site'
 
-// Build-time only (vite.config.ts sitemap plugin). Never import from app code:
-// it pulls the full blog + case-study corpus, which must stay out of the
-// entry chunk — that's why this lives apart from site.ts.
+// Consumed only by the sitemap server route (server/routes/sitemap.xml.ts).
+// Never import from app code: it pulls the full blog + case-study corpus, which
+// must stay out of the entry chunk — that's why this lives apart from site.ts.
 
 const staticPagesLastmod = '2026-07-01'
 

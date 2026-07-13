@@ -24,7 +24,7 @@ export interface IProject {
    * True when a long-form case study exists at /projects/<slug>.
    * Kept as a flag (not derived from caseStudies.ts) so components rendered
    * in the entry chunk never import the case-study corpus just for slugs —
-   * vite.config.ts asserts at build time that flags and caseStudies agree.
+   * nuxt.config.ts asserts at build time that flags and caseStudies agree.
    */
   caseStudy?: boolean
   /** One-line descriptor shown under the project name on the index. */
@@ -49,8 +49,8 @@ export const projects: IProject[] = [
     category: "Live",
     caseStudy: true,
     logo: lesoll,
-    logoWidth: 288,
-    logoHeight: 288,
+    logoWidth: 96,
+    logoHeight: 96,
     link: "https://lesoll.com",
     class: "w-5 h-auto",
     github: "",
@@ -231,8 +231,8 @@ export const projects: IProject[] = [
     category: "Live",
     caseStudy: true,
     logo: srvj,
-    logoWidth: 1254,
-    logoHeight: 1254,
+    logoWidth: 96,
+    logoHeight: 96,
     class: "w-5 h-5",
     link: "https://srvj.elrefai.me/",
     github: "",
@@ -444,8 +444,8 @@ export const projects: IProject[] = [
     slug: "gen-import",
     category: "Package",
     logo: GenImport,
-    logoWidth: 765,
-    logoHeight: 771,
+    logoWidth: 95,
+    logoHeight: 96,
     class: "w-5 h-5",
     github: "https://github.com/elrefai99/Gen-Import",
     npm: "https://www.npmjs.com/package/gen-import",
