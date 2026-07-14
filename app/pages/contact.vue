@@ -97,7 +97,9 @@ const submit = async () => {
 
           <section>
             <div class="mb-10 flex flex-col items-center text-center">
-              <h1 text-5xl font-bold mb-2 text-black dark:text-white>Contact</h1>
+              <h1 text-5xl font-bold mb-2 text-black dark:text-white>
+                Contact Mohammed Mostafa
+              </h1>
               <p text-sm text-gray-500 dark:text-gray-400 max-w-2xl>
                 Let's connect — reach me through any of these platforms, or send
                 a message straight from the form below.

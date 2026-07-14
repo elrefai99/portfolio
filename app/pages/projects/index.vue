@@ -73,7 +73,9 @@ const tagChipClass = "bp-chip";
           </nav>
           <section>
             <div class="flex flex-col items-center text-center mb-6">
-              <h1 text-5xl font-bold mb-2 text-black dark:text-white>Projects</h1>
+              <h1 text-5xl font-bold mb-2 text-black dark:text-white>
+                Backend &amp; API Projects
+              </h1>
               <p text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl>
                 Backend, API, payment, and developer tooling projects built with Node.js,
                 TypeScript, Express.js, AWS, Docker, Redis, and PostgreSQL. Includes

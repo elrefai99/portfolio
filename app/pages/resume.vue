@@ -44,7 +44,7 @@ useHead(resumeSEO);
                 class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-400"
               >
                 <span class="text-gray-300 dark:text-gray-600">•</span>
-                <span>Banha, Al Qalyubia</span>
+                <span>Cairo, Egypt</span>
                 <span class="text-gray-300 dark:text-gray-600">•</span>
                 <a
                   href="mailto:elrefai99@gmail.com"

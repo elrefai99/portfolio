@@ -243,6 +243,19 @@ const fullText = "Mohammed Mostafa";
             class="decoration-black/30 dark:decoration-white/30 hover:decoration-black/80 dark:hover:decoration-white/80"
           >
             projects </router-link
+          >, or read my
+          <router-link
+            to="/blogs"
+            font-semibold
+            text-black
+            dark:text-white
+            underline
+            underline-offset-3
+            transition-all
+            duration-200
+            class="decoration-black/30 dark:decoration-white/30 hover:decoration-black/80 dark:hover:decoration-white/80"
+          >
+            backend engineering writing </router-link
           >.
         </p>
 
