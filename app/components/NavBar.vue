@@ -70,7 +70,6 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--bp-canvas) 78%, transparent);
   backdrop-filter: blur(10px);
 }
-
 .bp-nav__row {
   width: 100%;
   max-width: 60rem;
