@@ -8,4 +8,5 @@ export const sitePaths = {
   projects: '/projects',
   blogs: '/blogs',
   resume: '/resume',
+  contact: '/contact',
 } as const

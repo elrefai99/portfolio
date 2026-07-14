@@ -33,6 +33,12 @@ export const sitemapEntries = [
     priority: '0.7',
     lastmod: staticPagesLastmod,
   },
+  {
+    path: sitePaths.contact,
+    changefreq: 'monthly',
+    priority: '0.6',
+    lastmod: '2026-07-14',
+  },
   ...caseStudies.map((cs) => ({
     path: `${sitePaths.projects}/${cs.slug}`,
     changefreq: 'monthly',

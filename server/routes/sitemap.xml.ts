@@ -27,6 +27,7 @@ const routeSources: Record<string, string[]> = {
   [sitePaths.projects]: ['app/pages/projects/index.vue', 'shared/utils/projects.ts', 'shared/utils/caseStudies.ts', ...globalSources],
   [sitePaths.blogs]: ['app/pages/blogs/index.vue', 'shared/utils/blogs.ts', ...globalSources],
   [sitePaths.resume]: ['app/pages/resume.vue', ...globalSources],
+  [sitePaths.contact]: ['app/pages/contact.vue', ...globalSources],
   ...Object.fromEntries(
     caseStudies.map((cs) => [
       `${sitePaths.projects}/${cs.slug}`,

@@ -166,6 +166,15 @@ export const staticCards: OgCard[] = [
     footerLeft: author,
     footerRight: 'Node.js · TypeScript · Cloud · Databases',
   },
+  {
+    fileName: 'page-contact.png',
+    eyebrow: 'L-05 · CONTACT / COMMS',
+    chip: 'Get in Touch',
+    title: 'Contact Mohammed Mostafa',
+    subtitle: 'Reach out about backend engineering, freelance work, or collaboration — email, GitHub, LinkedIn, X, or the contact form.',
+    footerLeft: author,
+    footerRight: 'Email · GitHub · LinkedIn · X',
+  },
 ]
 
 export const allCards = (blogs: BlogPost[]): OgCard[] => [

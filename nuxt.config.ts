@@ -30,6 +30,7 @@ const ogRoutes = [
   '/og/page-projects.png',
   '/og/page-blogs.png',
   '/og/page-resume.png',
+  '/og/page-contact.png',
   ...caseStudies.map((cs) => `/og/project-${cs.slug}.png`),
   ...blogs.map((blog) => `/og/blog-${blog.slug}.png`),
 ]
@@ -55,6 +56,7 @@ export default defineNuxtConfig({
         sitePaths.projects,
         sitePaths.blogs,
         sitePaths.resume,
+        sitePaths.contact,
         '/sitemap.xml',
         '/rss.xml',
         ...caseStudyRoutes,

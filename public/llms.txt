@@ -16,6 +16,7 @@ background job processing, and real-time notification infrastructure.
 - [Projects](https://elrefai.me/projects): Lesoll, EGYStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord
 - [Blog](https://elrefai.me/blogs): Backend engineering articles
 - [Resume](https://elrefai.me/resume): Experience, skills, and education
+- [Contact](https://elrefai.me/contact): Contact form and links (email, GitHub, LinkedIn, X)
 - [RSS feed](https://elrefai.me/rss.xml): Blog post updates
 
 ## Project case studies
