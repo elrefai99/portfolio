@@ -31,7 +31,7 @@ onUnmounted(() => {
         mx-auto
         flex
         items-center
-        justify-between
+        justify-center
         gap-4
         px-5
         py-3
