@@ -4,6 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
 </script>
 
 <template>
+  <a href="#main-content" class="bp-skip-link">Skip to content</a>
   <NavBar />
   <BackGround />
   <!-- Roof datum: top of the building section -->
@@ -14,7 +15,9 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
       <span class="bp-roof__tick" />
     </div>
   </div>
-  <NuxtPage />
+  <div id="main-content" tabindex="-1">
+    <NuxtPage />
+  </div>
   <Footer />
   <ClientOnly>
     <Analytics />
@@ -27,6 +30,27 @@ html.dark {
   background: #141413;
   color: var(--color-text);
   color-scheme: dark;
+}
+
+/* Keyboard skip link: off-screen until focused, then pinned top-left. */
+.bp-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  font-size: 12px;
+  color: var(--bp-blue);
+  background: var(--bp-canvas);
+  border: 1px solid var(--bp-line);
+}
+.bp-skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+/* The skip target is programmatically focusable but shouldn't show a focus ring. */
+#main-content:focus {
+  outline: none;
 }
 
 /* Roof line marking the top of the building elevation */

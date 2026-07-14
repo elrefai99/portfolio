@@ -161,6 +161,34 @@ export const websiteSchema = {
   inLanguage: 'en',
 }
 
+// Organization publisher for Article rich results: Google's Article guidance
+// wants publisher to be an Organization carrying a logo ImageObject. The person
+// stays the `author`/main entity; this is the branded publisher of the writing.
+export const publisherId = `${siteUrl}/#organization`
+
+export const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': publisherId,
+  name: 'Mohammed Mostafa',
+  url: siteUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${siteUrl}/icon-512.png`,
+    width: 512,
+    height: 512,
+  },
+  sameAs,
+}
+
+/** Wrap an OG card URL as an ImageObject so Article rich results get explicit dimensions. */
+export const ogImageObject = (url: string) => ({
+  '@type': 'ImageObject',
+  url,
+  width: 1200,
+  height: 630,
+})
+
 const createJsonLd = (schema: Record<string, unknown> | Record<string, unknown>[]) => ({
   type: 'application/ld+json',
   innerHTML: JSON.stringify(schema),

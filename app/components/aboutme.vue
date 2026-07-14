@@ -8,6 +8,11 @@ const egystayLogo = "/projects/egy-stay-logo.png";
 // to '' on mount and retyped letter-by-letter, which delayed LCP by ~1.6s
 // and made the largest element on the page visibly disappear on hydration.
 const fullText = "Mohammed Mostafa";
+
+// The contribution graph is a third-party image (ghchart.rshah.org). If that
+// host is slow or down, drop the image instead of showing a broken-image icon —
+// the "@elrefai99 on GitHub" link below still carries the CTA.
+const chartFailed = ref(false);
 </script>
 
 <template>
@@ -274,6 +279,7 @@ const fullText = "Mohammed Mostafa";
           block
         >
           <img
+            v-if="!chartFailed"
             src="https://ghchart.rshah.org/6e7681/elrefai99"
             alt="Mohammed Mostafa (elrefai99) GitHub contribution graph"
             loading="lazy"
@@ -283,6 +289,7 @@ const fullText = "Mohammed Mostafa";
             w-full
             h-auto
             class="github-chart bg-black/2 dark:bg-white/6"
+            @error="chartFailed = true"
           />
         </a>
         <div flex items-center justify-between mt-4>

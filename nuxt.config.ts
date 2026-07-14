@@ -78,8 +78,6 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#141413', media: '(prefers-color-scheme: dark)' },
       ],
       link: [
-        // Third-party GitHub contribution chart on the homepage (aboutme.vue).
-        { rel: 'preconnect', href: 'https://ghchart.rshah.org' },
         { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
         { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon', sizes: '48x48' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },

@@ -61,7 +61,7 @@ const tagClass = 'bp-chip'
             <ol class="flex flex-wrap items-center gap-2">
               <li><router-link to="/" class="bp-tab">Home</router-link></li>
               <li aria-hidden="true">/</li>
-              <li><router-link to="/blogs" class="bp-tab">Blogs</router-link></li>
+              <li><router-link to="/blogs" class="bp-tab">Blog</router-link></li>
               <li aria-hidden="true">/</li>
               <li aria-current="page" class="max-w-56 truncate opacity-70 sm:max-w-md">
                 {{ blog.title }}
