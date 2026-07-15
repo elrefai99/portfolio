@@ -37,30 +37,36 @@ useHead(resumeSEO);
               <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-1">
                 Mohammed Mostafa
               </h1>
+
               <p class="text-base font-semibold text-gray-600 dark:text-gray-400 mb-3">
+                <span class="text-gray-600 dark:text-gray-300 m1">•</span>
                 Software Engineer
+                <span class="text-gray-600 dark:text-gray-300 m1">•</span>
               </p>
               <div
-                class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-400"
+                class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-gray-600 dark:text-gray-100"
               >
-                <span class="text-gray-300 dark:text-gray-600">•</span>
-                <span>Cairo, Egypt</span>
-                <span class="text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-gray-600 dark:text-gray-300">•</span>
+                <span>Banha, Al Qalyubia</span>
+                <span class="text-gray-600 dark:text-gray-300">•</span>
                 <a
-                  href="mailto:elrefai99@gmail.com"
+                  href="mailto:mohamed.mostafa0699@gmail.com"
                   class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                 >
                   elrefai99@gmail.com
                 </a>
-                <span class="text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-gray-600 dark:text-gray-300">•</span>
                 <a
                   href="tel:+201142314446"
                   class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                 >
                   +20 114 231 4446
                 </a>
-                <span class="text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-gray-600 dark:text-gray-300">•</span>
+              <br>
                 <div>
+                  <span class="text-gray-600 dark:text-gray-300">•</span>
+
                   <a
                     href="https://www.linkedin.com/in/elrefai99/"
                     target="_blank"
@@ -68,7 +74,7 @@ useHead(resumeSEO);
                     class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
                     >LinkedIn</a
                   >
-                  <span class="text-gray-300 dark:text-gray-600">•</span>
+                  <span class="text-gray-600 dark:text-gray-300">•</span>
                   <a
                     href="https://elrefai.me"
                     target="_blank"
@@ -76,7 +82,7 @@ useHead(resumeSEO);
                     class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
                     >Portfolio</a
                   >
-                  <span class="text-gray-300 dark:text-gray-600">•</span>
+                  <span class="text-gray-600 dark:text-gray-300">•</span>
                   <a
                     href="https://github.com/elrefai99"
                     target="_blank"
@@ -84,6 +90,7 @@ useHead(resumeSEO);
                     class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
                     >GitHub</a
                   >
+                  <span class="text-gray-600 dark:text-gray-300">•</span>
                 </div>
               </div>
             </div>
@@ -97,12 +104,12 @@ useHead(resumeSEO);
               </h2>
               <hr class="border-gray-200 dark:border-gray-900 mb-3" />
               <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                Backend Engineer with 3+ years of building and operating production
-                payment systems and real-time services in Node.js and TypeScript. Shipped
-                multi-provider payment integrations (PayMob, Amazon Payment Services,
-                Stripe), event-driven background processing, and SSE/WebSocket
-                notifications across two live marketplace platforms. Focused on
-                reliability, idempotency, and performance under real transaction volume.
+                Backend Engineer with 3+ years of experience building and maintaining
+                production backend systems using Node.js and TypeScript. Experienced in
+                designing scalable APIs, real-time services, background processing, cloud
+                infrastructure, and payment integrations. Built and operated the backend
+                for live marketplace platforms, focusing on performance, reliability,
+                maintainability, and clean system design.
               </p>
             </section>
 
@@ -134,33 +141,41 @@ useHead(resumeSEO);
                     >Jun 2023 – Jul 2026 · Cairo, Egypt · On-site</span
                   >
                 </div>
+                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-2">
+                  Worked as the sole Backend Engineer responsible for developing and
+                  maintaining the backend systems for Lesoll and EgyStay, managing
+                  production infrastructure, cloud services, and third-party integrations.
+                </p>
                 <ul
                   class="list-disc pl-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
                 >
                   <li>
-                    Leading backend architecture and development for large-scale
-                    hospitality platforms.
+                    Developed and maintained scalable REST APIs using Node.js, Express.js,
+                    TypeScript, and MongoDB.
                   </li>
                   <li>
-                    Built and operated the payment system integrating PayMob and Amazon
-                    Payment Services, processing ~10K transactions/month with
-                    HMAC-verified webhooks and idempotent handlers that guarantee zero
-                    double-charges.
+                    Built backend services for authentication, property management,
+                    bookings, payments, reporting, and admin operations.
                   </li>
                   <li>
-                    Developed scalable background processing and real-time communication
-                    systems using Redis, BullMQ, and WebSockets.
+                    Implemented Redis caching and BullMQ background jobs to improve
+                    performance and reduce database load.
                   </li>
                   <li>
-                    Improved API performance and optimized database operations across
-                    critical services.
+                    Developed real-time features using Socket.IO, including chat,
+                    notifications, and online user tracking.
                   </li>
                   <li>
-                    Delivered core business features, including booking, reporting, CoHost
-                    management, and employee tools.
+                    Integrated Paymob and Amazon Payment Services, implementing secure
+                    payment workflows and webhook processing.
                   </li>
                   <li>
-                    Managed AWS infrastructure, Docker deployments, and CI/CD pipelines.
+                    Managed production infrastructure using AWS (EC2, S3, CloudFront,
+                    Route 53), Docker, Nginx, PM2, and GitHub Actions.
+                  </li>
+                  <li>
+                    Improved backend SEO by optimizing API performance and generating
+                    dynamic XML sitemaps for active listings.
                   </li>
                 </ul>
               </div>
