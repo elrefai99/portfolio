@@ -75,7 +75,7 @@ export const caseStudies: CaseStudy[] = [
     slug: 'lesoll',
     logo: '/projects/lesoll-logo.png',
     name: 'Lesoll',
-    subtitle: 'Real-Estate Marketplace Backend',
+    subtitle: 'Real-Estate Marketplace',
     category: 'Production',
     summary:
       'Backend of a large-scale real-estate classifieds marketplace serving real users in the Egyptian market.',
@@ -262,7 +262,7 @@ export const caseStudies: CaseStudy[] = [
     slug: 'egystay',
     logo: '/projects/egy-stay-logo.png',
     name: 'EGYStay',
-    subtitle: 'Booking Platform Backend',
+    subtitle: 'Booking Platform',
     category: 'Production',
     summary:
       'Booking and reservation backend for a short-term rental platform, built from the ground up.',

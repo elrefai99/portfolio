@@ -50,7 +50,7 @@ useHead(resumeSEO);
                 <span>Banha, Al Qalyubia</span>
                 <span class="text-gray-600 dark:text-gray-300">•</span>
                 <a
-                  href="mailto:mohamed.mostafa0699@gmail.com"
+                  href="mailto:elrefai99@gmail.com"
                   class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                 >
                   elrefai99@gmail.com

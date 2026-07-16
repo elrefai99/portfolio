@@ -111,6 +111,26 @@ const scrollToTop = () => {
   text-align: center;
   position: relative;
 }
+.bp-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.25rem;
+  margin-bottom: 1.75rem;
+  font-size: 11px;
+}
+.bp-footer__nav a {
+  color: var(--bp-blue);
+  opacity: 0.72;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.bp-footer__nav a:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .bp-footer__datum {
   font-size: 10px;
   color: var(--bp-blue);
