@@ -18,25 +18,6 @@ I work across Express.js, MongoDB, PostgreSQL, Redis, Docker, Kubernetes, and AW
 frontend with Vue 3 — including this site and [SRVJ](https://srvj.elrefai.me), a real-time
 collaborative whiteboard built on Yjs CRDTs over a custom WebSocket server.
 
-## Selected projects
-
-| Project | Role | Stack |
-| --- | --- | --- |
-| [Lesoll](https://lesoll.com) | Backend developer — B2C/B2B real-estate & automotive marketplace | TypeScript · Express · MongoDB · Paymob · Redis · Docker · AWS |
-| [EGYStay](https://egystay.com) | Backend developer — property rental & booking marketplace | TypeScript · Express · MongoDB · Amazon Payment Services · AWS EKS |
-| [SRVJ](https://srvj.elrefai.me) | Creator — real-time collaborative whiteboard on Yjs CRDTs | TypeScript · Express · PostgreSQL · MongoDB · Redis · WebSockets · PASETO |
-| [0Gosha](https://0gosha.elrefai.me) | Creator — rule-based AI prompt-optimization engine | TypeScript · Express · MongoDB · Redis · BullMQ |
-| [Gen-Import](https://www.npmjs.com/package/gen-import) | Author — TypeScript barrel-file generator | TypeScript · TS Compiler API |
-| [Elrecord](https://github.com/elrefai99/elrecord) | Creator — real-time chat backend (Discord-style) | TypeScript · Express · PostgreSQL · Prisma · Socket.IO |
-
-See the full list at [elrefai.me/projects](https://elrefai.me/projects).
-
-## Tech stack
-
-`TypeScript` · `Node.js` · `Express.js` · `MongoDB` · `PostgreSQL` · `Redis` · `BullMQ` ·
-`WebSockets / SSE` · `Socket.IO` · `Docker` · `Kubernetes` · `AWS (EC2, EKS, S3, ECR)` ·
-`Vue 3` · `Vite` · `UnoCSS`
-
 ## Connect
 
 - GitHub: [@elrefai99](https://github.com/elrefai99)
