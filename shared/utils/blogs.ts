@@ -58,9 +58,9 @@ export const blogs: BlogPost[] = [
     title: 'From One EC2 Box to Kubernetes: How SRVJ Actually Deploys on AWS',
     excerpt:
       'How SRVJ\'s deployment grew up in three acts — a single EC2 box with NGINX and pm2, Docker Compose, and finally a Kubernetes cluster with kustomize, an NGINX ingress, and an HPA. Plus the S3 patterns that outlived every stage.',
-    metaTitle: 'AWS EC2, S3 & Kubernetes: SRVJ\'s Deployment Journey',
+    metaTitle: 'Migrate a Node.js App from EC2 + pm2 to Kubernetes on AWS',
     metaDescription:
-      'How SRVJ\'s Node.js deployment evolved from one EC2 box with NGINX and pm2 to Docker Compose and Kubernetes — plus S3 avatars and presigned uploads.',
+      'How to migrate a Node.js app from EC2 + pm2 to Kubernetes on AWS — Docker Compose, EKS, kustomize, NGINX ingress, HPA, and S3 presigned uploads.',
     category: 'Cloud & DevOps',
     date: '2026-07-09',
     updated: '2026-07-11',
@@ -487,9 +487,9 @@ export const blogs: BlogPost[] = [
     title: 'CRDTs, Yjs, and the Day I Stopped Writing Conflict-Resolution Code',
     excerpt:
       'Why I stopped writing conflict-resolution code for SRVJ\'s collaborative diagrams — CRDTs from first principles (G-Counter, LWW-Register, OR-Set, sequence types), then Yjs and the authenticated WebSocket relay that keeps every editor converged.',
-    metaTitle: 'CRDTs & Yjs: Conflict-Free Real-Time Collaboration',
+    metaTitle: 'Production Yjs WebSocket Server: CRDTs & Authenticated Sync',
     metaDescription:
-      'How CRDTs and Yjs power conflict-free collaborative editing in SRVJ — G-Counter, LWW-Register and OR-Set explained, plus an authenticated WebSocket relay.',
+      'Running a Yjs WebSocket server in production for real-time collaboration — CRDTs (G-Counter, LWW-Register, OR-Set) and an authenticated sync relay in Node.js.',
     category: 'Distributed Systems',
     date: '2026-07-06',
     updated: '2026-07-10',
@@ -864,9 +864,9 @@ export const blogs: BlogPost[] = [
     title: 'Server-Sent Events (SSE): Real-Time Notifications in SRVJ',
     excerpt:
       'How SRVJ delivers real-time notifications with Server-Sent Events, BullMQ, Redis Pub/Sub, and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
-    metaTitle: 'Server-Sent Events (SSE) for Real-Time Notifications',
+    metaTitle: 'Scale SSE Notifications with Redis Pub/Sub in Node.js',
     metaDescription:
-      'Real-time notifications with SSE, BullMQ, Redis Pub/Sub and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
+      'Scaling Server-Sent Events across Node.js instances with Redis Pub/Sub fan-out and BullMQ — real-time notifications without sticky sessions.',
     category: 'Backend Architecture',
     date: '2026-06-27',
     updated: '2026-07-12',
@@ -1362,9 +1362,9 @@ export const blogs: BlogPost[] = [
     title: 'PayMob & Amazon Payment Services: What the Docs Don\'t Cover',
     excerpt:
       'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace, distilled — the provider adapter, the payment state machine, the verify-then-enqueue webhook pipeline, and the reconciliation job that catches everything else.',
-    metaTitle: 'PayMob & Amazon Payment Services (PayFort) Integration',
+    metaTitle: 'PayMob Webhooks in Node.js: HMAC Verification & Idempotency',
     metaDescription:
-      'Integrating PayMob and Amazon Payment Services (PayFort) in production — the adapter pattern, payment state machine, webhook pipeline and reconciliation.',
+      'Integrate PayMob and Amazon Payment Services (PayFort) in Node.js — HMAC webhook verification, idempotency, a payment state machine, and reconciliation.',
     category: 'Payment Integration',
     date: '2026-06-12',
     updated: '2026-07-09',
@@ -1636,9 +1636,9 @@ export const blogs: BlogPost[] = [
     title: 'JWT vs PASETO: Choosing the Right Token for the Job',
     excerpt:
       'I shipped JWT in production, got burned, and switched to PASETO for auth and payments — but the real lesson is token taxonomy: signed vs encrypted vs opaque, and which job each one actually belongs to.',
-    metaTitle: 'JWT vs PASETO: Choosing the Right Token Type',
+    metaTitle: 'PASETO vs JWT for Node.js Auth & Payments',
     metaDescription:
-      'JWT vs PASETO for auth and payments — signed vs encrypted vs opaque tokens, algorithm safety, revocation, and picking the right token type for each job.',
+      'PASETO vs JWT in Node.js for auth and payments — signed vs encrypted vs opaque tokens, algorithm safety, revocation, and choosing the right token per job.',
     category: 'Backend Security',
     date: '2026-05-12',
     updated: '2026-07-09',
