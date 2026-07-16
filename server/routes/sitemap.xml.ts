@@ -6,7 +6,7 @@ import { caseStudies } from '../../shared/utils/caseStudies'
 const globalSources = ['shared/utils/seo/shared.ts']
 
 const routeSources: Record<string, string[]> = {
-  [sitePaths.home]: ['app/pages/index.vue', 'app/components/aboutme.vue', 'app/components/SelectedProjects.vue', 'app/components/timeline.vue', 'shared/utils/projects.ts', 'shared/utils/seo/home.ts', ...globalSources],
+  [sitePaths.home]: ['app/pages/index.vue', 'app/components/aboutme.vue', 'app/components/SelectedProjects.vue', 'app/components/SelectedWriting.vue', 'app/components/timeline.vue', 'shared/utils/projects.ts', 'shared/utils/seo/home.ts', ...globalSources],
   [sitePaths.projects]: ['app/pages/projects/index.vue', 'shared/utils/projects.ts', 'shared/utils/caseStudies.ts', 'shared/utils/seo/projects.ts', ...globalSources],
   [sitePaths.blogs]: ['app/pages/blogs/index.vue', 'shared/utils/blogs.ts', 'shared/utils/seo/blog.ts', ...globalSources],
   [sitePaths.resume]: ['app/pages/resume.vue', 'shared/utils/seo/resume.ts', ...globalSources],

@@ -25,8 +25,16 @@ useHead(homeSEO);
     </FloorSection>
     <FloorSection
       level="L-02"
-      name="Experience / Timeline"
+      name="Journal / Selected Writing"
       elevation="+16.00 m"
+      slab="RC SLAB · 300mm"
+    >
+      <SelectedWriting />
+    </FloorSection>
+    <FloorSection
+      level="L-03"
+      name="Experience / Timeline"
+      elevation="+24.00 m"
       slab="RC SLAB · 300mm"
     >
       <Timeline />
