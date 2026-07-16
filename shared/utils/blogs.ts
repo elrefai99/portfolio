@@ -55,7 +55,7 @@ export const blogs: BlogPost[] = [
     id: 5,
     slug: 'aws-ec2-s3-kubernetes-production-deployments',
     ogImage: '/og/blog-aws-ec2-s3-kubernetes-production-deployments.png',
-    title: 'From One EC2 Box to Kubernetes: How SRVJ Actually Deploys on AWS',
+    title: 'From One EC2 Box to Kubernetes: Migrating a Node.js App on AWS',
     excerpt:
       'How SRVJ\'s deployment grew up in three acts — a single EC2 box with NGINX and pm2, Docker Compose, and finally a Kubernetes cluster with kustomize, an NGINX ingress, and an HPA. Plus the S3 patterns that outlived every stage.',
     metaTitle: 'Migrate a Node.js App from EC2 + pm2 to Kubernetes on AWS',
@@ -63,7 +63,7 @@ export const blogs: BlogPost[] = [
       'How to migrate a Node.js app from EC2 + pm2 to Kubernetes on AWS — Docker Compose, EKS, kustomize, NGINX ingress, HPA, and S3 presigned uploads.',
     category: 'Cloud & DevOps',
     date: '2026-07-09',
-    updated: '2026-07-11',
+    updated: '2026-07-16',
     readTime: '13 min read',
     tags: ['AWS', 'EC2', 'S3', 'EKS', 'Kubernetes', 'Docker', 'NGINX', 'CI/CD', 'Node.js', 'DevOps'],
     entities: [
@@ -78,7 +78,7 @@ export const blogs: BlogPost[] = [
     blocks: [
       {
         type: 'paragraph',
-        text: 'SRVJ — the [collaborative diagram tool](/projects/srvj) I keep writing about — runs on AWS, but it didn\'t start on Kubernetes, and it shouldn\'t have. This post is its deployment story in three acts: a single EC2 box with NGINX and pm2, then Docker Compose, then a Kubernetes cluster — plus the S3 patterns that survived every stage untouched.',
+        text: 'SRVJ — the [collaborative diagram tool](/projects/srvj) I keep writing about — is a Node.js app running on AWS, but it didn\'t start on Kubernetes, and it shouldn\'t have. This post is its migration story in three acts: a single EC2 box with NGINX and pm2, then Docker Compose, then a Kubernetes cluster — plus the S3 patterns that survived every stage untouched.',
       },
       {
         type: 'paragraph',
@@ -86,7 +86,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'heading',
-        text: 'Act one: a box, NGINX, and pm2',
+        text: 'Act one: one EC2 box, NGINX, and pm2',
       },
       {
         type: 'paragraph',
@@ -484,7 +484,7 @@ export const blogs: BlogPost[] = [
     id: 4,
     slug: 'crdts-yjs-collaborative-editing-srvj',
     ogImage: '/og/blog-crdts-yjs-collaborative-editing-srvj.png',
-    title: 'CRDTs, Yjs, and the Day I Stopped Writing Conflict-Resolution Code',
+    title: 'CRDTs & Yjs in Production: The Day I Stopped Writing Conflict-Resolution Code',
     excerpt:
       'Why I stopped writing conflict-resolution code for SRVJ\'s collaborative diagrams — CRDTs from first principles (G-Counter, LWW-Register, OR-Set, sequence types), then Yjs and the authenticated WebSocket relay that keeps every editor converged.',
     metaTitle: 'Production Yjs WebSocket Server: CRDTs & Authenticated Sync',
@@ -492,7 +492,7 @@ export const blogs: BlogPost[] = [
       'Running a Yjs WebSocket server in production for real-time collaboration — CRDTs (G-Counter, LWW-Register, OR-Set) and an authenticated sync relay in Node.js.',
     category: 'Distributed Systems',
     date: '2026-07-06',
-    updated: '2026-07-10',
+    updated: '2026-07-16',
     readTime: '13 min read',
     tags: ['CRDT', 'Yjs', 'Collaborative Editing', 'Real-Time', 'Distributed Systems', 'WebSocket', 'TypeScript', 'Node.js'],
     entities: [
@@ -514,7 +514,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Then I found CRDTs, and the whole problem class just... dissolved. This post is what I wish someone had handed me at the start.',
+        text: 'Then I found CRDTs, and the whole problem class just... dissolved. This post is what I wish someone had handed me at the start — the theory from first principles, then Yjs and the production WebSocket server that keeps SRVJ\'s editors in sync.',
       },
       {
         type: 'heading',
@@ -771,7 +771,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'heading',
-        text: 'Why Yjs in SRVJ',
+        text: 'Yjs in production: SRVJ\'s WebSocket server',
       },
       {
         type: 'paragraph',
@@ -861,7 +861,7 @@ export const blogs: BlogPost[] = [
     id: 3,
     slug: 'server-sent-events-real-time-notifications-srvj',
     ogImage: '/og/blog-server-sent-events-real-time-notifications-srvj.png',
-    title: 'Server-Sent Events (SSE): Real-Time Notifications in SRVJ',
+    title: 'Scaling Server-Sent Events with Redis Pub/Sub: SRVJ\'s Notifications',
     excerpt:
       'How SRVJ delivers real-time notifications with Server-Sent Events, BullMQ, Redis Pub/Sub, and PostgreSQL — a persist-then-fan-out pipeline that scales horizontally without sticky sessions.',
     metaTitle: 'Scale SSE Notifications with Redis Pub/Sub in Node.js',
@@ -869,7 +869,7 @@ export const blogs: BlogPost[] = [
       'Scaling Server-Sent Events across Node.js instances with Redis Pub/Sub fan-out and BullMQ — real-time notifications without sticky sessions.',
     category: 'Backend Architecture',
     date: '2026-06-27',
-    updated: '2026-07-12',
+    updated: '2026-07-16',
     readTime: '9 min read',
     tags: ['SSE', 'Server-Sent Events', 'Real-Time', 'BullMQ', 'Redis', 'PostgreSQL', 'Node.js', 'System Design'],
     entities: [
@@ -887,7 +887,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'This post is about that path: why it\'s Server-Sent Events rather than another WebSocket, and the pipeline behind it — BullMQ, PostgreSQL, and Redis Pub/Sub, arranged so notifications survive crashes, reach every open tab, and keep working when the app scales past one instance.',
+        text: 'This post is about that path: why it\'s Server-Sent Events rather than another WebSocket, and the Node.js pipeline behind it — BullMQ, PostgreSQL, and Redis Pub/Sub, arranged so notifications survive crashes, reach every open tab, and keep working when the app scales past one instance.',
       },
       {
         type: 'heading',
@@ -1048,7 +1048,7 @@ export const blogs: BlogPost[] = [
       },
       {
         type: 'heading',
-        text: 'Redis as the Distribution Layer',
+        text: 'Redis Pub/Sub as the Distribution Layer',
       },
       {
         type: 'paragraph',
@@ -1359,7 +1359,7 @@ export const blogs: BlogPost[] = [
     id: 2,
     slug: 'paymob-amazon-payment-services-integration',
     ogImage: '/og/blog-paymob-amazon-payment-services-integration.png',
-    title: 'PayMob & Amazon Payment Services: What the Docs Don\'t Cover',
+    title: 'PayMob Webhooks in Node.js: HMAC, Idempotency & What the Docs Don\'t Cover',
     excerpt:
       'Months of integrating PayMob and Amazon Payment Services (PayFort) into a production marketplace, distilled — the provider adapter, the payment state machine, the verify-then-enqueue webhook pipeline, and the reconciliation job that catches everything else.',
     metaTitle: 'PayMob Webhooks in Node.js: HMAC Verification & Idempotency',
@@ -1367,7 +1367,7 @@ export const blogs: BlogPost[] = [
       'Integrate PayMob and Amazon Payment Services (PayFort) in Node.js — HMAC webhook verification, idempotency, a payment state machine, and reconciliation.',
     category: 'Payment Integration',
     date: '2026-06-12',
-    updated: '2026-07-09',
+    updated: '2026-07-16',
     readTime: '12 min read',
     tags: ['Payments', 'Paymob', 'Amazon Payment Services', 'PayFort', 'Webhooks', 'BullMQ', 'Node.js', 'TypeScript'],
     entities: [
@@ -1381,11 +1381,11 @@ export const blogs: BlogPost[] = [
     blocks: [
       {
         type: 'paragraph',
-        text: 'I\'ve spent the last few months integrating two payment providers into a production marketplace: PayMob and Amazon Payment Services (the thing everyone still calls PayFort). The docs got me to my first sandbox transaction in an afternoon. Everything after that, I had to figure out the hard way.',
+        text: 'I\'ve spent the last few months integrating two payment providers into a production Node.js marketplace: PayMob and Amazon Payment Services (the thing everyone still calls PayFort). The docs got me to my first sandbox transaction in an afternoon. Everything after that, I had to figure out the hard way.',
       },
       {
         type: 'paragraph',
-        text: 'So this post is the writeup I wish existed when I started. It\'s not "how to call the PayMob API" — there are ten of those already and they all stop right before the part that hurts. This is about the architecture that sits between your Express app and two providers that disagree on basically everything.',
+        text: 'So this post is the writeup I wish existed when I started. It\'s not "how to call the PayMob API" — there are ten of those already and they all stop right before the parts that hurt: HMAC webhook verification, idempotent processing, reconciliation. This is about the architecture that sits between your Express app and two providers that disagree on basically everything.',
       },
       {
         type: 'paragraph',
@@ -1468,7 +1468,7 @@ export const blogs: BlogPost[] = [
 
       {
         type: 'heading',
-        text: 'Webhooks: do almost nothing, fast',
+        text: 'Webhook HMAC verification: do almost nothing, fast',
       },
       {
         type: 'paragraph',
@@ -1633,7 +1633,7 @@ export const blogs: BlogPost[] = [
     id: 1,
     slug: 'jwt-vs-paseto-tokens',
     ogImage: '/og/blog-jwt-vs-paseto-tokens.png',
-    title: 'JWT vs PASETO: Choosing the Right Token for the Job',
+    title: 'PASETO vs JWT in Node.js: Choosing the Right Token for the Job',
     excerpt:
       'I shipped JWT in production, got burned, and switched to PASETO for auth and payments — but the real lesson is token taxonomy: signed vs encrypted vs opaque, and which job each one actually belongs to.',
     metaTitle: 'PASETO vs JWT for Node.js Auth & Payments',
@@ -1641,7 +1641,7 @@ export const blogs: BlogPost[] = [
       'PASETO vs JWT in Node.js for auth and payments — signed vs encrypted vs opaque tokens, algorithm safety, revocation, and choosing the right token per job.',
     category: 'Backend Security',
     date: '2026-05-12',
-    updated: '2026-07-09',
+    updated: '2026-07-16',
     readTime: '14 min read',
     tags: ['Security', 'JWT', 'PASETO', 'Auth', 'Tokens', 'Node.js', 'TypeScript'],
     entities: [
@@ -1654,7 +1654,7 @@ export const blogs: BlogPost[] = [
     blocks: [
       {
         type: 'paragraph',
-        text: 'Let me be upfront about something: the way I handle tokens in my own backends is not what most teams do. I use PASETO for both auth and payment tokens. Most of the industry uses JWT for everything. This post is my honest take on why I made that switch, what the real tradeoffs are, and — more importantly — what token format you choose matters far less than whether you are using the right type of token for the job at all.',
+        text: 'Let me be upfront about something: the way I handle tokens in my own Node.js backends is not what most teams do. I use PASETO for both auth and payment tokens. Most of the industry uses JWT for everything. This post is my honest take on why I made that switch, what the real tradeoffs are, and — more importantly — what token format you choose matters far less than whether you are using the right type of token for the job at all.',
       },
       {
         type: 'paragraph',

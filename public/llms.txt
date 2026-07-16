@@ -27,11 +27,11 @@ background job processing, and real-time notification infrastructure.
 
 ## Blog posts
 
-- [From one EC2 box to Kubernetes](https://elrefai.me/blogs/aws-ec2-s3-kubernetes-production-deployments): SRVJ's AWS deployment evolution — EC2 + NGINX + pm2, Docker Compose, Kubernetes (kustomize, ingress, HPA), and S3 avatars + presigned uploads
-- [CRDTs, Yjs, and collaborative editing](https://elrefai.me/blogs/crdts-yjs-collaborative-editing-srvj): CRDT theory and a production Yjs WebSocket relay
-- [Server-Sent Events for real-time notifications](https://elrefai.me/blogs/server-sent-events-real-time-notifications-srvj): SSE with Redis pub/sub fan-out
-- [PayMob & Amazon Payment Services integration](https://elrefai.me/blogs/paymob-amazon-payment-services-integration): HMAC-verified idempotent payment webhooks
-- [JWT vs PASETO](https://elrefai.me/blogs/jwt-vs-paseto-tokens): Token format security trade-offs
+- [Migrating a Node.js app from one EC2 box to Kubernetes on AWS](https://elrefai.me/blogs/aws-ec2-s3-kubernetes-production-deployments): EC2 + NGINX + pm2, Docker Compose, Kubernetes (kustomize, ingress, HPA), and S3 avatars + presigned uploads
+- [CRDTs & Yjs in production](https://elrefai.me/blogs/crdts-yjs-collaborative-editing-srvj): CRDT theory and a production Yjs WebSocket server with authenticated sync
+- [Scaling Server-Sent Events with Redis Pub/Sub](https://elrefai.me/blogs/server-sent-events-real-time-notifications-srvj): SSE notifications in Node.js with Redis pub/sub fan-out
+- [PayMob webhooks in Node.js: HMAC verification & idempotency](https://elrefai.me/blogs/paymob-amazon-payment-services-integration): HMAC-verified idempotent payment webhooks for PayMob + Amazon Payment Services
+- [PASETO vs JWT for Node.js auth & payments](https://elrefai.me/blogs/jwt-vs-paseto-tokens): Token format security trade-offs
 
 ## Contact
 
