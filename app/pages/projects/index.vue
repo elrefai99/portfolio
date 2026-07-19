@@ -85,7 +85,7 @@ const tagChipClass = "bp-chip";
                 >
                 and
                 <router-link to="/projects/egystay" class="underline underline-offset-2"
-                  >EGYStay</router-link
+                  >EgyStay</router-link
                 >
                 — production marketplace and booking backends — plus
                 <router-link to="/projects/srvj" class="underline underline-offset-2"

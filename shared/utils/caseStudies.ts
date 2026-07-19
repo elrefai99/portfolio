@@ -261,7 +261,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: 'egystay',
     logo: '/projects/egy-stay-logo.png',
-    name: 'EGYStay',
+    name: 'EgyStay',
     subtitle: 'Booking Platform',
     category: 'Production',
     summary:
@@ -281,7 +281,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     link: 'https://egystay.com',
     overview: [
-      'EGYStay is a short-term rental platform for the Egyptian market. Guests book accommodations; hosts and co-hosts manage their properties through dedicated dashboards. Reservations, availability, and pricing are the core of the product — if any of them is wrong, someone loses money or a place to stay.',
+      'EgyStay is a short-term rental platform for the Egyptian market. Guests book accommodations; hosts and co-hosts manage their properties through dedicated dashboards. Reservations, availability, and pricing are the core of the product — if any of them is wrong, someone loses money or a place to stay.',
       'I architected and developed the backend from the ground up: reservation workflows, availability management, pricing logic, payments, authentication, messaging, notifications, and administrative services.',
       'I contributed roughly 80% of the implementation — around 63,000 lines of production code across 600+ source files — with maintainability and performance as explicit goals rather than afterthoughts.',
     ],
@@ -403,14 +403,14 @@ export const caseStudies: CaseStudy[] = [
     ],
     lessons: [],
     result: [],
-    metaTitle: 'EGYStay Deep Dive • Booking Platform Backend',
+    metaTitle: 'EgyStay Deep Dive • Booking Platform Backend',
     metaDescription:
-      'How I built EGYStay’s booking backend: atomic reservations with zero double bookings, a centralized pricing engine, and APS + Paymob payments.',
+      'How I built EgyStay booking backend: atomic reservations with zero double bookings, a centralized pricing engine, and APS + Paymob payments.',
     datePublished: '2026-07-09',
     relatedBlogSlugs: ['paymob-amazon-payment-services-integration'],
     keywords: [
-      "EGYStay",
-      "EGYStay Booking Platform",
+      "EgyStay",
+      "EgyStay Booking Platform",
       "Property Rental Platform",
       "Vacation Rental Platform",
       "Property Booking System",

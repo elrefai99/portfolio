@@ -20,20 +20,8 @@ export interface IProject {
   link?: string
   github?: string
   npm?: string
-  /**
-   * True when a long-form case study exists at /projects/<slug>.
-   * Kept as a flag (not derived from caseStudies.ts) so components rendered
-   * in the entry chunk never import the case-study corpus just for slugs —
-   * nuxt.config.ts asserts at build time that flags and caseStudies agree.
-   */
   caseStudy?: boolean
-  /** One-line descriptor shown under the project name on the index. */
   tagline?: string
-  /**
-   * Brand-name variants (spacing, domain form, Arabic spellings) emitted as
-   * schema.org alternateName so search engines match variant queries to the
-   * same entity.
-   */
   altNames?: string[]
   desc: string | string[]
   tags: string | string[]
@@ -132,7 +120,7 @@ export const projects: IProject[] = [
   },
   {
     id: 2,
-    name: "EGYStay",
+    name: "EgyStay",
     slug: "egystay",
     category: "Live",
     caseStudy: true,
@@ -143,7 +131,7 @@ export const projects: IProject[] = [
     link: "https://egystay.com",
     github: "",
     tagline: "Property rental & booking platform with a Co-Host marketplace",
-    altNames: ["EgyStay", "Egy Stay", "EGYStay.com", "إيجي ستاي", "ايجي ستاي"],
+    altNames: ["EgyStay", "Egy Stay", "EgyStay.com", "إيجي ستاي", "ايجي ستاي"],
     desc: [
       "EgyStay is a short-term rental platform for the Egyptian market, allowing guests to book accommodations while hosts and co-hosts manage their properties through dedicated dashboards.",
       "As the primary Backend Engineer, I architected and developed the backend from the ground up, implementing reservation workflows, availability management, pricing logic, payments, authentication, messaging, notifications, and administrative services.",
@@ -222,7 +210,7 @@ export const projects: IProject[] = [
       "Cloud Deployment"
     ],
     metaDescription:
-      "Technical case study of EGYStay, a production property rental and booking platform. Discover its Express.js backend, MongoDB, Amazon Payment Services (APS) integration, booking engine, Co-Host system, BullMQ, Docker, AWS EKS deployment, and scalable backend architecture."
+      "Technical case study of EgyStay, a production property rental and booking platform. Discover its Express.js backend, MongoDB, Amazon Payment Services (APS) integration, booking engine, Co-Host system, BullMQ, Docker, AWS EKS deployment, and scalable backend architecture."
   },
   {
     id: 3,

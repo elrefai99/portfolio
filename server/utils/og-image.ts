@@ -144,7 +144,7 @@ export const staticCards: OgCard[] = [
     eyebrow: 'L-02 · PROJECTS / INDEX',
     chip: 'Selected Work',
     title: 'Projects & Open-Source Work',
-    subtitle: 'Lesoll, EGYStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord — backend, API, payment, cloud, and developer tooling.',
+    subtitle: 'Lesoll, EGYStay, EgyStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord — backend, API, payment, cloud, and developer tooling.',
     footerLeft: author,
     footerRight: 'Backend · APIs · Payments · Tooling',
   },

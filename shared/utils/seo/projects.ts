@@ -36,7 +36,7 @@ const projectListItems = projects.map((project: IProject, index) => {
 export const projectsSEO = createSeo({
   title: 'Mohammed Mostafa • Projects',
   description:
-    'Projects by Elrefai (Mohammed Mostafa) — Lesoll, EGYStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord: backend, API, payment, cloud, and developer tooling.',
+    'Projects by Elrefai (Mohammed Mostafa) — Lesoll, EgyStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord: backend, API, payment, cloud, and developer tooling.',
   path: sitePaths.projects,
   keywords: [
     ...brandKeywords,
