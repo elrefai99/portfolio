@@ -3,18 +3,16 @@ import { sitePaths, siteUrl } from '../../shared/utils/site'
 import { sitemapEntries } from '../../shared/utils/sitemap'
 import { caseStudies } from '../../shared/utils/caseStudies'
 
-const globalSources = ['shared/utils/seo/shared.ts']
-
 const routeSources: Record<string, string[]> = {
-  [sitePaths.home]: ['app/pages/index.vue', 'app/components/aboutme.vue', 'app/components/SelectedProjects.vue', 'app/components/SelectedWriting.vue', 'app/components/timeline.vue', 'shared/utils/projects.ts', 'shared/utils/seo/home.ts', ...globalSources],
-  [sitePaths.projects]: ['app/pages/projects/index.vue', 'shared/utils/projects.ts', 'shared/utils/caseStudies.ts', 'shared/utils/seo/projects.ts', ...globalSources],
-  [sitePaths.blogs]: ['app/pages/blogs/index.vue', 'shared/utils/blogs.ts', 'shared/utils/seo/blog.ts', ...globalSources],
-  [sitePaths.resume]: ['app/pages/resume.vue', 'shared/utils/seo/resume.ts', ...globalSources],
-  [sitePaths.contact]: ['app/pages/contact.vue', 'shared/utils/seo/contact.ts', ...globalSources],
+  [sitePaths.home]: ['app/pages/index.vue', 'app/components/aboutme.vue', 'app/components/SelectedProjects.vue', 'app/components/SelectedWriting.vue', 'app/components/timeline.vue', 'shared/utils/projects.ts', 'shared/utils/seo/home.ts'],
+  [sitePaths.projects]: ['app/pages/projects/index.vue', 'shared/utils/projects.ts', 'shared/utils/caseStudies.ts', 'shared/utils/seo/projects.ts'],
+  [sitePaths.blogs]: ['app/pages/blogs/index.vue', 'shared/utils/blogs.ts', 'shared/utils/seo/blog.ts'],
+  [sitePaths.resume]: ['app/pages/resume.vue', 'shared/utils/seo/resume.ts'],
+  [sitePaths.contact]: ['app/pages/contact.vue', 'shared/utils/seo/contact.ts'],
   ...Object.fromEntries(
     caseStudies.map((cs) => [
       `${sitePaths.projects}/${cs.slug}`,
-      ['shared/utils/caseStudies.ts', 'shared/utils/seo/case-study.ts', ...globalSources],
+      ['shared/utils/caseStudies.ts', 'shared/utils/seo/case-study.ts'],
     ]),
   ),
 }

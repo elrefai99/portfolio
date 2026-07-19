@@ -34,7 +34,7 @@ const blogTopicKeywords = [
 
 export const blogsSEO = createSeo({
   // Mirrors the page h1 so the title carries topic keywords, not just brand.
-  title: 'Blog • Mohammed Mostafa',
+  title: 'Backend Engineering Blog • Mohammed Mostafa',
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,

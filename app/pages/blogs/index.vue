@@ -39,7 +39,9 @@ const tagClass = "bp-chip";
           </nav>
           <section>
             <div class="mb-6 flex flex-col items-center text-center">
-              <h1 text-5xl font-bold mb-2 text-black dark:text-white>Blog</h1>
+              <h1 text-5xl font-bold mb-2 text-black dark:text-white>
+                Blog
+              </h1>
               <p text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl>
                 Backend engineering notes by Mohammed Mostafa on Node.js, TypeScript,
                 Express.js, API architecture, message queues (BullMQ / Redis),

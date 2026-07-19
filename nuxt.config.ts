@@ -78,6 +78,9 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#141413', media: '(prefers-color-scheme: dark)' },
       ],
       link: [
+        // The homepage GitHub contribution chart is the site's only third-party
+        // request — warm the DNS lookup before the lazy image loads.
+        { rel: 'dns-prefetch', href: 'https://ghchart.rshah.org' },
         { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
         { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon', sizes: '48x48' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
@@ -94,6 +97,14 @@ export default defineNuxtConfig({
           type: 'font/woff2',
           href: '/fonts/alexandria-latin.woff2',
           crossorigin: '',
+        },
+      ],
+      noscript: [
+        {
+          // FloorSection's IntersectionObserver reveal never runs without JS,
+          // so .is-visible is never added — force the floors visible instead of
+          // leaving every below-the-fold section at opacity:0.
+          innerHTML: '<style>.bp-floor .bp-floor__body{opacity:1;transform:none}</style>',
         },
       ],
       script: [

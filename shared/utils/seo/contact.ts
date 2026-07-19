@@ -11,7 +11,7 @@ import {
 export const contactSEO = createSeo({
   title: 'Mohammed Mostafa • Contact',
   description:
-    'Contact Mohammed Mostafa — Software Engineer in Cairo, Egypt. Reach out about backend engineering, freelance work, or collaboration via the contact form, email, GitHub, LinkedIn, or X.',
+    'Contact Mohammed Mostafa — Software Engineer in Cairo, Egypt. Reach out about backend engineering, freelance work, or collaboration via the form or email.',
   path: sitePaths.contact,
   keywords: [
     ...brandKeywords,

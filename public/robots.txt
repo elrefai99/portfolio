@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+# Nitro build shells — empty hydration stubs, never meant as pages.
+Disallow: /200.html
+Disallow: /404.html
 
 # AI answer engines / LLM crawlers — explicitly welcomed (also see /llms.txt).
 User-agent: GPTBot
