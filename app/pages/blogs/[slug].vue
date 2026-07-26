@@ -37,24 +37,27 @@ const tagClass = 'bp-chip'
 </script>
 
 <template>
-  <FloorSection
-    level="L-04"
-    name="Journal / Article"
-    elevation="+0.00 m"
-    :top-slab="false"
-    eager
-  >
-    <div
-      max-w-4xl
-      mx-auto
-      min-h-screen
-      text-black
-      dark:text-white
-      flex
-      justify-center
-      items-start
+  <!-- <main> wraps the floor here (matching every other page) rather than
+       sitting inside it, so the document has one top-level main landmark. -->
+  <main>
+    <FloorSection
+      level="L-04"
+      name="Journal / Article"
+      elevation="+0.00 m"
+      :top-slab="false"
+      eager
     >
-      <main w-full max-w-4xl p-4 md:p-10>
+      <div
+        max-w-4xl
+        mx-auto
+        min-h-screen
+        text-black
+        dark:text-white
+        flex
+        justify-center
+        items-start
+      >
+        <div w-full max-w-4xl p-4 md:p-10>
         <article v-if="blog" class="space-y-6">
           <!-- Visible breadcrumb corroborating the BreadcrumbList JSON-LD -->
           <nav aria-label="Breadcrumb" class="bp-mono text-xs">
@@ -170,7 +173,8 @@ const tagClass = 'bp-chip'
             </ul>
           </aside>
         </article>
-      </main>
-    </div>
-  </FloorSection>
+        </div>
+      </div>
+    </FloorSection>
+  </main>
 </template>

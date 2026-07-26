@@ -1,29 +1,8 @@
 User-agent: *
 Allow: /
-# Nitro build shells — empty hydration stubs, never meant as pages.
 Disallow: /200.html
 Disallow: /404.html
-
-# AI answer engines / LLM crawlers — explicitly welcomed (also see /llms.txt).
-User-agent: GPTBot
-Allow: /
-
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
+Disallow: /200
+Disallow: /404
 
 Sitemap: https://elrefai.me/sitemap.xml

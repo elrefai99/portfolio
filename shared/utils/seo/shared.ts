@@ -1,10 +1,5 @@
 import { siteUrl, sitePaths } from '../site'
 
-// Shared SEO core: entity schemas + the createSeo head factory.
-// Route-specific SEO objects live in the sibling modules (home.ts, blog.ts, …)
-// so a page's chunk only pulls the content data it actually renders —
-// importing this module must never drag blog/case-study content along.
-
 export const author = 'elrefai99'
 export const siteName = 'Mohammed Mostafa Portfolio'
 export const defaultImage = `${siteUrl}/og-image.png`
@@ -47,7 +42,6 @@ const sameAs = [
   'https://www.linkedin.com/in/elrefai99/',
   'https://www.instagram.com/elrefai99/',
   'https://x.com/elrefai99',
-  // Must match the footer link exactly — entity reconciliation keys on exact URLs.
   'https://bsky.app/profile/elrefai.me',
   'https://orcid.org/0009-0003-3680-2750',
 ]
@@ -59,8 +53,6 @@ export const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   '@id': personId,
-  // Entity name must be the person's literal name — the role lives in
-  // jobTitle. A decorated name breaks knowledge-graph reconciliation.
   name: 'Mohammed Mostafa',
   alternateName: [
     'Mohamed Mostafa',
@@ -161,9 +153,6 @@ export const websiteSchema = {
   inLanguage: 'en',
 }
 
-// Organization publisher for Article rich results: Google's Article guidance
-// wants publisher to be an Organization carrying a logo ImageObject. The person
-// stays the `author`/main entity; this is the branded publisher of the writing.
 export const publisherId = `${siteUrl}/#organization`
 
 export const organizationSchema = {
@@ -181,7 +170,6 @@ export const organizationSchema = {
   sameAs,
 }
 
-/** Wrap an OG card URL as an ImageObject so Article rich results get explicit dimensions. */
 export const ogImageObject = (url: string) => ({
   '@type': 'ImageObject',
   url,
@@ -210,10 +198,13 @@ export const toIsoDateTime = (date: string) =>
 
 export type SeoMeta = ({ name: string } | { property: string }) & { content: string }
 
-export const uniqueKeywords = (keywords: string[]) => [...new Set(keywords.filter(Boolean))]
+const normalizeKeyword = (keyword: string) =>
+  keyword.replace(/[,;]+/g, ' ').replace(/\s+/g, ' ').trim()
 
-// Google ignores the keywords meta entirely; keep it for other engines but cap
-// it so generated per-page lists can't balloon into kilobyte-long tags.
+export const uniqueKeywords = (keywords: string[]) => [
+  ...new Set(keywords.map(normalizeKeyword).filter(Boolean)),
+]
+
 const MAX_KEYWORDS = 25
 
 export const createSeo = ({
@@ -243,7 +234,6 @@ export const createSeo = ({
   keywords?: string[]
   extraMeta?: SeoMeta[]
   schema?: Record<string, unknown> | Record<string, unknown>[]
-  /** Set false on error pages — a 404 must not claim another URL as canonical. */
   canonical?: boolean
 }) => {
   const url = new URL(path, siteUrl).toString()

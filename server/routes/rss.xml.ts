@@ -1,17 +1,14 @@
 import { sitePaths, siteUrl } from '../../shared/utils/site'
 import { blogs, type BlogBlock } from '../../shared/utils/blogs'
 
-// Prerendered to .output/public/rss.xml (and served live in `nuxt dev`).
-// Full-text RSS 2.0 feed, newest first. Reads only blog metadata, so new posts
-// appear automatically.
+const AUTHOR_NAME = 'Mohammed Mostafa'
+const AUTHOR_EMAIL = 'elrefai99@gmail.com'
 
 const escapeXml = (value: string) =>
   value.replace(/[&<>"']/g, (char) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string,
   )
 
-// Render the block content model to plain HTML for the feed's full-text
-// content:encoded — same inline rules as ContentBlocks.vue (`code`, [label](url)).
 const inlineHtml = (text: string) =>
   text
     .split('`')
@@ -57,6 +54,7 @@ const createRssXml = () => {
       <guid isPermaLink="true">${url}</guid>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       <category>${escapeXml(post.category)}</category>
+      <dc:creator>${escapeXml(AUTHOR_NAME)}</dc:creator>
       <description>${escapeXml(post.metaDescription ?? post.excerpt)}</description>
       <content:encoded><![CDATA[${fullHtml}]]></content:encoded>
     </item>`
@@ -64,13 +62,21 @@ const createRssXml = () => {
     .join('\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Blogs • Mohammed Mostafa</title>
     <link>${new URL(sitePaths.blogs, siteUrl).toString()}</link>
     <atom:link href="${new URL('/rss.xml', siteUrl).toString()}" rel="self" type="application/rss+xml"/>
     <description>Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.</description>
     <language>en</language>
+    <copyright>© ${new Date(lastBuildDate).getUTCFullYear()} ${escapeXml(AUTHOR_NAME)}</copyright>
+    <managingEditor>${AUTHOR_EMAIL} (${escapeXml(AUTHOR_NAME)})</managingEditor>
+    <webMaster>${AUTHOR_EMAIL} (${escapeXml(AUTHOR_NAME)})</webMaster>
+    <image>
+      <url>${new URL('/icon-512.png', siteUrl).toString()}</url>
+      <title>Blogs • Mohammed Mostafa</title>
+      <link>${new URL(sitePaths.blogs, siteUrl).toString()}</link>
+    </image>
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
 ${items}
   </channel>

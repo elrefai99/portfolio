@@ -1,6 +1,3 @@
-// Logos are referenced as public-path strings (files in public/ are served
-// as-is). Importing them from ../../public would make Vite emit a second,
-// hashed copy of each file into dist/assets — every logo shipped twice.
 const lesoll = '/projects/lesoll-logo.png'
 const egystay = '/projects/egy-stay-logo.png'
 const keepits = '/projects/keepits.png'
@@ -131,7 +128,7 @@ export const projects: IProject[] = [
     link: "https://egystay.com",
     github: "",
     tagline: "Property rental & booking platform with a Co-Host marketplace",
-    altNames: ["EgyStay", "Egy Stay", "EgyStay.com", "إيجي ستاي", "ايجي ستاي"],
+    altNames: ["EgyStay", "EGYStay", "Egy Stay", "EgyStay.com", "إيجي ستاي", "ايجي ستاي"],
     desc: [
       "EgyStay is a short-term rental platform for the Egyptian market, allowing guests to book accommodations while hosts and co-hosts manage their properties through dedicated dashboards.",
       "As the primary Backend Engineer, I architected and developed the backend from the ground up, implementing reservation workflows, availability management, pricing logic, payments, authentication, messaging, notifications, and administrative services.",
@@ -158,8 +155,9 @@ export const projects: IProject[] = [
       "Github Actions"
     ],
     keywords: [
+      "EgyStay",
       "EGYStay",
-      "EGYStay Booking Platform",
+      "EgyStay Booking Platform",
       "Property Rental Platform",
       "Vacation Rental Platform",
       "Property Booking System",
@@ -311,8 +309,8 @@ export const projects: IProject[] = [
     slug: "keepits",
     category: "Live",
     logo: keepits,
-    logoWidth: 263,
-    logoHeight: 226,
+    logoWidth: 96,
+    logoHeight: 82,
     class: "w-5 h-5",
     link: "https://keepit.elrefai.me/",
     github: "",
@@ -369,8 +367,8 @@ export const projects: IProject[] = [
     slug: "0gosha",
     category: "Backend",
     logo: Gosha0,
-    logoWidth: 440,
-    logoHeight: 440,
+    logoWidth: 96,
+    logoHeight: 96,
     class: "w-5 h-5",
     github: "https://github.com/elrefai99/0G0sha",
     link: "https://0gosha.elrefai.me",

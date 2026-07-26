@@ -8,7 +8,6 @@ const routeSources: Record<string, string[]> = {
   [sitePaths.projects]: ['app/pages/projects/index.vue', 'shared/utils/projects.ts', 'shared/utils/caseStudies.ts', 'shared/utils/seo/projects.ts'],
   [sitePaths.blogs]: ['app/pages/blogs/index.vue', 'shared/utils/blogs.ts', 'shared/utils/seo/blog.ts'],
   [sitePaths.resume]: ['app/pages/resume.vue', 'shared/utils/seo/resume.ts'],
-  [sitePaths.contact]: ['app/pages/contact.vue', 'shared/utils/seo/contact.ts'],
   ...Object.fromEntries(
     caseStudies.map((cs) => [
       `${sitePaths.projects}/${cs.slug}`,

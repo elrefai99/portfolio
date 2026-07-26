@@ -6,6 +6,7 @@ import {
   personId,
   personSchema,
   skillKeywords,
+  websiteId,
 } from './shared'
 
 export const resumeSEO = createSeo({
@@ -27,11 +28,13 @@ export const resumeSEO = createSeo({
     personSchema,
     {
       '@context': 'https://schema.org',
-      '@type': 'ProfilePage',
+      '@type': 'AboutPage',
+      '@id': `${new URL(sitePaths.resume, siteUrl).toString()}#webpage`,
       name: 'Mohammed Mostafa Resume',
       url: new URL(sitePaths.resume, siteUrl).toString(),
-      mainEntity: { '@id': personId },
+      isPartOf: { '@id': websiteId },
       about: { '@id': personId },
+      inLanguage: 'en',
     },
     createBreadcrumb([
       { name: 'Home', path: sitePaths.home },

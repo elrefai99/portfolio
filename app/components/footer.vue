@@ -61,8 +61,10 @@
 
       <!-- Datum / copyright -->
       <p class="bp-mono bp-footer__datum">
-        © {{ new Date().getFullYear() }}
-        <a href="https://github.com/elrefai99">elrefai99</a>
+        © {{ year }}
+        <a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer"
+          >elrefai99</a
+        >
         · DWG MM-001 · ALL RIGHTS RESERVED
       </p>
 
@@ -80,6 +82,14 @@
 </template>
 
 <script setup>
+// The site is statically generated, so a year rendered during prerender freezes
+// at the build date. Seed with the build year (keeps SSR and the first client
+// render identical — no hydration mismatch) and correct it after mount.
+const year = ref(new Date().getFullYear());
+onMounted(() => {
+  year.value = new Date().getFullYear();
+});
+
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };

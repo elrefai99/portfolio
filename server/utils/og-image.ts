@@ -144,7 +144,7 @@ export const staticCards: OgCard[] = [
     eyebrow: 'L-02 · PROJECTS / INDEX',
     chip: 'Selected Work',
     title: 'Projects & Open-Source Work',
-    subtitle: 'Lesoll, EGYStay, EgyStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord — backend, API, payment, cloud, and developer tooling.',
+    subtitle: 'Lesoll, EgyStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord — backend, API, payment, cloud, and developer tooling.',
     footerLeft: author,
     footerRight: 'Backend · APIs · Payments · Tooling',
   },
@@ -165,15 +165,6 @@ export const staticCards: OgCard[] = [
     subtitle: 'Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, Docker, and AWS.',
     footerLeft: author,
     footerRight: 'Node.js · TypeScript · Cloud · Databases',
-  },
-  {
-    fileName: 'page-contact.png',
-    eyebrow: 'L-05 · CONTACT / COMMS',
-    chip: 'Get in Touch',
-    title: 'Contact Mohammed Mostafa',
-    subtitle: 'Reach out about backend engineering, freelance work, or collaboration — email, GitHub, LinkedIn, X, or the contact form.',
-    footerLeft: author,
-    footerRight: 'Email · GitHub · LinkedIn · X',
   },
 ]
 

@@ -1,6 +1,13 @@
 import { sitePaths, siteUrl } from '../site'
 import { projects, type IProject } from '../projects'
-import { brandKeywords, createBreadcrumb, createSeo, personId, personSchema } from './shared'
+import {
+  brandKeywords,
+  createBreadcrumb,
+  createSeo,
+  personId,
+  personSchema,
+  websiteId,
+} from './shared'
 
 export const projectDescriptionText = (desc: string | string[]) =>
   Array.isArray(desc) ? desc.join(' ') : desc
@@ -54,9 +61,12 @@ export const projectsSEO = createSeo({
     {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
+      '@id': `${new URL(sitePaths.projects, siteUrl).toString()}#collection`,
       name: 'Mohammed Mostafa Projects',
       url: new URL(sitePaths.projects, siteUrl).toString(),
       about: 'Backend, API, cloud, payment, and developer tooling projects by Elrefai (Mohammed Mostafa).',
+      isPartOf: { '@id': websiteId },
+      inLanguage: 'en',
       author: { '@id': personId },
       mainEntity: {
         '@type': 'ItemList',

@@ -52,6 +52,9 @@ html.dark {
 #main-content:focus {
   outline: none;
 }
+.bp-skip-link:focus-visible {
+  outline-offset: -2px;
+}
 
 /* Roof line marking the top of the building elevation */
 .bp-roof {

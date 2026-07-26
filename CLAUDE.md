@@ -49,8 +49,10 @@ Content is plain TypeScript data modules under **`shared/utils/`** (importable f
 - **`blogs.ts`** — blog posts as structured content blocks (`paragraph`, `heading`, `list`, `code`); metadata feeds routing, the prerender set, SEO, and OG cards. Paragraph/list text supports `` `inline code` `` and `[label](url)` links (rendered by `ContentBlocks.vue`). A `code` block with `language: 'mermaid'` is rendered live by `MermaidDiagram.vue` (mermaid lazy-`import()`ed, theme-aware).
 - **`site.ts`** — canonical `siteUrl` and `sitePaths` **only**. Imported everywhere, so it must stay dependency-free — never import content modules here.
 - **`sitemap.ts`** — `sitemapEntries`, consumed only by the sitemap server route; imports the corpus, which is why it lives apart from `site.ts`.
-- **`seo/`** — per-route SEO `<head>` modules consumed via Nuxt's auto-imported `useHead(...)`: `shared.ts` (createSeo factory, Person/WebSite schemas, notFoundSEO), `home.ts`, `projects.ts`, `case-study.ts`, `blog.ts`, `resume.ts`. **Split on purpose**: a page imports only its own module so e.g. the homepage never pulls the blog corpus (`seo/blog.ts` is the only SEO module allowed to import `blogs.ts`).
-- **`icons.ts`** — maps tech-tag strings → Iconify icon ids.
+- **`seo/`** — per-route SEO `<head>` modules consumed via Nuxt's auto-imported `useHead(...)`: `shared.ts` (createSeo factory, Person/WebSite/Organization schemas, notFoundSEO), `home.ts`, `projects.ts`, `case-study.ts`, `blog.ts`, `resume.ts`, `contact.ts`. **Split on purpose**: a page imports only its own module so e.g. the homepage never pulls the blog corpus (`seo/blog.ts` is the only SEO module allowed to import `blogs.ts`).
+- **`icons.ts`** — maps tech-tag strings → bare Iconify icon ids (`logos:redis`), consumed by `TagIcon.vue`. **Not** UnoCSS utility classes — see the tech-tag icon note under Styling.
+- **`tagIconId.ts`** — tag icon id → `<symbol>` DOM id. Shared by the sprite generator and `TagIcon.vue`; they must agree.
+- **`featuredPosts.ts`** — the three posts `SelectedWriting.vue` links from the homepage, as slug/title/category literals so the home chunk never imports `blogs.ts`. `nuxt.config.ts` asserts at build time that the titles and categories still match the corpus, so the anchor text can't silently drift from the target page's h1.
 
 ## Sitemap / RSS (server routes)
 
@@ -62,7 +64,11 @@ Content is plain TypeScript data modules under **`shared/utils/`** (importable f
 
 UnoCSS via **`@unocss/nuxt`**, reading the unchanged **`uno.config.ts`** (`presetUno({ dark: 'class' })`, `presetAttributify`, `presetIcons`; shortcuts, theme colors, animations, safelist). `@unocss/reset/tailwind.css` is in the `nuxt.config.ts` `css` array. Utilities and attributify syntax work as before. Icons render via the UnoCSS icon preset from the installed `@iconify-json/*` collections.
 
-> **Safelist gotcha**: icon classes chosen at runtime (tech-tag icons via `shared/utils/icons.ts`) aren't literal strings in source, so UnoCSS purges them. Such icons must be in `safelist` in `uno.config.ts`. New tech tag with a new icon → update both `icons.ts` and the `safelist`.
+> **Tech-tag icons are NOT UnoCSS icons.** They used to be safelisted `i-logos:*` utilities, which forced all ~24 multicolour logos into the single global stylesheet — 75KB raw / 27KB gz of render-blocking CSS on every page, including `/blogs`, `/resume` and `/contact`, which draw no chips at all. They now live in **one external sprite, `public/icons/tags.svg`** (54KB raw / 22KB gz, generated): `shared/utils/icons.ts` maps a tag → a bare Iconify id (`logos:redis`) and **`app/components/TagIcon.vue`** emits `<use href="/icons/tags.svg#ti-…">`. Only the tag→id map travels in JS; the artwork is one cached, off-critical-path request that the 8 chip-free pages never make.
+>
+> Inlining the SVG bodies per chip is the other wrong answer — it moves the same bytes into the HTML (it took `/projects` to 205KB) *and* ships them again as hydration data.
+>
+> Adding a tech-tag icon → add the mapping to `icons.ts`, add the id to the list in `scripts/gen-tag-icons.mjs`, then run `node scripts/gen-tag-icons.mjs`. There is deliberately **no `safelist`** in `uno.config.ts`; don't reintroduce one for tag logos.
 
 ## SEO & performance invariants
 
@@ -85,6 +91,8 @@ The navbar toggle (`app/components/darkmode.vue`) uses `useDark({ storageKey: 't
 
 `app/components/MermaidDiagram.vue` dynamically `import()`s mermaid only when a diagram nears the viewport (IntersectionObserver, `400px` rootMargin), keeping the ~600KB bundle off the critical path. It is **not** `ClientOnly`: the `<pre><code>` source fallback renders during prerender (the component only upgrades to SVG after mount + intersection), so crawlers and no-JS clients get the code. A MutationObserver re-renders on theme toggle.
 
+Nuxt's client manifest works against this: it emits `<link rel="prefetch">` for the whole mermaid + katex graph on every article page, so the browser pulled ~140KB gz at idle even on posts with no diagram. The `build:manifest` hook in `nuxt.config.ts` walks the import graph out from the named mermaid/katex modules and clears `prefetch` on everything reachable — name-matching alone misses it, because mermaid's ~600KB core lands in an anonymous shared chunk. **Verify after a build: `grep -c 'rel="prefetch"' .output/public/blogs/*/index.html` must be 0.**
+
 ## Auto-imports
 
 Nuxt auto-imports: Vue Composition API (`ref`, `computed`, `onMounted`, …), Nuxt composables (`useHead`, `useRoute`, `createError`, `navigateTo`, `useRequestURL`, …), `@vueuse/core` (via `@vueuse/nuxt`), components in `app/components/`, and `shared/utils/**`. Components keep their file-based names — lowercase filenames resolve PascalCase (`footer.vue` → `<Footer>`, `darkmode.vue` → `<Darkmode>`, `aboutme.vue` → `<Aboutme>`, `timeline.vue` → `<Timeline>`). Content/SEO modules are imported **explicitly** (`~~/shared/utils/...`) to keep the chunk-split invariant obvious, even though they're auto-importable. `.nuxt/` type decls are generated — don't hand-edit.
@@ -97,7 +105,8 @@ Nuxt auto-imports: Vue Composition API (`ref`, `computed`, `onMounted`, …), Nu
 ## Nuxt structure
 
 ```
-nuxt.config.ts        modules, css, app.head, nitro prerender, caseStudy-flag assertion
+nuxt.config.ts        modules, css, app.head, nitro prerender, caseStudy-flag +
+                      featuredPosts assertions, mermaid-prefetch build:manifest hook
 app/
   app.vue             building frame (NavBar, roof, <NuxtPage>, Footer, analytics)
   error.vue           branded 404 (notFoundSEO)
@@ -105,11 +114,14 @@ app/
   assets/             blueprint.css, main.css (+ Alexandria @font-face)
   components/          all UI components (auto-imported)
   pages/               file-based routes
-shared/utils/          site, projects, caseStudies, blogs, sitemap, icons, seo/
+shared/utils/          site, projects, caseStudies, blogs, sitemap, icons,
+                      tagIconId, featuredPosts, seo/
+scripts/               gen-tag-icons.mjs (regenerates public/icons/tags.svg)
 server/
   utils/og-image.ts    OG renderer (@resvg, build/fonts/*.ttf)
   routes/              sitemap.xml.ts, rss.xml.ts, og/[name].ts (all prerendered)
-public/                static assets (favicons, fonts, projects logos, llms.txt, robots.txt)
+public/                static assets (favicons, fonts, projects logos, llms.txt,
+                      robots.txt, icons/tags.svg [generated])
 build/fonts/           Inter *.ttf for OG rendering (read at prerender via process.cwd())
 ```
 

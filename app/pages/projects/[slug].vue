@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getCaseStudyBySlug, type CaseBuiltItem, type CaseIncident } from '~~/shared/utils/caseStudies'
 import { createCaseStudySEO } from '~~/shared/utils/seo/case-study'
-import { getTagIcon } from '~~/shared/utils/icons'
 import { getBlogBySlug } from '~~/shared/utils/blogs'
 
 const route = useRoute()
@@ -194,12 +193,7 @@ onUnmounted(() => observer?.disconnect())
                     :key="tech"
                     class="inline-flex items-center gap-1.5 text-sm leading-6 text-gray-700 dark:text-gray-300"
                   >
-                    <i
-                      v-if="getTagIcon(tech)"
-                      :class="getTagIcon(tech)!"
-                      class="h-4 w-4 shrink-0"
-                      aria-hidden="true"
-                    />
+                    <TagIcon :tag="tech" size="h-4 w-4" />
                     {{ tech }}
                   </span>
                 </dd>
@@ -229,7 +223,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section"
           >
-            <h2 class="case-label">{{ sectionNumber("overview") }} — Overview</h2>
+            <p class="case-label">{{ sectionNumber("overview") }}</p>
+            <h2 class="case-h2">Overview</h2>
             <div class="case-prose mt-8 space-y-5">
               <p v-for="(paragraph, i) in cs.overview" :key="i">{{ paragraph }}</p>
             </div>
@@ -242,7 +237,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">{{ sectionNumber("challenges") }} — Challenges</h2>
+            <p class="case-label">{{ sectionNumber("challenges") }}</p>
+            <h2 class="case-h2">Challenges</h2>
             <div class="mt-8 space-y-10">
               <div v-for="challenge in cs.challenges" :key="challenge.title">
                 <h3 class="text-lg font-semibold">{{ challenge.title }}</h3>
@@ -258,7 +254,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">{{ sectionNumber("built") }} — What I Built</h2>
+            <p class="case-label">{{ sectionNumber("built") }}</p>
+            <h2 class="case-h2">What I Built</h2>
             <div class="mt-8 space-y-14">
               <div v-for="item in cs.built" :key="item.title">
                 <h3 class="text-xl font-semibold tracking-tight">{{ item.title }}</h3>
@@ -279,9 +276,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">
-              {{ sectionNumber("production") }} — Production Problems
-            </h2>
+            <p class="case-label">{{ sectionNumber("production") }}</p>
+            <h2 class="case-h2">Production Problems</h2>
             <div class="mt-8 space-y-14">
               <div v-for="incident in cs.incidents" :key="incident.title">
                 <h3 class="text-xl font-semibold tracking-tight">{{ incident.title }}</h3>
@@ -302,9 +298,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">
-              {{ sectionNumber("decisions") }} — Engineering Decisions
-            </h2>
+            <p class="case-label">{{ sectionNumber("decisions") }}</p>
+            <h2 class="case-h2">Engineering Decisions</h2>
             <div class="mt-8 space-y-12">
               <div v-for="decision in cs.decisions" :key="decision.title">
                 <h3 class="text-xl font-semibold tracking-tight">{{ decision.title }}</h3>
@@ -324,7 +319,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">{{ sectionNumber("performance") }} — Performance</h2>
+            <p class="case-label">{{ sectionNumber("performance") }}</p>
+            <h2 class="case-h2">Performance</h2>
             <div class="mt-8 space-y-10">
               <div v-for="note in cs.performance" :key="note.title">
                 <h3 class="text-lg font-semibold">{{ note.title }}</h3>
@@ -340,7 +336,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">{{ sectionNumber("security") }} — Security</h2>
+            <p class="case-label">{{ sectionNumber("security") }}</p>
+            <h2 class="case-h2">Security</h2>
             <div class="mt-8 space-y-10">
               <div v-for="note in cs.security" :key="note.title">
                 <h3 class="text-lg font-semibold">{{ note.title }}</h3>
@@ -356,7 +353,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">{{ sectionNumber("lessons") }} — Lessons Learned</h2>
+            <p class="case-label">{{ sectionNumber("lessons") }}</p>
+            <h2 class="case-h2">Lessons Learned</h2>
             <div class="mt-8 space-y-10">
               <div v-for="note in cs.lessons" :key="note.title">
                 <h3 class="text-lg font-semibold">{{ note.title }}</h3>
@@ -372,7 +370,8 @@ onUnmounted(() => observer?.disconnect())
             data-case-section
             class="case-section case-rule"
           >
-            <h2 class="case-label">{{ sectionNumber("result") }} — Result</h2>
+            <p class="case-label">{{ sectionNumber("result") }}</p>
+            <h2 class="case-h2">Result</h2>
             <div class="case-prose mt-8 space-y-5">
               <p v-for="(paragraph, i) in cs.result" :key="i">{{ paragraph }}</p>
             </div>
@@ -380,7 +379,7 @@ onUnmounted(() => observer?.disconnect())
 
           <!-- Further reading: related blog posts -->
           <section v-if="relatedPosts.length" class="case-rule py-16">
-            <h2 class="case-label">Further Reading</h2>
+            <h2 class="case-h2">Further Reading</h2>
             <ul class="mt-8 space-y-6">
               <li v-for="post in relatedPosts" :key="post.slug">
                 <router-link :to="`/blogs/${post.slug}`" class="group block">

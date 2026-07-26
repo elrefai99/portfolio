@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { projects } from "~~/shared/utils/projects";
-import { getTagIcon } from "~~/shared/utils/icons";
 
-// This component renders in the entry chunk (home page). Never import
-// caseStudies here — the `caseStudy` flag on projects.ts carries the
-// "has a deep dive" fact without dragging the corpus into every page.
-
-// Top 4 live projects only
 const selectedProjects = computed(() =>
   projects.filter((p: any) => p.category === "Live").slice(0, 4)
 );
@@ -68,11 +62,7 @@ const footerLinkClass = "bp-link";
         <!-- Tags -->
         <div class="flex flex-wrap gap-2 mt-4">
           <span v-for="tag in project.tags.slice(0, 4)" :key="tag" :class="tagChipClass">
-            <i
-              v-if="getTagIcon(tag)"
-              :class="getTagIcon(tag)!"
-              class="w-3.5 h-3.5 shrink-0"
-            />
+            <TagIcon :tag="tag" />
             {{ tag }}
           </span>
         </div>

@@ -83,33 +83,9 @@ export default defineConfig({
                },
           },
      },
-     safelist: [
-          'i-logos:typescript-icon',
-          'i-logos:javascript',
-          'i-skill-icons:expressjs-dark',
-          'i-logos:mongodb-icon',
-          'i-logos:redis',
-          'i-logos:docker-icon',
-          'i-logos:aws',
-          'i-logos:vue',
-          'i-logos:vitejs',
-          'i-logos:firebase',
-          'i-logos:netlify-icon',
-          'i-logos:postgresql',
-          'i-logos:prisma',
-          'i-logos:github-actions',
-          'i-logos:github-icon',
-          'i-logos:pnpm',
-          'i-logos:nginx',
-          'i-logos:swagger',
-          'i-logos:puppeteer',
-          'i-logos:socket-io',
-          'i-logos:kubernetes',
-          'i-logos:render',
-          'i-logos:sendgrid',
-          'i-logos:axios',
-          'i-logos:npm-icon',
-          'i-logos:pinia',
-          'i-logos:unocss',
-     ],
+     // Deliberately no icon safelist. Tech-tag logos come from the external
+     // sprite public/icons/tags.svg via TagIcon.vue; safelisting them as
+     // `i-logos:*` utilities forced all ~24 multicolour logos into the single
+     // global stylesheet — 75KB raw / 27KB gz of render-blocking CSS on every
+     // page, including the 8 that draw no chips at all. Don't reintroduce one.
 })

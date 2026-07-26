@@ -1,28 +1,15 @@
 <script setup lang="ts">
-// Public-path strings (not imports from ../../public) so Vite doesn't emit a
-// second hashed copy of each logo into dist/assets.
 const logo = "/projects/lesoll-logo.png";
 const egystayLogo = "/projects/egy-stay-logo.png";
-
-// Static text — this H1 is the homepage's LCP element. It used to be wiped
-// to '' on mount and retyped letter-by-letter, which delayed LCP by ~1.6s
-// and made the largest element on the page visibly disappear on hydration.
 const fullText = "Mohammed Mostafa";
 
-// The contribution graph is a third-party image (ghchart.rshah.org). If that
-// host is slow or down, drop the image instead of showing a broken-image icon —
-// the "@elrefai99 on GitHub" link below still carries the CTA.
 const chartFailed = ref(false);
 </script>
 
 <template>
-  <!-- No opacity animation on the section: it wraps the h1 (LCP element), and
-       animating it from opacity:0 delays LCP by the animation duration. -->
   <section max-w-4xl mx-auto p-6 md:p-10 space-y-16>
-    <!-- Hero Section -->
     <div text-center py-12>
       <div max-w-700px mx-auto>
-        <!-- Main Heading with Typing Effect -->
         <div mb-8>
           <p
             text-xl
@@ -35,7 +22,6 @@ const chartFailed = ref(false);
             Hello, I'm
           </p>
 
-          <!-- LCP element: transform-only entry (no opacity) so paint counts immediately -->
           <h1
             text="5xl md:6xl lg:7xl"
             font-extrabold
@@ -54,6 +40,11 @@ const chartFailed = ref(false);
               dark:text-gray-400
               font-light
             ></span>
+            <span
+              class="mt-3 block text-xl font-semibold tracking-tight text-gray-600 dark:text-gray-400 md:text-2xl"
+            >
+              Backend Software Engineer — APIs, Payments &amp; Cloud Systems
+            </span>
           </h1>
 
           <p
@@ -179,7 +170,7 @@ const chartFailed = ref(false);
           I'm Mohammed Mostafa, a software engineer specializing in backend development,
           scalable APIs, payment integrations, and production systems with
           <span inline-flex items-center gap-1.5 font-semibold text-black dark:text-white>
-            <i class="i-logos:nodejs-icon-alt"></i>Node.js </span
+            <TagIcon tag="Node.js" size="h-4 w-4" />Node.js </span
           >. I work across TypeScript, Express.js, MongoDB, PostgreSQL, Redis, Docker, and
           AWS, and I recently expanded into frontend development with Vue.js. As a backend
           developer, I built and shipped the systems behind production platforms like
@@ -207,7 +198,7 @@ const chartFailed = ref(false);
           </a>
           and
           <a
-            href="https://egystay.com/en"
+            href="https://egystay.com"
             target="_blank"
             rel="noopener noreferrer"
             inline-flex
@@ -220,14 +211,14 @@ const chartFailed = ref(false);
           >
             <img
               :src="egystayLogo"
-              alt="Egystay logo"
+              alt="EgyStay logo"
               loading="lazy"
               decoding="async"
               width="31"
               height="8"
               class="inline-block h-2 w-auto"
             />
-            Egystay </a
+            EgyStay </a
           >.
         </p>
 

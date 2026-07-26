@@ -6,7 +6,6 @@ export type BlogBlock =
   | {
     type: 'heading'
     text: string
-    /** 2 (default) for sections, 3 for subsections nested under the previous h2. */
     level?: 2 | 3
   }
   | {
@@ -20,11 +19,6 @@ export type BlogBlock =
     code: string
   }
 
-/**
- * A named entity the post is about, with authoritative URLs (Wikipedia, spec,
- * official docs). Feeds BlogPosting `about`/`mentions` in JSON-LD so search
- * and AI engines can disambiguate the topic (entity SEO).
- */
 export type BlogEntity = {
   name: string
   sameAs: string | string[]
@@ -42,9 +36,7 @@ export type BlogPost = {
   updated?: string
   readTime: string
   tags: string[]
-  /** Primary topics first — the first three become schema `about`, the rest `mentions`. */
   entities?: BlogEntity[]
-  /** Slugs of related posts — rendered as "Related notes" internal links on the post page. */
   relatedSlugs?: string[]
   blocks: BlogBlock[]
   ogImage?: string

@@ -14,6 +14,14 @@ useHead(resumeSEO);
       eager
     >
       <div max-w-4xl mx-auto min-h-screen text-black dark:text-white px-4 py-8>
+        <nav aria-label="Breadcrumb" class="bp-mono mb-6 text-xs">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li><router-link to="/" class="bp-tab">Home</router-link></li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="opacity-70">Resume</li>
+          </ol>
+        </nav>
+
         <!-- Top Download Button -->
         <!-- Real <a href> (not a JS-triggered download) so the PDF is crawlable -->
         <div flex justify-end mb-6>
@@ -75,12 +83,11 @@ useHead(resumeSEO);
                     >LinkedIn</a
                   >
                   <span class="text-gray-600 dark:text-gray-300">•</span>
-                  <a
-                    href="https://elrefai.me"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <!-- Own site: an internal route, not an external _blank link. -->
+                  <router-link
+                    to="/"
                     class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
-                    >Portfolio</a
+                    >Portfolio</router-link
                   >
                   <span class="text-gray-600 dark:text-gray-300">•</span>
                   <a
@@ -125,9 +132,9 @@ useHead(resumeSEO);
               <div>
                 <div flex items-baseline justify-between flex-wrap gap-2 mb-2>
                   <div class="flex items-baseline gap-1.5 flex-wrap">
-                    <span class="text-sm font-bold text-gray-900 dark:text-white"
-                      >Software Engineer II</span
-                    >
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">
+                      Software Engineer II
+                    </h3>
                     <span class="text-sm text-gray-400">|</span>
                     <a
                       href="https://lesoll.com"

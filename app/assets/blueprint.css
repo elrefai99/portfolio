@@ -27,7 +27,10 @@
   --bp-accent-rgb: 20, 20, 19;
   --bp-blue: #141413;
   --bp-blue-glow: #141413;
-  --bp-blue-dim: rgba(var(--bp-accent-rgb), 0.5);
+  /* 0.5 composited to rgb(135,135,132) on the paper canvas — 3.43:1, under the
+     4.5:1 floor, and this token colours the case-study <h2>s (.case-label),
+     .case-microlabel and .case-nav-link at 10-11px. 0.68 lands at 6.27:1. */
+  --bp-blue-dim: rgba(var(--bp-accent-rgb), 0.68);
   --bp-line: rgba(var(--bp-accent-rgb), 0.5);
   --bp-line-soft: rgba(var(--bp-accent-rgb), 0.16);
   --bp-line-faint: rgba(var(--bp-accent-rgb), 0.07);
@@ -437,6 +440,18 @@ html:not(.dark) body {
   color: var(--bp-blue-dim);
 }
 
+/* Section heading. The number stays in a .case-label eyebrow above it; the
+   heading itself has to outrank the 1.25rem <h3>s nested under it, otherwise
+   the visual hierarchy inverts the document outline. */
+.case-h2 {
+  margin-top: 0.6rem;
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: var(--bp-blue);
+}
+
 /* Micro-labels inside entries: Problem / Approach / Root cause / … */
 .case-microlabel {
   font-family: var(--bp-mono);
@@ -516,6 +531,24 @@ html:not(.dark) body {
 .case-btn:hover {
   background: var(--bp-blue);
   color: var(--bp-canvas);
+}
+
+/* =========================================================================
+   Accessibility: visible keyboard focus
+   The UnoCSS/Tailwind reset leaves the UA ring in place, but several surfaces
+   (bp-input, bp-card, bp-tab) repaint their border on :focus in ways that read
+   as decoration rather than focus. Draw one explicit, high-contrast ring for
+   keyboard users on every interactive surface instead.
+   ========================================================================= */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--bp-blue);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* The skip target is programmatically focused, never keyboard-tabbed to. */
+#main-content:focus-visible {
+  outline: none;
 }
 
 /* =========================================================================

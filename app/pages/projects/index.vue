@@ -3,7 +3,6 @@ import { ref, computed } from "vue";
 import { projectsSEO } from "~~/shared/utils/seo/projects";
 import { projects } from "~~/shared/utils/projects";
 import { sitePaths } from "~~/shared/utils/site";
-import { getTagIcon } from "~~/shared/utils/icons";
 
 useHead(projectsSEO);
 
@@ -105,10 +104,12 @@ const tagChipClass = "bp-chip";
             </div>
 
             <!-- Category Filter Tabs -->
-            <div class="category-tabs" flex gap-3 mb-8 flex-wrap>
+            <div class="category-tabs" flex gap-3 mb-8 flex-wrap role="group" aria-label="Filter projects by category">
               <button
                 v-for="(category, index) in categories"
                 :key="category"
+                type="button"
+                :aria-pressed="selectedCategory === category"
                 @click="selectedCategory = category"
                 :class="[
                   categoryChipClass,
@@ -211,11 +212,7 @@ const tagChipClass = "bp-chip";
                     </p>
                     <div class="flex flex-wrap gap-2">
                       <span v-for="tag in project.tags" :key="tag" :class="tagChipClass">
-                        <i
-                          v-if="getTagIcon(tag)"
-                          :class="getTagIcon(tag)!"
-                          class="w-3.5 h-3.5 shrink-0"
-                        />
+                        <TagIcon :tag="tag" />
                         {{ tag }}
                       </span>
                     </div>

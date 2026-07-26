@@ -12,10 +12,8 @@ import {
   publisherId,
   toIsoDateTime,
   uniqueKeywords,
+  websiteId,
 } from './shared'
-
-// This module (and the views that import it) is the only SEO entry that pulls
-// the full blog corpus — keep it out of shared.ts so other pages stay light.
 
 const blogTopicKeywords = [
   'Backend engineering articles',
@@ -33,8 +31,7 @@ const blogTopicKeywords = [
 ]
 
 export const blogsSEO = createSeo({
-  // Mirrors the page h1 so the title carries topic keywords, not just brand.
-  title: 'Backend Engineering Blog • Mohammed Mostafa',
+  title: 'Mohammed Mostafa • Blog',
   description:
     'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
   path: sitePaths.blogs,
@@ -56,6 +53,8 @@ export const blogsSEO = createSeo({
         'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
       url: new URL(sitePaths.blogs, siteUrl).toString(),
       author: { '@id': personId },
+      publisher: { '@id': publisherId },
+      isPartOf: { '@id': websiteId },
       inLanguage: 'en',
       keywords: blogTopicKeywords,
       // Enumerate the posts so crawlers see the collection's members and dates.
@@ -91,10 +90,6 @@ export const blogsSEO = createSeo({
   ],
 })
 
-// Entity SEO: emit each post's named topics as schema.org Things with
-// authoritative sameAs URLs (Wikipedia/spec/docs) so search and AI engines can
-// tie the article to the exact concept — first three are the primary `about`
-// topics, the rest are `mentions`.
 const toSchemaThing = (entity: BlogEntity) => ({
   '@type': 'Thing',
   name: entity.name,

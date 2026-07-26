@@ -20,8 +20,6 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
   const url = new URL(path, siteUrl).toString()
   const ogImage = `${siteUrl}/og/project-${cs.slug}.png`
   const modifiedDate = cs.dateModified ?? cs.datePublished
-  // The matching projects.ts entry carries the richest, hand-curated keyword
-  // list for this product — reuse it instead of duplicating in caseStudies.ts.
   const projectEntry = projects.find((p) => p.slug === cs.slug)
   const projectKeywords = projectEntry?.keywords
     ? Array.isArray(projectEntry.keywords)
@@ -79,6 +77,10 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
         articleSection: 'Engineering Deep Dive',
         wordCount: caseStudyWordCount(cs),
         keywords: cs.keywords,
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', '.case-prose'],
+        },
         isPartOf: { '@id': websiteId },
         about: {
           '@type': 'SoftwareApplication',

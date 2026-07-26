@@ -31,7 +31,7 @@ onUnmounted(() => {
         mx-auto
         flex
         items-center
-        justify-center
+        justify-between
         gap-4
         px-5
         py-3
@@ -50,9 +50,6 @@ onUnmounted(() => {
           </router-link>
           <router-link to="/blogs" class="bp-nav__link" active-class="is-active">
             <span class="bp-nav__code">04</span>Blogs
-          </router-link>
-          <router-link to="/contact" class="bp-nav__link" active-class="is-active">
-            <span class="bp-nav__code">05</span>Contact
           </router-link>
           <Darkmode class="bp-nav__theme" aria-label="Toggle theme" />
         </div>
@@ -118,6 +115,10 @@ onUnmounted(() => {
 .bp-nav__index {
   display: flex;
   align-items: center;
+  /* wrap rather than overflow: the index carries five routes + the theme
+     toggle, which is tight on narrow phones once the codes are hidden. */
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.35rem;
   font-size: 11px;
 }

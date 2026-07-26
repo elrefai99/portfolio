@@ -39,6 +39,12 @@ const quickLinks = [
     to: sitePaths.resume,
     icon: "i-carbon:document",
   },
+  // {
+  //   title: "Contact",
+  //   description: "Send a message, or reach out by email, GitHub, or LinkedIn.",
+  //   to: sitePaths.contact,
+  //   icon: "i-carbon:email",
+  // },
 ] as const;
 
 const requestedPath = computed(() => {

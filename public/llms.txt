@@ -13,7 +13,7 @@ background job processing, and real-time notification infrastructure.
 ## Pages
 
 - [Home](https://elrefai.me/): Introduction, selected work, and experience timeline
-- [Projects](https://elrefai.me/projects): Lesoll, EGYStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord
+- [Projects](https://elrefai.me/projects): Lesoll, EgyStay, SRVJ, KeepITs, 0Gosha, Gen-Import, Elrecord
 - [Blog](https://elrefai.me/blogs): Backend engineering articles
 - [Resume](https://elrefai.me/resume): Experience, skills, and education
 - [Contact](https://elrefai.me/contact): Contact form and links (email, GitHub, LinkedIn, X)
@@ -22,7 +22,7 @@ background job processing, and real-time notification infrastructure.
 ## Project case studies
 
 - [Lesoll](https://elrefai.me/projects/lesoll): Production real-estate classifieds marketplace backend — Express.js, MongoDB, Redis, BullMQ, Paymob payments, Socket.IO messaging, AWS
-- [EGYStay](https://elrefai.me/projects/egystay): Short-term rental booking backend built from the ground up — reservations, availability, pricing, Amazon Payment Services
+- [EgyStay](https://elrefai.me/projects/egystay): Short-term rental booking backend built from the ground up — reservations, availability, pricing, Amazon Payment Services
 - [SRVJ](https://elrefai.me/projects/srvj): Real-time collaborative diagram editor — Yjs CRDT sync server, PASETO-authenticated WebSockets, dual-snapshot persistence, SSE + Redis pub/sub
 
 ## Blog posts

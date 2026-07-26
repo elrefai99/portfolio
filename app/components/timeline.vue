@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// Public-path strings (not imports from ../../public) so Vite doesn't emit a
-// second hashed copy of each logo into dist/assets.
 const lesollLogo = "/projects/lesoll-logo.png";
 const modernAcademyLogo = "/projects/modern-academy.png";
 
@@ -10,8 +8,10 @@ const timeline = [
     role: "Software Engineer II",
     period: "2023 - 2026",
     logo: lesollLogo,
+    logoWidth: 96,
+    logoHeight: 96,
     desc: [
-      "Leading backend development and architecture decisions for Lesoll and EGYStay, including system design, technology choices, and production operations.",
+      "Leading backend development and architecture decisions for Lesoll and EgyStay, including system design, technology choices, and production operations.",
       "Built and maintained payment integrations with Paymob and Amazon Payment Services, handling around 10K transactions per month with webhook validation, idempotency, and reconciliation processes.",
       "Designed and implemented asynchronous workflows using BullMQ and Redis for notifications, emails, SMS, OTPs, and other background jobs.",
       "Worked on several core business modules including booking, cancellation policies, CoHost management, reporting, employee tools, and internal traffic intelligence systems built with Puppeteer.",
@@ -26,6 +26,8 @@ const timeline = [
     role: "B.S. Computer Science",
     period: "2018 - 2022",
     logo: modernAcademyLogo,
+    logoWidth: 96,
+    logoHeight: 43,
     desc: "Completed B.Sc. in Computing Web applications.",
     color: "bg-yellow-500 dark:bg-yellow-400",
   },
@@ -94,8 +96,8 @@ const timeline = [
                     v-if="item.logo"
                     :src="item.logo"
                     :alt="`${item.company} logo`"
-                    width="24"
-                    height="24"
+                    :width="item.logoWidth"
+                    :height="item.logoHeight"
                     loading="lazy"
                     decoding="async"
                     class="w-6 h-6 rounded-md object-contain shrink-0"
