@@ -73,6 +73,7 @@ export default defineNuxtConfig({
         sitePaths.resume,
         '/sitemap.xml',
         '/rss.xml',
+        '/llms.txt',
         ...caseStudyRoutes,
         ...blogRoutes,
         ...ogRoutes,

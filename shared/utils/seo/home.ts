@@ -13,7 +13,7 @@ import {
 export const homeSEO = createSeo({
   title: 'Mohammed Mostafa • Software Engineer',
   description:
-    'Elrefai (Mohammed Mostafa, elrefai99) — Software Engineer at Lesoll in Cairo, Egypt. Backend APIs, payments & cloud systems with Node.js, TypeScript and AWS.',
+    'Backend engineer building production Node.js and TypeScript systems — payment webhooks, BullMQ queues, CRDT real-time sync, and Kubernetes on AWS. Deep dives from real production work.',
   path: sitePaths.home,
   keywords: [...brandKeywords, ...roleLocationKeywords, ...skillKeywords],
   image: `${siteUrl}/og/page-home.png`,

@@ -12,7 +12,7 @@ import {
 export const resumeSEO = createSeo({
   title: 'Mohammed Mostafa • Resume',
   description:
-    'Resume of Mohammed Mostafa — Software Engineer: Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, Docker, and AWS.',
+    'Software Engineer II at Lesoll. Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, BullMQ, Docker, Kubernetes, and AWS.',
   path: sitePaths.resume,
   keywords: [
     ...brandKeywords,

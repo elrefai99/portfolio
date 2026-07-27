@@ -7,6 +7,17 @@
     </div>
 
     <div class="bp-footer__inner">
+      <!-- Sitewide footer nav: every page links to every other page, which is
+           how internal link equity gets distributed evenly. /resume in
+           particular used to have a single inbound link from the homepage. -->
+      <nav class="bp-mono bp-footer__nav" aria-label="Footer">
+        <router-link to="/">Home</router-link>
+        <router-link to="/projects">Projects</router-link>
+        <router-link to="/blogs">Blog</router-link>
+        <router-link to="/resume">Resume</router-link>
+        <a href="/rss.xml">RSS</a>
+      </nav>
+
       <!-- Social Links -->
       <div flex gap-4 justify-center mb-8>
         <a

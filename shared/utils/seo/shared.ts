@@ -2,7 +2,12 @@ import { siteUrl, sitePaths } from '../site'
 
 export const author = 'elrefai99'
 export const siteName = 'Mohammed Mostafa Portfolio'
-export const defaultImage = `${siteUrl}/og-image.png`
+// The generated home card, not the hand-made public/og-image.png. That file is
+// 277KB — 92% of the ~300KB ceiling above which WhatsApp silently drops link
+// previews — while the rendered cards come in around 70KB with the same
+// branding. public/og-image.png stays on disk so previously shared links keep
+// resolving; nothing points at it any more.
+export const defaultImage = `${siteUrl}/og/page-home.png`
 
 export const brandKeywords = [
   'Mohammed Mostafa',
@@ -95,43 +100,47 @@ export const personSchema = {
     addressLocality: 'Cairo',
     addressCountry: 'EG',
   },
+  // The technologies that have a Knowledge Graph node are declared as linked
+  // Things rather than bare strings. A bare string is an unresolvable claim
+  // ("knows about something called Redis"); a `sameAs` pointing at the
+  // canonical entity is a disambiguated one, and disambiguated claims are what
+  // entity understanding can actually act on. The same technique is already
+  // used for per-post `entities[]` in blogs.ts.
   knowsAbout: [
+    { '@type': 'Thing', name: 'Node.js', sameAs: ['https://en.wikipedia.org/wiki/Node.js', 'https://nodejs.org'] },
+    { '@type': 'Thing', name: 'TypeScript', sameAs: ['https://en.wikipedia.org/wiki/TypeScript', 'https://www.typescriptlang.org'] },
+    { '@type': 'Thing', name: 'Express.js', sameAs: ['https://en.wikipedia.org/wiki/Express.js', 'https://expressjs.com'] },
+    { '@type': 'Thing', name: 'MongoDB', sameAs: ['https://en.wikipedia.org/wiki/MongoDB', 'https://www.mongodb.com'] },
+    { '@type': 'Thing', name: 'PostgreSQL', sameAs: ['https://en.wikipedia.org/wiki/PostgreSQL', 'https://www.postgresql.org'] },
+    { '@type': 'Thing', name: 'Redis', sameAs: ['https://en.wikipedia.org/wiki/Redis', 'https://redis.io'] },
+    { '@type': 'Thing', name: 'Docker', sameAs: ['https://en.wikipedia.org/wiki/Docker_(software)', 'https://www.docker.com'] },
+    { '@type': 'Thing', name: 'Kubernetes', sameAs: ['https://en.wikipedia.org/wiki/Kubernetes', 'https://kubernetes.io'] },
+    { '@type': 'Thing', name: 'Amazon Web Services', sameAs: ['https://en.wikipedia.org/wiki/Amazon_Web_Services', 'https://aws.amazon.com'] },
+    { '@type': 'Thing', name: 'Nginx', sameAs: ['https://en.wikipedia.org/wiki/Nginx', 'https://nginx.org'] },
+    { '@type': 'Thing', name: 'WebSocket', sameAs: 'https://en.wikipedia.org/wiki/WebSocket' },
+    { '@type': 'Thing', name: 'Server-sent events', sameAs: 'https://en.wikipedia.org/wiki/Server-sent_events' },
+    { '@type': 'Thing', name: 'Conflict-free replicated data type', sameAs: 'https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type' },
+    { '@type': 'Thing', name: 'Distributed computing', sameAs: 'https://en.wikipedia.org/wiki/Distributed_computing' },
+    { '@type': 'Thing', name: 'Representational state transfer', sameAs: 'https://en.wikipedia.org/wiki/REST' },
+    { '@type': 'Thing', name: 'Message queue', sameAs: 'https://en.wikipedia.org/wiki/Message_queue' },
+    { '@type': 'Thing', name: 'CI/CD', sameAs: 'https://en.wikipedia.org/wiki/CI/CD' },
+    { '@type': 'Thing', name: 'Role-based access control', sameAs: 'https://en.wikipedia.org/wiki/Role-based_access_control' },
+    { '@type': 'Thing', name: 'Authentication', sameAs: 'https://en.wikipedia.org/wiki/Authentication' },
+    { '@type': 'Thing', name: 'Cache (computing)', sameAs: 'https://en.wikipedia.org/wiki/Cache_(computing)' },
+    { '@type': 'Thing', name: 'PASETO', sameAs: ['https://paseto.io', 'https://github.com/paseto-standard/paseto-spec'] },
+    { '@type': 'Thing', name: 'Yjs', sameAs: 'https://github.com/yjs/yjs' },
+    { '@type': 'Thing', name: 'BullMQ', sameAs: 'https://docs.bullmq.io' },
+    { '@type': 'Thing', name: 'Socket.IO', sameAs: 'https://socket.io' },
+    { '@type': 'Thing', name: 'GitHub Actions', sameAs: 'https://github.com/features/actions' },
+    // No canonical entity to point at — these stay as plain strings.
     'Backend Engineering',
     'Software Architecture',
-    'Distributed Systems',
     'Real-Time Systems',
-    'Cloud Computing',
     'System Design',
-    'Node.js',
-    'TypeScript',
-    'Express.js',
-    'REST APIs',
-    'MongoDB',
-    'PostgreSQL',
-    'Redis',
-    'BullMQ',
-    'Socket.IO',
-    'Docker',
-    'Kubernetes',
-    'AWS',
-    'CI/CD',
-    'GitHub Actions',
-    'NGINX',
     'Payment Gateway Integration',
-    'Real-Time Collaboration',
-    'CRDT',
-    'Yjs',
-    'Server-Sent Events',
-    'WebSockets',
-    'PASETO',
-    'Authentication',
-    'Authorization',
-    'RBAC',
-    'Caching',
     'Background Job Processing',
-    'Message Queues',
     'Performance Optimization',
-    'Scalable Backend Systems'
+    'Scalable Backend Systems',
   ],
   knowsLanguage: [
     { '@type': 'Language', name: 'English' },
@@ -205,8 +214,6 @@ export const uniqueKeywords = (keywords: string[]) => [
   ...new Set(keywords.map(normalizeKeyword).filter(Boolean)),
 ]
 
-const MAX_KEYWORDS = 25
-
 export const createSeo = ({
   title,
   description,
@@ -256,9 +263,6 @@ export const createSeo = ({
       { name: 'author', content: author },
       { name: 'description', content: description },
       { name: 'robots', content: robots },
-      ...(keywords.length
-        ? [{ name: 'keywords', content: uniqueKeywords(keywords).slice(0, MAX_KEYWORDS).join(', ') }]
-        : []),
       { property: 'og:type', content: ogType },
       { property: 'og:url', content: url },
       { property: 'og:site_name', content: siteName },

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { getBlogBySlug, type BlogPost } from '~~/shared/utils/blogs'
 import { caseStudies } from '~~/shared/utils/caseStudies'
 import { createBlogPostSEO } from '~~/shared/utils/seo/blog'
+import { slugifyHeading } from '~~/shared/utils/headingIds'
 
 const route = useRoute()
 
@@ -113,8 +114,39 @@ const tagClass = 'bp-chip'
             </div>
           </header>
 
+          <TableOfContents :blocks="blog.blocks" />
+
           <section :class="`${panelClass} p-6 md:p-8`">
             <ContentBlocks :blocks="blog.blocks" />
+          </section>
+
+          <!-- FAQ: rendered visibly because the FAQPage JSON-LD describes it.
+               Structured data for content that is not on the page is a policy
+               violation, so these two must always ship together. -->
+          <section
+            v-if="blog.faq?.length"
+            :class="`${panelClass} p-6 md:p-8`"
+            aria-labelledby="faq-heading"
+          >
+            <h2
+              id="faq-heading"
+              class="scroll-mt-24 text-2xl font-semibold text-black dark:text-gray-300"
+            >
+              Frequently asked questions
+            </h2>
+            <dl class="mt-6 space-y-6">
+              <div v-for="entry in blog.faq" :key="entry.question">
+                <dt
+                  :id="`faq-${slugifyHeading(entry.question)}`"
+                  class="scroll-mt-24 text-lg font-semibold text-black dark:text-gray-300"
+                >
+                  {{ entry.question }}
+                </dt>
+                <dd class="mt-2 text-base leading-8 text-black dark:text-gray-400">
+                  {{ entry.answer }}
+                </dd>
+              </div>
+            </dl>
           </section>
 
           <!-- Related posts: keyword-rich internal links between articles -->

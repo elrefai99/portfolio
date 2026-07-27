@@ -24,6 +24,39 @@ export type BlogEntity = {
   sameAs: string | string[]
 }
 
+/**
+ * Question/answer pairs rendered visibly at the foot of the post and emitted as
+ * FAQPage JSON-LD.
+ *
+ * People Also Ask boxes and AI Overviews are assembled from question → concise
+ * answer pairs, and extraction is far more reliable when the answer is
+ * self-contained: no "as described above", no pronoun whose referent lives three
+ * paragraphs up. Keep answers under ~60 words and restate the subject noun.
+ *
+ * The markup is only ever emitted alongside the visible list — FAQ structured
+ * data describing content that is not on the page is a policy violation.
+ */
+export type BlogFaq = {
+  question: string
+  answer: string
+}
+
+export type BlogHowToStep = {
+  name: string
+  text: string
+  /** Fragment id of the heading this step maps to; defaults to a slug of `name`. */
+  anchor?: string
+}
+
+export type BlogHowTo = {
+  name: string
+  /** ISO 8601 duration, e.g. 'PT45M'. */
+  totalTime: string
+  tool?: string[]
+  supply?: string[]
+  steps: BlogHowToStep[]
+}
+
 export type BlogPost = {
   id: number
   slug: string
@@ -40,6 +73,12 @@ export type BlogPost = {
   relatedSlugs?: string[]
   blocks: BlogBlock[]
   ogImage?: string
+  faq?: BlogFaq[]
+  howTo?: BlogHowTo
+  /** TechArticle audience hint: how much background a reader needs. */
+  proficiencyLevel?: 'Beginner' | 'Expert'
+  /** TechArticle prerequisites, e.g. ['Node.js 20+', 'Redis 7', 'An AWS account']. */
+  dependencies?: string[]
 }
 
 export const blogs: BlogPost[] = [
@@ -64,6 +103,33 @@ export const blogs: BlogPost[] = [
   //     { name: 'Tarjan\'s strongly connected components algorithm', sameAs: 'https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm' },
   //   ],
   //   relatedSlugs: ['nodejs-pino-s3-log-archiving-cron', 'jwt-vs-paseto-tokens'],
+  //   faq: [
+  //     {
+  //       question: 'Does a passing tsc build mean my imports are safe?',
+  //       answer:
+  //         'No. The type checker resolves names across the whole module graph and does not care what order modules execute in, because types do not run. Module evaluation is a linear order, and a cycle can leave a binding undefined at the moment another module needs it.',
+  //     },
+  //     {
+  //       question: 'What causes \'Class extends value undefined is not a constructor or null\'?',
+  //       answer:
+  //         'A circular import evaluated in the wrong order. In CommonJS a module caught mid-cycle returns whatever it has exported so far, which can be an empty object, so the base class is undefined at exactly the instant the extends clause needs a constructor.',
+  //     },
+  //     {
+  //       question: 'Are barrel files the cause of import cycles?',
+  //       answer:
+  //         'Barrels do not create the cycle, they hide it. Routing every import through one re-export file makes two modules that never reference each other directly look like neighbours, so a cycle that would be obvious in the direct-import graph becomes invisible.',
+  //     },
+  //     {
+  //       question: 'Is every circular import a bug?',
+  //       answer:
+  //         'No, which is why a yes-or-no answer is not useful. A cycle only breaks when a binding is read eagerly during module evaluation, such as in an extends clause or a top-level call. A cycle whose references are all deferred inside function bodies runs fine.',
+  //     },
+  //     {
+  //       question: 'How do you detect unsafe import cycles automatically?',
+  //       answer:
+  //         'Model the graph the way the runtime does: distinguish eager reads from deferred ones, contract barrel re-exports back to their real sources, then find strongly connected components with Tarjan\'s algorithm and report only the cycles containing an eager edge.',
+  //     },
+  //   ],
   //   blocks: [
   //     {
   //       type: 'paragraph',
@@ -280,6 +346,64 @@ export const blogs: BlogPost[] = [
       { name: 'OpenTelemetry', sameAs: ['https://en.wikipedia.org/wiki/OpenTelemetry', 'https://opentelemetry.io'] },
     ],
     relatedSlugs: ['aws-ec2-s3-kubernetes-production-deployments', 'server-sent-events-real-time-notifications-srvj'],
+    faq: [
+      {
+        question: 'Why use Pino instead of Winston for Node.js logging?',
+        answer:
+          'Pino writes newline-delimited JSON with very little per-log overhead, and structured JSON is what makes logs queryable later. The output format is also the archive format, so no reprocessing step sits between writing a log and searching it months afterwards.',
+      },
+      {
+        question: 'How do you rotate a log file without losing writes?',
+        answer:
+          'Rename the current file and have the logger reopen its file descriptor. Renaming is atomic and the already-open descriptor keeps pointing at the renamed inode, so in-flight writes land safely; the reopen then starts a fresh file. Deleting or truncating a file the logger still holds loses data.',
+      },
+      {
+        question: 'How do you verify a log archive actually reached S3?',
+        answer:
+          'Compare the checksum of the uploaded object against the local gzip before deleting anything. Delete the local copy only after S3 confirms the object, so a failed or truncated upload leaves the only remaining copy on disk instead of nowhere.',
+      },
+      {
+        question: 'How do you enforce log retention on S3?',
+        answer:
+          'Use an S3 Lifecycle rule rather than application code. Lifecycle expiry runs inside S3 whether or not your service is healthy, which is exactly the property you want from the mechanism that stops you paying to store logs forever.',
+      },
+      {
+        question: 'What should never be written to application logs?',
+        answer:
+          'Credentials, tokens, full payment payloads, and personal data. Redaction has to happen at the logger, not downstream, because once a secret is written to disk it is also in every archive, every backup, and every copy anyone has pulled since.',
+      },
+    ],
+    howTo: {
+      name: 'Set up automated Node.js log archiving with Pino, cron, and AWS S3',
+      totalTime: 'PT90M',
+      tool: ['Node.js', 'Pino', 'AWS S3', 'cron'],
+      steps: [
+        {
+          name: 'Configure the logging module',
+          text:
+            'Set up Pino to write newline-delimited JSON to a file on disk, with redaction configured at the logger so secrets never reach the archive.',
+          anchor: 'the-logging-module',
+        },
+        {
+          name: 'Rotate the log file daily',
+          text:
+            'Run a UTC cron job that renames the current log file and has the logger reopen its file descriptor, so in-flight writes are never lost.',
+          anchor: 'daily-log-rotation',
+        },
+        {
+          name: 'Upload the archive to S3',
+          text:
+            'Gzip the rotated file, upload it to S3, verify the stored object against the local checksum, and only then delete the local copy.',
+          anchor: 'uploading-archives-to-s3',
+        },
+        {
+          name: 'Enforce retention with S3 Lifecycle',
+          text:
+            'Add an S3 Lifecycle rule so archives expire inside S3 on a fixed schedule, independently of whether the application is running.',
+          anchor: 'automatic-retention-with-s3-lifecycle',
+        },
+      ],
+    },
     blocks: [
       {
         type: 'paragraph',
@@ -977,6 +1101,70 @@ export const blogs: BlogPost[] = [
       { name: 'NGINX', sameAs: 'https://en.wikipedia.org/wiki/Nginx' },
     ],
     relatedSlugs: ['nodejs-pino-s3-log-archiving-cron', 'crdts-yjs-collaborative-editing-srvj', 'server-sent-events-real-time-notifications-srvj'],
+    faq: [
+      {
+        question: 'Should a queue worker use RollingUpdate or Recreate?',
+        answer:
+          'Recreate. During an API rollout you want old and new pods overlapping so requests keep being served. During a worker rollout that overlap means two workers competing for the same queue jobs mid-deploy, which is how you get duplicated work at exactly the moment you are changing code.',
+      },
+      {
+        question: 'How much termination grace does a Node.js queue worker need?',
+        answer:
+          'More than an API pod. Finishing the HTTP request you are serving takes a moment; finishing the job you are holding can take much longer. In this deployment the API gets 30 seconds and the worker gets 60.',
+      },
+      {
+        question: 'Should the API and the worker autoscale on the same metric?',
+        answer:
+          'No, because they are driven by different pressure. The API scales on CPU and memory as traffic rises. A worker\'s load is queue depth, not request rate, so scaling it on CPU adds replicas at the wrong moments and leaves a deep backlog untouched.',
+      },
+      {
+        question: 'Is Kubernetes worth it for a single Node.js application?',
+        answer:
+          'Only once you are paying for what it gives you: real rollouts, per-workload scaling, and separate lifecycles for API and worker processes. Before that, one EC2 box with NGINX and a process manager is less machinery and less to be woken up by.',
+      },
+      {
+        question: 'How should file uploads be handled on AWS?',
+        answer:
+          'Presign the upload so the client sends bytes straight to S3 and your application never proxies the file. The server\'s job is to authorise the upload and record the resulting object key, which keeps large transfers off your request path entirely.',
+      },
+    ],
+    howTo: {
+      name: 'Migrate a Node.js application from EC2 to Kubernetes on AWS',
+      totalTime: 'PT8H',
+      tool: ['Node.js', 'Docker', 'Kubernetes', 'kustomize', 'AWS EC2', 'AWS S3'],
+      steps: [
+        {
+          name: 'Start from the single EC2 box',
+          text:
+            'Establish the baseline deployment: NGINX in front, the Node.js process under a process manager, on one EC2 instance.',
+          anchor: 'act-one-one-ec2-box-nginx-and-pm2',
+        },
+        {
+          name: 'Containerise the application',
+          text:
+            'Move the same workload into Docker on the same box, so the runtime is reproducible before the orchestration changes.',
+          anchor: 'act-two-same-box-but-docker',
+        },
+        {
+          name: 'Move uploads to presigned S3',
+          text:
+            'Have clients upload directly to S3 with presigned URLs so large transfers never pass through the application.',
+          anchor: 'the-s3-pattern-that-never-changed-presigned-uploads',
+        },
+        {
+          name: 'Split API and worker workloads',
+          text:
+            'Deploy the API and the queue worker as separate Kubernetes workloads with their own update strategies, grace periods, and scaling rules.',
+          anchor: 'act-three-srvjs-shape-and-the-case-for-kubernetes',
+        },
+        {
+          name: 'Apply the manifests',
+          text:
+            'Deploy with kustomize overlays, ingress, and an HPA on the API, and confirm the rollout behaves as intended.',
+          anchor: 'the-deploy-one-apply-and-an-honest-gap',
+        },
+      ],
+    },
     blocks: [
       {
         type: 'paragraph',
@@ -1405,6 +1593,33 @@ export const blogs: BlogPost[] = [
       { name: 'WebSocket', sameAs: 'https://en.wikipedia.org/wiki/WebSocket' },
     ],
     relatedSlugs: ['server-sent-events-real-time-notifications-srvj', 'aws-ec2-s3-kubernetes-production-deployments'],
+    faq: [
+      {
+        question: 'What is a CRDT?',
+        answer:
+          'A conflict-free replicated data type is a data structure whose merge operation is commutative, associative, and idempotent. Replicas that receive the same set of updates in any order converge on the same state, which means merging never needs a central arbiter or hand-written conflict resolution.',
+      },
+      {
+        question: 'Do CRDTs need a server?',
+        answer:
+          'Not for correctness, only for delivery and persistence. The merge is peer-to-peer by nature, but a production deployment still wants a server to relay updates between clients that are never online at the same time, to authenticate them, and to store the authoritative state.',
+      },
+      {
+        question: 'Is Yjs better than operational transformation?',
+        answer:
+          'Yjs shifts the complexity from the server to the data structure. Operational transformation needs a central server to transform operations against each other correctly, whereas a CRDT merges anywhere. The trade-off is metadata: CRDTs carry per-character bookkeeping that OT does not.',
+      },
+      {
+        question: 'How do you authenticate a Yjs WebSocket connection?',
+        answer:
+          'Authenticate during the upgrade handshake, before any sync message is processed, and bind the resulting identity to the room the socket joins. In SRVJ that is a PASETO v4 token checked at connection time, with project-level role checks deciding which documents the socket may sync.',
+      },
+      {
+        question: 'How should Yjs documents be persisted?',
+        answer:
+          'Store the authoritative Yjs binary update as the source of truth, because it is the only lossless representation. A denormalised JSON projection alongside it makes ordinary API reads and queries cheap without ever being the thing you restore from.',
+      },
+    ],
     blocks: [
       {
         type: 'paragraph',
@@ -1782,6 +1997,33 @@ export const blogs: BlogPost[] = [
       { name: 'PostgreSQL', sameAs: 'https://en.wikipedia.org/wiki/PostgreSQL' },
     ],
     relatedSlugs: ['crdts-yjs-collaborative-editing-srvj', 'aws-ec2-s3-kubernetes-production-deployments'],
+    faq: [
+      {
+        question: 'Should I use SSE or WebSockets for notifications?',
+        answer:
+          'Use SSE when the data flows one way, from server to client, which is what notifications are. SSE runs over plain HTTP, reconnects automatically, and needs no separate protocol upgrade. Reach for WebSockets when the client also needs to push, as in chat or collaborative editing.',
+      },
+      {
+        question: 'How do you scale SSE across multiple server processes?',
+        answer:
+          'An SSE connection is pinned to the single process holding it, so a notification created on another process has to be routed there. Redis pub/sub does that fan-out: every process subscribes, the publishing process broadcasts, and whichever process holds that user\'s connection writes to the stream.',
+      },
+      {
+        question: 'Does SSE work behind NGINX?',
+        answer:
+          'Only once proxy buffering is disabled and the read timeout is raised. With default settings NGINX buffers the response and holds events back until the buffer fills, which makes a working SSE endpoint look broken, then closes the idle connection.',
+      },
+      {
+        question: 'Redis pub/sub or Redis Streams for SSE fan-out?',
+        answer:
+          'Pub/sub is fire-and-forget: a message published while a process is disconnected is gone. That is acceptable when the durable copy of the notification already lives in your database and the stream is only a delivery accelerator. Choose Streams when the transport itself must not lose messages.',
+      },
+      {
+        question: 'How do you avoid duplicate notifications after a reconnect?',
+        answer:
+          'Make the worker that writes notifications idempotent, keyed on the event that caused it, so a retried job updates the existing row instead of inserting a second one. The client then re-reads from the database on reconnect rather than replaying the stream.',
+      },
+    ],
     blocks: [
       {
         type: 'paragraph',
@@ -2280,6 +2522,33 @@ export const blogs: BlogPost[] = [
       { name: 'Idempotence', sameAs: 'https://en.wikipedia.org/wiki/Idempotence' },
     ],
     relatedSlugs: ['jwt-vs-paseto-tokens'],
+    faq: [
+      {
+        question: 'How do you verify a Paymob webhook signature?',
+        answer:
+          'Compute an HMAC over the specific fields Paymob concatenates, in the documented order, using your HMAC secret, then compare it against the signature on the request in constant time. Do this before any parsing, database work, or business logic, and reject the request outright if it does not match.',
+      },
+      {
+        question: 'Why do payment webhooks fire more than once?',
+        answer:
+          'Because delivery is at-least-once by design. The provider retries whenever it does not receive a timely success response, including when your handler actually succeeded but the acknowledgement was lost. Any handler a payment provider can reach will eventually be called twice.',
+      },
+      {
+        question: 'How do you make a payment webhook idempotent?',
+        answer:
+          'Key the effect on something the provider guarantees is stable, such as the transaction id, and enforce uniqueness in the database rather than in application code. A second delivery then collides with the existing record and becomes a no-op instead of a duplicate charge or a double credit.',
+      },
+      {
+        question: 'Should payment state live in a status column?',
+        answer:
+          'Treat payments as an explicit state machine with defined transitions rather than a free-form status string. A state machine makes illegal transitions impossible to represent, which matters because webhooks arrive out of order and a later event can reach you before an earlier one.',
+      },
+      {
+        question: 'Why do you still need reconciliation if webhooks work?',
+        answer:
+          'Because webhooks are a notification channel, not a source of truth. Deliveries get dropped, providers have outages, and your own handler can fail after the money moved. A scheduled reconciliation job compares your ledger against the provider\'s record and catches everything the webhook path missed.',
+      },
+    ],
     blocks: [
       {
         type: 'paragraph',
@@ -2553,6 +2822,33 @@ export const blogs: BlogPost[] = [
       { name: 'Authenticated encryption', sameAs: 'https://en.wikipedia.org/wiki/Authenticated_encryption' },
     ],
     relatedSlugs: ['paymob-amazon-payment-services-integration'],
+    faq: [
+      {
+        question: 'Is PASETO more secure than JWT?',
+        answer:
+          'PASETO is safer by construction rather than by discipline. It removes the algorithm header entirely, so the alg:none and RS256-to-HS256 confusion attacks that plague JWT are not merely discouraged, they are unrepresentable. JWT can be made equally safe, but only if every verifier pins the algorithm itself.',
+      },
+      {
+        question: 'Should I use a JWT as a payment token?',
+        answer:
+          'No. A JWT is signed, not encrypted, so anyone holding it can read every claim inside. Payment-related tokens should be encrypted, which means PASETO v4.local or an opaque random identifier that carries no meaning outside your own database.',
+      },
+      {
+        question: 'Can you revoke a JWT?',
+        answer:
+          'Not by the token format alone. Neither JWT nor PASETO solves revocation: both are self-contained and valid until they expire. Revocation requires server-side state, such as a denylist keyed by token id or a short expiry paired with an opaque refresh token you can delete.',
+      },
+      {
+        question: 'What is the alg:none attack?',
+        answer:
+          'The JWT header declares which algorithm signed the token, and a verifier that trusts that field will accept a token claiming alg:none with an empty signature. The fix is to pin the expected algorithm in the verifier and ignore the header\'s claim entirely.',
+      },
+      {
+        question: 'Should refresh tokens be JWTs?',
+        answer:
+          'No. Refresh tokens should be opaque random strings stored server-side. They are long-lived and must be revocable on demand, which is exactly what a self-contained token format cannot give you. The same applies to API keys, email verification, and password reset tokens.',
+      },
+    ],
     blocks: [
       {
         type: 'paragraph',

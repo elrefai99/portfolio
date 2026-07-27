@@ -40,11 +40,6 @@ const chartFailed = ref(false);
               dark:text-gray-400
               font-light
             ></span>
-            <span
-              class="mt-3 block text-xl font-semibold tracking-tight text-gray-600 dark:text-gray-400 md:text-2xl"
-            >
-              Backend Software Engineer — APIs, Payments &amp; Cloud Systems
-            </span>
           </h1>
 
           <p

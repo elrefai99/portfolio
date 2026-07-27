@@ -34,22 +34,17 @@ export const createCaseStudySEO = (cs: CaseStudy) => {
     image: ogImage,
     ogType: 'article',
     imageAlt: `${cs.name} • Backend Engineering Deep Dive`,
+    // Real terms only — see the note in seo/blog.ts about the generated
+    // `${name} deep dive` / `${name} case study` permutations that were here.
     keywords: uniqueKeywords([
       cs.name,
-      `${cs.name} deep dive`,
       `${cs.name} case study`,
-      `${cs.name} backend`,
-      `${cs.name} architecture`,
-      `${cs.name} engineering`,
       ...brandKeywords,
       ...projectKeywords,
       ...cs.keywords,
       ...cs.stack,
-      'Backend engineering deep dive',
       'Backend engineering case study',
       'Production backend architecture',
-      'Node.js case study',
-      'Real-world backend engineering',
     ]),
     extraMeta: [
       { property: 'article:published_time', content: toIsoDateTime(cs.datePublished) },

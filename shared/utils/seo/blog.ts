@@ -1,5 +1,6 @@
 import { sitePaths, siteUrl } from '../site'
 import { blogs, blogReadMinutes, blogWordCount, type BlogEntity, type BlogPost } from '../blogs'
+import { slugifyHeading } from '../headingIds'
 import {
   brandKeywords,
   createBreadcrumb,
@@ -40,7 +41,7 @@ const blogTopicKeywords = [
 export const blogsSEO = createSeo({
   title: 'Mohammed Mostafa • Blog',
   description:
-    'Backend engineering notes by Mohammed Mostafa on Node.js, TypeScript, Express.js, API architecture, queues, Redis, logging, AWS, and production systems.',
+    'Production backend engineering write-ups by Mohammed Mostafa: queues, payments, real-time systems, authentication, observability, and AWS — with the code and the numbers.',
   path: sitePaths.blogs,
   keywords: [
     ...brandKeywords,
@@ -113,23 +114,17 @@ export const createBlogPostSEO = (blog: BlogPost) => {
   const ogImage = blog.ogImage
     ? new URL(blog.ogImage, siteUrl).toString()
     : defaultImage
+  // Real terms only. The generated permutations that used to live here
+  // (`${tag} blog`, `${tag} article`, `${title} elrefai99`) were a
+  // keyword-stuffing pattern with no upside: these keywords now feed the
+  // JSON-LD, where they are read for entity association, and a machine-made
+  // list of near-duplicates helps nothing there either.
   const keywords = uniqueKeywords([
     blog.title,
     blog.category,
     ...brandKeywords,
-    `${blog.title} Mohammed Mostafa`,
-    `${blog.title} elrefai99`,
-    `${blog.category} blog`,
-    `${blog.category} article`,
     'Backend engineering blog',
-    'Node.js security',
-    'TypeScript security',
-    'API security',
-    'Authentication tokens',
-    'Payment tokens',
     ...blog.tags,
-    ...blog.tags.map((tag) => `${tag} blog`),
-    ...blog.tags.map((tag) => `${tag} article`),
   ])
 
   return createSeo({
@@ -151,11 +146,17 @@ export const createBlogPostSEO = (blog: BlogPost) => {
     schema: [
       {
         '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
+        // Dual-typed on purpose. These are technical articles that happen to
+        // live on a blog: TechArticle is the type Google's developer-content
+        // understanding keys on, and it carries proficiencyLevel/dependencies,
+        // which BlogPosting has no equivalent for.
+        '@type': ['BlogPosting', 'TechArticle'],
         mainEntityOfPage: {
           '@type': 'WebPage',
           '@id': url,
         },
+        proficiencyLevel: blog.proficiencyLevel ?? 'Expert',
+        ...(blog.dependencies?.length ? { dependencies: blog.dependencies.join(', ') } : {}),
         headline: blog.title,
         name: blog.title,
         description: blog.excerpt,
@@ -185,6 +186,47 @@ export const createBlogPostSEO = (blog: BlogPost) => {
           }
           : {}),
       },
+      // FAQPage / HowTo are emitted only when the post actually carries the
+      // content — the page renders the same questions and steps visibly, which
+      // is what the structured-data policy requires.
+      ...(blog.faq?.length
+        ? [{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          '@id': `${url}#faq`,
+          isPartOf: { '@id': url },
+          inLanguage: 'en',
+          mainEntity: blog.faq.map((entry) => ({
+            '@type': 'Question',
+            name: entry.question,
+            acceptedAnswer: { '@type': 'Answer', text: entry.answer },
+          })),
+        }]
+        : []),
+      ...(blog.howTo
+        ? [{
+          '@context': 'https://schema.org',
+          '@type': 'HowTo',
+          '@id': `${url}#howto`,
+          name: blog.howTo.name,
+          description: blog.metaDescription ?? blog.excerpt,
+          totalTime: blog.howTo.totalTime,
+          inLanguage: 'en',
+          ...(blog.howTo.tool?.length
+            ? { tool: blog.howTo.tool.map((name) => ({ '@type': 'HowToTool', name })) }
+            : {}),
+          ...(blog.howTo.supply?.length
+            ? { supply: blog.howTo.supply.map((name) => ({ '@type': 'HowToSupply', name })) }
+            : {}),
+          step: blog.howTo.steps.map((step, index) => ({
+            '@type': 'HowToStep',
+            position: index + 1,
+            name: step.name,
+            text: step.text,
+            url: `${url}#${step.anchor ?? slugifyHeading(step.name)}`,
+          })),
+        }]
+        : []),
       personSchema,
       organizationSchema,
       createBreadcrumb([

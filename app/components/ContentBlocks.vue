@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import type { BlogBlock } from "~~/shared/utils/blogs";
+import { headingIds } from "~~/shared/utils/headingIds";
 
 // Shared renderer for the block content model (paragraph / heading / list / code /
 // mermaid) used by both blog posts and project case studies. Headings render as
 // <h2> so pages keep a single <h1> above this component.
-defineProps<{
+const props = defineProps<{
   blocks: BlogBlock[];
 }>();
+
+// Fragment ids so each section is separately addressable — see headingIds.ts
+// for why. Indexed by block position; TableOfContents.vue derives the same ids
+// from the same helper.
+const ids = computed(() => headingIds(props.blocks));
+
+const anchorClass =
+  "ml-2 align-middle text-[0.7em] font-normal opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-60";
 
 const inlineCodeClass =
   "mx-0.5 rounded-md border border-red-500/25 bg-red-500/8 px-1.5 py-0.5 font-mono text-[0.85em] text-red-600 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400";
@@ -203,13 +212,21 @@ const isMermaidCode = (block: BlogBlock) =>
       <component
         :is="block.level === 3 ? 'h3' : 'h2'"
         v-else-if="block.type === 'heading'"
+        :id="ids[index]"
+        class="group scroll-mt-24"
         :class="
           block.level === 3
             ? 'pt-1 text-xl font-semibold text-black dark:text-gray-300'
             : 'pt-2 text-2xl font-semibold text-black dark:text-gray-300'
         "
       >
-        {{ block.text }}
+        {{ block.text
+        }}<a
+          :href="`#${ids[index]}`"
+          :class="anchorClass"
+          :aria-label="`Link to section: ${block.text}`"
+          >#</a
+        >
       </component>
 
       <ul

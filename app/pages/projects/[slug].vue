@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getCaseStudyBySlug, type CaseBuiltItem, type CaseIncident } from '~~/shared/utils/caseStudies'
 import { createCaseStudySEO } from '~~/shared/utils/seo/case-study'
 import { getBlogBySlug } from '~~/shared/utils/blogs'
+import { slugifyHeading } from '~~/shared/utils/headingIds'
 
 const route = useRoute()
 
@@ -40,6 +41,13 @@ const sections = computed(() => {
 
 const sectionNumber = (id: string) =>
   String(sections.value.findIndex((s) => s.id === id) + 1).padStart(2, '0')
+
+// Section-level ids already exist (the sticky nav links to them), but the H3s
+// inside each section did not, so a subsection could not be linked or cited
+// on its own. Scope the slug by section: "Caching" can legitimately appear
+// under both Performance and Lessons Learned, and those must not collide.
+const subId = (section: string, title: string) =>
+  `${section}-${slugifyHeading(title)}`
 
 const builtFields = (item: CaseBuiltItem): [string, string][] =>
   ([
@@ -241,7 +249,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">Challenges</h2>
             <div class="mt-8 space-y-10">
               <div v-for="challenge in cs.challenges" :key="challenge.title">
-                <h3 class="text-lg font-semibold">{{ challenge.title }}</h3>
+                <h3 :id="subId('challenges', challenge.title)" class="scroll-mt-24 text-lg font-semibold">{{ challenge.title }}</h3>
                 <p class="case-prose mt-3">{{ challenge.body }}</p>
               </div>
             </div>
@@ -258,7 +266,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">What I Built</h2>
             <div class="mt-8 space-y-14">
               <div v-for="item in cs.built" :key="item.title">
-                <h3 class="text-xl font-semibold tracking-tight">{{ item.title }}</h3>
+                <h3 :id="subId('built', item.title)" class="scroll-mt-24 text-xl font-semibold tracking-tight">{{ item.title }}</h3>
                 <dl class="mt-5 space-y-5">
                   <div v-for="[label, text] in builtFields(item)" :key="label">
                     <dt class="case-microlabel">{{ label }}</dt>
@@ -280,7 +288,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">Production Problems</h2>
             <div class="mt-8 space-y-14">
               <div v-for="incident in cs.incidents" :key="incident.title">
-                <h3 class="text-xl font-semibold tracking-tight">{{ incident.title }}</h3>
+                <h3 :id="subId('production', incident.title)" class="scroll-mt-24 text-xl font-semibold tracking-tight">{{ incident.title }}</h3>
                 <dl class="mt-5 space-y-5">
                   <div v-for="[label, text] in incidentFields(incident)" :key="label">
                     <dt class="case-microlabel">{{ label }}</dt>
@@ -302,7 +310,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">Engineering Decisions</h2>
             <div class="mt-8 space-y-12">
               <div v-for="decision in cs.decisions" :key="decision.title">
-                <h3 class="text-xl font-semibold tracking-tight">{{ decision.title }}</h3>
+                <h3 :id="subId('decisions', decision.title)" class="scroll-mt-24 text-xl font-semibold tracking-tight">{{ decision.title }}</h3>
                 <p class="case-prose mt-4">{{ decision.reasoning }}</p>
                 <div v-if="decision.tradeoff" class="mt-4">
                   <p class="case-microlabel">Tradeoff</p>
@@ -323,7 +331,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">Performance</h2>
             <div class="mt-8 space-y-10">
               <div v-for="note in cs.performance" :key="note.title">
-                <h3 class="text-lg font-semibold">{{ note.title }}</h3>
+                <h3 :id="subId('performance', note.title)" class="scroll-mt-24 text-lg font-semibold">{{ note.title }}</h3>
                 <p class="case-prose mt-3">{{ note.body }}</p>
               </div>
             </div>
@@ -340,7 +348,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">Security</h2>
             <div class="mt-8 space-y-10">
               <div v-for="note in cs.security" :key="note.title">
-                <h3 class="text-lg font-semibold">{{ note.title }}</h3>
+                <h3 :id="subId('security', note.title)" class="scroll-mt-24 text-lg font-semibold">{{ note.title }}</h3>
                 <p class="case-prose mt-3">{{ note.body }}</p>
               </div>
             </div>
@@ -357,7 +365,7 @@ onUnmounted(() => observer?.disconnect())
             <h2 class="case-h2">Lessons Learned</h2>
             <div class="mt-8 space-y-10">
               <div v-for="note in cs.lessons" :key="note.title">
-                <h3 class="text-lg font-semibold">{{ note.title }}</h3>
+                <h3 :id="subId('lessons', note.title)" class="scroll-mt-24 text-lg font-semibold">{{ note.title }}</h3>
                 <p class="case-prose mt-3">{{ note.body }}</p>
               </div>
             </div>
