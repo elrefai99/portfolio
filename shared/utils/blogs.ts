@@ -43,6 +43,916 @@ export type BlogPost = {
 }
 
 export const blogs: BlogPost[] = [
+  // {
+  //   id: 7,
+  //   slug: 'tsc-passes-import-cycles-break-at-runtime',
+  //   ogImage: '/og/blog-tsc-passes-import-cycles-break-at-runtime.png',
+  //   title: 'tsc Says Fine, Node Says TypeError: Import Cycles Type-Checkers Cannot See',
+  //   excerpt:
+  //     'A two-file cycle that compiles cleanly and throws `Class extends value undefined` the moment you run it — and how gen-import models module evaluation (edge kinds, eager reads, barrel contraction, Tarjan SCCs) to catch it before Node does.',
+  //   metaTitle: 'Why tsc Passing Says Nothing About Import-Cycle Safety',
+  //   metaDescription:
+  //     'A TypeScript cycle that passes tsc and throws at runtime, and how a static analyzer models eager vs deferred reads, barrel contraction, and Tarjan SCCs to catch it.',
+  //   category: 'Developer Tooling',
+  //   date: '2026-07-27',
+  //   readTime: '8 min read',
+  //   tags: ['TypeScript', 'Node.js', 'Static Analysis', 'Tooling', 'AST', 'CommonJS', 'Barrel Files', 'Compiler API'],
+  //   entities: [
+  //     { name: 'TypeScript', sameAs: ['https://en.wikipedia.org/wiki/TypeScript', 'https://www.typescriptlang.org'] },
+  //     { name: 'Node.js', sameAs: ['https://en.wikipedia.org/wiki/Node.js', 'https://nodejs.org'] },
+  //     { name: 'Circular dependency', sameAs: 'https://en.wikipedia.org/wiki/Circular_dependency' },
+  //     { name: 'Tarjan\'s strongly connected components algorithm', sameAs: 'https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm' },
+  //   ],
+  //   relatedSlugs: ['nodejs-pino-s3-log-archiving-cron', 'jwt-vs-paseto-tokens'],
+  //   blocks: [
+  //     {
+  //       type: 'paragraph',
+  //       text: 'Here are two files. Both import through a generated barrel, the way most of my projects do. Nothing about them looks dangerous.',
+  //     },
+  //     {
+  //       type: 'code',
+  //       language: 'ts',
+  //       filename: 'src/audit.entity.ts · src/entity.base.ts',
+  //       code:
+  //         '// src/audit.entity.ts\n' +
+  //         'import { BaseEntity } from \'./gen-import\'\n\n' +
+  //         'export class AuditEntity extends BaseEntity {\n' +
+  //         '  tag(): string {\n' +
+  //         '    return \'audit/\' + super.tag()\n' +
+  //         '  }\n' +
+  //         '}\n\n' +
+  //         'export const formatTag = (s: string): string => `[${s}]`\n\n' +
+  //         '// src/entity.base.ts\n' +
+  //         'import { formatTag } from \'./gen-import\'\n\n' +
+  //         'export class BaseEntity {\n' +
+  //         '  tag(): string {\n' +
+  //         '    return formatTag(\'base\')\n' +
+  //         '  }\n' +
+  //         '}',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'The compiler is happy. The process is not.',
+  //     },
+  //     {
+  //       type: 'code',
+  //       language: 'text',
+  //       filename: 'terminal',
+  //       code:
+  //         '$ npx tsc -p tsconfig.json\n' +
+  //         '$ echo $?\n' +
+  //         '0\n\n' +
+  //         '$ node dist/main.js\n' +
+  //         'dist/audit.entity.js:5\n' +
+  //         'class AuditEntity extends gen_import_1.BaseEntity {\n' +
+  //         '                                       ^\n\n' +
+  //         'TypeError: Class extends value undefined is not a constructor or null\n' +
+  //         '    at Object.<anonymous> (dist/audit.entity.js:5:40)',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'That is the whole problem with treating a green `tsc` as a safety signal for cycles. The type checker resolves names across a graph — it does not care what order the files run in, because types do not run. Module evaluation is a linear order, and in CommonJS a module caught mid-cycle hands back whatever it has exported so far, which here is an empty object. `BaseEntity` is `undefined` at exactly the instant the `extends` clause needs a constructor.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'And it is order-dependent, which is the nasty part. I built the same cycle twice, changing nothing but the filenames. In one spelling the barrel happened to re-export the base first and the program printed `PROBE:user/[base]` like nothing was wrong. Rename the files so the subclass sorts first, and it throws. Same code, same compiler result, different luck.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'I wrote [gen-import](https://github.com/elrefai99/Gen-Import) to generate those barrels, so this is my bug to catch. What follows is what the analyzer actually does about it.',
+  //     },
+  //     {
+  //       type: 'code',
+  //       language: 'mermaid',
+  //       filename: 'analysis-pipeline.mmd',
+  //       code:
+  //         'flowchart TD\n' +
+  //         '    A[Source files] --> B[scanFile: walk the AST]\n' +
+  //         '    B --> C[classifyReference per identifier]\n' +
+  //         '    C --> D{position}\n' +
+  //         '    D -- extends / decorator / static --> E[eager read]\n' +
+  //         '    D -- inside a function body --> F[deferred read]\n' +
+  //         '    D -- type position --> G[type-only, erased]\n' +
+  //         '    E --> H[buildModuleGraph: edges carry kind + eager]\n' +
+  //         '    F --> H\n' +
+  //         '    G --> H\n' +
+  //         '    H --> I[contractBarrel: rewrite barrel edges to owner files]\n' +
+  //         '    I --> J[tarjanScc over INIT_EDGE_KINDS only]\n' +
+  //         '    J --> K{cyclic SCC?}\n' +
+  //         '    K -- no --> L[verdict: safe]\n' +
+  //         '    K -- yes, no eager edge --> M[GI003 / GI004 warn: ordered]\n' +
+  //         '    K -- yes, eager edge --> N[GI001 / GI002 error: unsafe]',
+  //     },
+  //     {
+  //       type: 'heading',
+  //       text: 'Not every import is an edge',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'The first thing that has to go is the idea that an import statement is a dependency. `src/@types/index.d.ts` splits `EdgeKind` five ways — `value-static`, `type-only`, `dynamic`, `require`, `side-effect` — and only three of those can ever break initialisation. `graph.ts` names that set explicitly:',
+  //     },
+  //     {
+  //       type: 'code',
+  //       language: 'ts',
+  //       filename: 'src/analysis/graph.ts',
+  //       code:
+  //         'export const INIT_EDGE_KINDS: ReadonlySet<EdgeKind> = new Set<EdgeKind>([\n' +
+  //         '    \'value-static\',\n' +
+  //         '    \'side-effect\',\n' +
+  //         '    \'require\',\n' +
+  //         '])',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: '`type-only` is gone before the code runs, so it cannot participate in a runtime cycle. `dynamic` — an `import()` call — resolves later by definition. `scan.ts` decides `require` versus `dynamic` by asking whether the call sits at the top level: a `require()` in the module body is eager, the same call inside a function is not. Getting this wrong in either direction is how a cycle checker becomes noise: count type imports and you flag cycles that do not exist, ignore `export *` and you miss ones that do.',
+  //     },
+  //     {
+  //       type: 'heading',
+  //       text: 'Where the identifier sits decides everything',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'A cycle only breaks when someone reads a binding while the other module is still evaluating. So `classifyReference` in `scan.ts` walks up from each identifier and classifies the position it was used in — `eager-heritage` for an `extends` clause, `eager-decorator` for anything inside a decorator argument, `eager-static` for a static field or static block, `deferred` once it hits a function, `type` for type nodes and import specifiers. `scanFile` then marks the edge that introduced the binding as eager, keeping the strongest reason it saw.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'That distinction is the entire verdict. A cycle where every read happens inside a function body still initialises — both modules finish loading, then somebody calls something. A cycle with one `extends` in it does not, and a base class is the one case with no escape: you cannot lazily resolve it, which is why the tool tells you to import it from its source file rather than offering a workaround.',
+  //     },
+  //     {
+  //       type: 'heading',
+  //       text: 'The barrel is not a real node',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'In the failing example neither file imports the other — both import `./gen-import`. Left alone, the graph would report a cycle through the barrel and blame the generated file, which is useless advice. `contractBarrel` rewrites it: for every edge into the barrel it looks the imported bindings up in an owner map, redirects the edge to the file that actually exports each name, and tags it `viaBarrel`. The barrel drops out and the cycle appears between the two modules that genuinely depend on each other. The diagnostic still mentions the routing, because knowing your import goes through a barrel is useful — believing the barrel caused the cycle is not.',
+  //     },
+  //     {
+  //       type: 'heading',
+  //       text: 'Tarjan, not a boolean',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: '`scc.ts` runs an iterative Tarjan pass over the restricted edge set and returns strongly connected components. Marking a component cyclic is the easy part — `members.length > 1`, or a single node with a self-loop. What matters more is what comes next: `cycleEdges` collects the edges inside the component and `shortestCycle` does a BFS back to the entry node to recover an actual path. A boolean tells you that you have a problem somewhere; the path plus the eager edge tells you the line to open. The topological order falls out of the same pass and is what the emitter uses to sort the barrel, so dependencies get re-exported before their dependents.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'Here is the run on the same two files:',
+  //     },
+  //     {
+  //       type: 'code',
+  //       language: 'text',
+  //       filename: 'npx gen-import',
+  //       code:
+  //         'error GI001  Circular dependency read during module evaluation — class heritage clause (`class X extends Y`)\n' +
+  //         '    src/audit.entity.ts → src/entity.base.ts → src/audit.entity.ts\n' +
+  //         '    fix: `BaseEntity` is read to build a class at src/audit.entity.ts:3. A base class cannot be lazily resolved — import it directly from its source file.\n\n' +
+  //         'error GI002  src/gen-import.ts is inside a cycle with an init-time read — this fails at runtime\n' +
+  //         '    src/audit.entity.ts → src/entity.base.ts → src/audit.entity.ts\n' +
+  //         '    fix: Breaks at src/audit.entity.ts:3 — class heritage clause (`class X extends Y`). Run with --safe-barrels to withhold the offending exports and print direct-import lines.\n\n' +
+  //         '╭────────────────────  gen-import  ─────────────────────╮\n' +
+  //         '│ Source files   2                                      │\n' +
+  //         '│ Total exports  3                                      │\n' +
+  //         '│ Language       TypeScript                             │\n' +
+  //         '│ Output file    src/gen-import.ts                      │\n' +
+  //         '│ Module         cjs                                    │\n' +
+  //         '│ Globals        off                                    │\n' +
+  //         '│ Lazy           off                                    │\n' +
+  //         '│ Topo sort      on                                     │\n' +
+  //         '│ Import edges   7                                      │\n' +
+  //         '│ Cycles         1 (1 init-time ✖)                     │\n' +
+  //         '│ Barrel         unsafe ✖                              │\n' +
+  //         '│ Collisions     none                                   │\n' +
+  //         '│ New exports    +3: AuditEntity, formatTag, BaseEntity │\n' +
+  //         '╰───────────────────────────────────────────────────────╯',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'Two codes, because they answer different questions. GI001 is about your modules: this cycle contains a read that happens during evaluation. GI002 is about the generated barrel: it sits inside that cycle, so importing from it is what triggers the failure. Both are errors in `SEVERITY_BY_CODE`. When every read on a cycle is deferred, the same situation downgrades to GI003 / GI004 at warn level, and the barrel verdict is `ordered` rather than `unsafe` — it works today, and one `extends` added through the barrel turns it into the output above.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'There is a fourth verdict I like more than I expected to. If the barrel is acyclic over runtime edges but cyclic once `type-only` edges are added back, that is `type-safe` — GI005, info severity, with advice that says it becomes real the moment an `import type` annotation is dropped or `verbatimModuleSyntax` is switched on. It is not a problem. It is a problem with a specific trigger, and I would rather know where those are.',
+  //     },
+  //     {
+  //       type: 'heading',
+  //       text: 'Checking the checker',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'A static analyzer that is confidently wrong is worse than no analyzer, and emit-shape assertions cannot catch that — a barrel can look perfectly well-formed and still hand back `undefined`. So `test/integration/runtime-oracle.test.ts` generates each scenario, runs the CLI, parses the `Barrel` row straight out of the summary box, and then actually executes the result under both `tsc` + node and `tsx`, in lazy and static emit modes, asserting an exact `PROBE:` line. The genuine-cycle scenario expects `BROKEN` rather than a fixed string, because the same cycle corrupts differently per loader: tsc yields a silent `undefined`, esbuild throws. Pinning one spelling would make the test loader-specific; asserting "this must not produce a clean result" is the real invariant.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'The property that matters is the other direction. If the tool says a barrel is safe, importing from it has to work everywhere — under every loader, in both emit modes. That is the claim worth testing, and it is the claim `tsc` was never making.',
+  //     },
+  //     {
+  //       type: 'paragraph',
+  //       text: 'In CI I want the run to fail, not to print something nobody reads. `--strict=cycles` blocks on GI001 only; `--strict=barrels` on GI002 and GI004; `--strict` on its own blocks on all of them plus export-name collisions, and exits 1:',
+  //     },
+  //     {
+  //       type: 'code',
+  //       language: 'text',
+  //       filename: 'terminal',
+  //       code: 'npx gen-import --strict=cycles',
+  //     },
+  //   ],
+  // },
+  {
+    id: 6,
+    slug: 'nodejs-pino-s3-log-archiving-cron',
+    ogImage: '/og/blog-nodejs-pino-s3-log-archiving-cron.png',
+    title: 'Automated Log Archiving in Node.js: Pino, Cron Rotation, and AWS S3',
+    excerpt:
+      'A deliberately boring production log pipeline: Pino writes NDJSON to disk, a UTC cron job rotates the file and reopens the descriptor, a gzipped archive goes to S3 with checksum verification, and the local copy is deleted only after the object is confirmed — with S3 Lifecycle enforcing retention.',
+    metaTitle: 'Node.js Log Archiving with Pino, Cron Rotation & AWS S3',
+    metaDescription:
+      'Build a Node.js log pipeline with Pino: daily cron rotation, file descriptor reopen, verified gzip upload to S3, and 90-day Lifecycle retention.',
+    category: 'Cloud & DevOps',
+    date: '2026-07-27',
+    readTime: '17 min read',
+    tags: ['Node.js', 'Pino', 'Logging', 'AWS', 'S3', 'Cron', 'Observability', 'Security', 'TypeScript', 'DevOps'],
+    entities: [
+      { name: 'Node.js', sameAs: ['https://en.wikipedia.org/wiki/Node.js', 'https://nodejs.org'] },
+      { name: 'Pino', sameAs: 'https://getpino.io' },
+      { name: 'Amazon S3', sameAs: 'https://en.wikipedia.org/wiki/Amazon_S3' },
+      { name: 'Amazon Web Services', sameAs: ['https://en.wikipedia.org/wiki/Amazon_Web_Services', 'https://aws.amazon.com'] },
+      { name: 'cron', sameAs: 'https://en.wikipedia.org/wiki/Cron' },
+      { name: 'OpenTelemetry', sameAs: ['https://en.wikipedia.org/wiki/OpenTelemetry', 'https://opentelemetry.io'] },
+    ],
+    relatedSlugs: ['aws-ec2-s3-kubernetes-production-deployments', 'server-sent-events-real-time-notifications-srvj'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'Most teams treat logging as a solved problem until the night they need it. Then they discover the disk filled up three weeks ago, the logs that mattered were rotated into oblivion, or worse — the logs exist but contain a customer\'s `Authorization` header in plaintext.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This article walks through a production log archiving pipeline that is deliberately boring: Pino writes structured JSON to a local file, a daily cron job rotates that file, uploads it to S3, and deletes the local copy only after the upload is verified. S3 Lifecycle rules expire objects after 90 days. No log shipping agents, no vendor, no per-GB ingestion bill.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It is not the right architecture for every system, and I will be explicit about where it breaks down. But for a single-VM or small-fleet Node.js service, it gives you searchable, durable, cost-bounded logs with roughly 150 lines of code and one IAM policy.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture at a glance',
+      },
+      {
+        type: 'paragraph',
+        text: 'The pipeline end to end, with the failure paths and the detail that most implementations get wrong — the file descriptor reopen:',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'log-archive.mmd',
+        code:
+          'flowchart TD\n' +
+          '    A[HTTP Request / Domain Event] --> B[Pino Logger]\n' +
+          '    B --> C{redact paths}\n' +
+          '    C --> D[SonicBoom destination]\n' +
+          '    D --> E[(logs/app.log)]\n\n' +
+          '    F[Cron 00:00 UTC] --> G[Acquire rotation lock]\n' +
+          '    G --> H[fs.rename app.log to YYYY-MM-DD.log]\n' +
+          '    H --> I[Signal process: destination.reopen]\n' +
+          '    I --> J[New empty app.log created]\n' +
+          '    J --> K[gzip archive]\n' +
+          '    K --> L[PutObject to S3 with checksum]\n' +
+          '    L --> M{HTTP 200 and checksum verified?}\n' +
+          '    M -- yes --> N[unlink local archive]\n' +
+          '    M -- no --> O[Keep file, alert, retry tomorrow]\n' +
+          '    N --> P[(S3 bucket: logs/YYYY/MM/DD/)]\n' +
+          '    P --> Q[S3 Lifecycle: Expiration 90 days]\n' +
+          '    Q --> R[Object deleted by AWS, no request cost]',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two things in that diagram deserve early attention, because they are the difference between a working system and a silent data-loss bug:',
+      },
+      {
+        type: 'list',
+        items: [
+          'The reopen step — on Linux, renaming a file the process has open does not detach the process from it. Without an explicit reopen, your application keeps writing into the archived file.',
+          'The verified delete — local deletion is conditional on a confirmed upload, never on the upload call returning without throwing.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why application logging matters',
+      },
+      {
+        type: 'paragraph',
+        text: 'Metrics tell you that something is wrong. Traces tell you where. Logs tell you what actually happened — the specific user, the specific payload shape, the specific branch of the specific conditional.',
+      },
+      {
+        type: 'paragraph',
+        text: 'In practice, logs earn their keep in four situations:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Incident forensics — a payment webhook was processed twice. Was it a duplicate delivery from the provider, or did your idempotency key generation collide? Only the log line carrying the provider\'s event ID and your computed key answers that.',
+          'Non-reproducible bugs — the class of bug that only occurs for one merchant, on one locale, with one malformed field. You cannot reproduce it locally; you can read what happened.',
+          'Audit and dispute resolution — "the customer says they never cancelled." A timestamped, immutable record of the state transition ends the conversation.',
+          'Behavioural archaeology — understanding how a feature is actually used before you refactor it.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The common failure is not "we do not log." It is "we log, but the logs are unqueryable, unretained, or unsafe."',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Why JSON logs beat plain text',
+      },
+      {
+        type: 'paragraph',
+        text: 'A plain-text line like `[2026-07-26 11:04:22] user 8123 failed login from 41.x.x.x` is human-readable and machine-hostile. To answer "how many failed logins per IP in the last hour," you write a regex. When someone adds a field, the regex breaks. Structured JSON gives you:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Queryability without parsing — `jq \'select(.level >= 50 and .route == "/checkout")\'` works today; the same file loads into Athena, OpenSearch, or DuckDB tomorrow with no ETL.',
+          'Type preservation — `durationMs: 412` stays a number. In text logs everything is a string until you regex it back.',
+          'Stable contracts — adding `tenantId` to every line breaks nothing downstream. Adding a column to a text format breaks every consumer.',
+          'Injection safety — a user submitting a username containing `\\n level=fatal` cannot forge a log line, because JSON encoding escapes the newline. Text formats are genuinely vulnerable to log forging.',
+          'Correlation — carrying `requestId` / `traceId` on every line lets you reconstruct a full request across dozens of emissions.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The tradeoff: JSON is verbose and unpleasant to read raw. That is solved at read time with `pino-pretty` in development, not by degrading the production format. Never let developer ergonomics dictate your production log format.',
+      },
+      {
+        type: 'heading',
+        text: 'Why Pino was chosen',
+      },
+      {
+        type: 'paragraph',
+        text: 'Pino is a JSON-first logger built around a simple principle: serialize as little as possible on the main thread, and get bytes out of the process fast. What that buys, concretely:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Low overhead in the hot path — Pino writes newline-delimited JSON through SonicBoom, a buffered write stream that batches syscalls instead of issuing one `write()` per log line.',
+          'Built-in redaction — the `redact` option compiles a set of paths into a fast censoring function. Security becomes a config concern, not something each developer must remember at each call site.',
+          'Child loggers — `logger.child({ requestId })` gives you per-request context propagation at almost no cost.',
+          'Transports run off-thread — `pino.transport()` moves formatting and shipping into a worker thread, keeping the event loop free.',
+          'It writes to a file cleanly — which is exactly what this architecture requires.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The problem it solves is the two classic logging taxes — CPU spent formatting strings, and event-loop blocking on synchronous stdout writes — while producing a format that is machine-consumable by default. That matters in any Node.js service where log volume is non-trivial and logs will be consumed by tooling rather than only by human eyes. The drawbacks are real too:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Asynchronous, buffered writes mean that on a hard crash (`SIGKILL`, an OOM kill) the last buffered lines can be lost — the exact opposite of what you want when debugging a crash. Mitigation: `sync: true` for fatal-level paths, or a `process.on(\'exit\')` handler calling `logger.flush()`. There is no free lunch; you are trading durability for throughput.',
+          'Redaction only protects paths you declared. An unknown nested object leaks.',
+          'Raw output is unreadable without a formatter.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Compared with the alternatives:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Winston — far more flexible transport ecosystem and formatting layers, at a meaningfully higher per-line cost. Choose it if you need many heterogeneous sinks configured in-process.',
+          'Bunyan — the original JSON logger; conceptually similar, effectively unmaintained relative to Pino.',
+          '`console.log` — unstructured, synchronous to a pipe on some platforms, no levels, no redaction. Acceptable only in scripts.',
+          'OpenTelemetry Logs SDK — the correct long-term answer if you are unifying logs, metrics, and traces under one vendor-neutral pipeline. Heavier to adopt; Pino can feed it.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Folder structure',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        filename: 'project layout',
+        code:
+          'src/\n' +
+          '├── config/\n' +
+          '│   ├── env.ts                  # validated environment (zod/envalid)\n' +
+          '│   └── s3.ts                   # S3Client singleton\n' +
+          '├── lib/\n' +
+          '│   └── logger/\n' +
+          '│       ├── index.ts            # pino instance + destination\n' +
+          '│       ├── redact.ts           # redaction path list\n' +
+          '│       └── serializers.ts      # req/res/err serializers\n' +
+          '├── middlewares/\n' +
+          '│   └── request-logger.ts       # pino-http wiring + requestId\n' +
+          '├── jobs/\n' +
+          '│   └── log-archive/\n' +
+          '│       ├── index.ts            # cron registration\n' +
+          '│       ├── rotate.ts           # rename + reopen\n' +
+          '│       ├── upload.ts           # gzip + S3 put + verify\n' +
+          '│       └── cleanup.ts          # verified local delete\n' +
+          '└── server.ts\n' +
+          'logs/\n' +
+          '├── app.log                     # current, always open\n' +
+          '└── 2026-07-25.log              # rotated, pending upload',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two structural decisions worth naming:',
+      },
+      {
+        type: 'list',
+        items: [
+          '`logs/` sits outside `src/`, is gitignored, and in containers it is a mounted volume. If it lives on the container\'s writable layer, rotation still "works" and every archive dies with the container.',
+          'Rotation, upload, and cleanup are three separate modules because they are three distinct failure domains: a filesystem failure, a network/IAM failure, and a cleanup failure. Collapsing them into one function makes the failure states impossible to reason about and impossible to unit test.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The logging module',
+      },
+      {
+        type: 'paragraph',
+        text: 'The logger is a single module-level singleton. Everything else derives child loggers from it.',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/lib/logger/index.ts',
+        code:
+          'import pino from \'pino\';\n\n' +
+          'const destination = pino.destination({\n' +
+          '  dest: \'logs/app.log\',\n' +
+          '  sync: false,        // buffered writes\n' +
+          '  mkdir: true,\n' +
+          '});\n\n' +
+          'export const logger = pino(\n' +
+          '  {\n' +
+          '    level: process.env.LOG_LEVEL ?? \'info\',\n' +
+          '    base: {\n' +
+          '      service: \'api\',\n' +
+          '      env: process.env.NODE_ENV,\n' +
+          '      version: process.env.APP_VERSION,\n' +
+          '    },\n' +
+          '    timestamp: pino.stdTimeFunctions.isoTime,\n' +
+          '    redact: {\n' +
+          '      paths: [\n' +
+          '        \'req.headers.authorization\',\n' +
+          '        \'req.headers.cookie\',\n' +
+          '        \'req.headers["x-api-key"]\',\n' +
+          '        \'res.headers["set-cookie"]\',\n' +
+          '        \'password\',\n' +
+          '        \'*.password\',\n' +
+          '        \'body.token\',\n' +
+          '        \'body.cardNumber\',\n' +
+          '        \'user.email\',\n' +
+          '      ],\n' +
+          '      censor: \'[REDACTED]\',\n' +
+          '    },\n' +
+          '  },\n' +
+          '  destination,\n' +
+          ');\n\n' +
+          '// Critical: lets the rotation job detach from the renamed inode.\n' +
+          'process.on(\'SIGHUP\', () => destination.reopen());\n\n' +
+          'process.on(\'exit\', () => logger.flush());',
+      },
+      {
+        type: 'paragraph',
+        text: 'Why each of those lines is there:',
+      },
+      {
+        type: 'list',
+        items: [
+          '`base` stamps `service`, `env`, and `version` on every line. Without `version`, you cannot correlate an error spike to a deploy.',
+          '`isoTime` costs slightly more than Pino\'s default epoch milliseconds, but it makes archived files readable and makes Athena / `jq` date filtering trivial. For a file-archived pipeline that trade is worth it; in an ultra-high-throughput service, keep epoch and convert at read time.',
+          '`redact` is declarative and centralized. The tradeoff: wildcard paths (`*.password`) are slower than exact paths and still only cover the shapes you anticipated. Redaction is a safety net, not a policy — the policy is "do not pass secrets to the logger."',
+          '`SIGHUP` → `reopen()` is the hinge of the entire rotation design. More on that next.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Request logging attaches a correlation ID and a child logger per request:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/middlewares/request-logger.ts',
+        code:
+          'import pinoHttp from \'pino-http\';\n' +
+          'import { randomUUID } from \'node:crypto\';\n\n' +
+          'export const requestLogger = pinoHttp({\n' +
+          '  logger,\n' +
+          '  genReqId: (req) => (req.headers[\'x-request-id\'] as string) ?? randomUUID(),\n' +
+          '  customLogLevel: (_req, res, err) => {\n' +
+          '    if (err || res.statusCode >= 500) return \'error\';\n' +
+          '    if (res.statusCode >= 400) return \'warn\';\n' +
+          '    return \'info\';\n' +
+          '  },\n' +
+          '  serializers: {\n' +
+          '    req: (req) => ({ method: req.method, url: req.url, id: req.id }),\n' +
+          '    res: (res) => ({ statusCode: res.statusCode }),\n' +
+          '  },\n' +
+          '});',
+      },
+      {
+        type: 'paragraph',
+        text: 'Note the custom `req` serializer. Pino\'s default serializer includes headers; an explicit allow-list is safer than relying on redaction to subtract fields. Allow-list what you log; do not deny-list what you do not.',
+      },
+      {
+        type: 'heading',
+        text: 'Daily log rotation',
+      },
+      {
+        type: 'paragraph',
+        text: 'An unrotated log file has four failure modes, and all four are experienced eventually:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Unbounded disk growth. A full disk does not degrade a Node service gracefully — writes fail, the process may crash, and on a shared volume the database goes down with it. This is one of the most common self-inflicted production outages.',
+          'Unreadable file sizes. `grep` on a 40 GB file is a minutes-long operation that saturates disk I/O on a live server.',
+          'No natural archive unit. "Upload yesterday\'s logs" is only meaningful if a file is yesterday\'s logs.',
+          'No retention boundary. You cannot expire what you cannot address.',
+        ],
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'The inode problem',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is the single most important implementation detail in the whole pipeline. On Linux, `fs.rename(\'logs/app.log\', \'logs/2026-07-25.log\')` changes a directory entry. It does not touch the open file descriptor — the process holds a reference to the inode, not the path. So after the rename, your application happily continues appending to `2026-07-25.log`, and the new empty `app.log` you created sits at zero bytes forever.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The symptom is delightful: rotation appears to work, uploads succeed, and one day you notice yesterday\'s archive contains today\'s traffic. The fix is a two-phase rotation:',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        filename: 'two-phase rotation',
+        code:
+          'Phase 1: fs.rename(app.log → 2026-07-25.log)\n' +
+          '           app process still writing to old inode\n' +
+          'Phase 2: signal SIGHUP\n' +
+          '           SonicBoom closes fd, opens logs/app.log fresh\n' +
+          '           new inode created, writes resume with zero downtime',
+      },
+      {
+        type: 'paragraph',
+        text: '`destination.reopen()` closes the current descriptor and opens the configured path again, creating a new file. Because SonicBoom buffers, the reopen flushes pending bytes into the archived file first — which is correct, since those bytes belong to yesterday. The gap between rename and reopen is sub-millisecond, and the lines written in that window land in the archive rather than in a void. There is no downtime and no dropped line, which is precisely why this pattern is preferable to stopping the process.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Comparing rotation strategies',
+      },
+      {
+        type: 'list',
+        items: [
+          'rename + reopen (this design) — the app owns rotation via an explicit signal. Requires an in-process signal handler; in exchange you get zero data loss, full control, and a testable seam.',
+          '`logrotate` with `copytruncate` — copies the file, then truncates the original in place. No app cooperation needed, but there is a real race window between copy and truncate where lines are lost, and it doubles disk I/O for the copy.',
+          '`logrotate` with a `postrotate` `kill -HUP` — the same signal mechanism, orchestrated by the OS. Solid on VMs; adds an OS-level dependency that does not exist inside a minimal container image.',
+          '`pino-roll` — a Pino transport that rotates by size or interval internally. Least code, but less control over the exact filename boundary and the handoff to the upload step.',
+          'Size-based rotation — rotate at N MB. Bounds disk usage under traffic spikes, but produces non-date-aligned files that are awkward to partition in S3.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Time-based rotation was chosen because the archive unit and the retention unit should be the same unit. A 90-day retention policy is trivially expressible over daily files and awkward over 500 MB chunks.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Scheduling',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/jobs/log-archive/index.ts',
+        code:
+          'import cron from \'node-cron\';\n\n' +
+          'cron.schedule(\'0 0 * * *\', () => void runArchiveJob(), {\n' +
+          '  timezone: \'UTC\',\n' +
+          '  name: \'log-archive\',\n' +
+          '});',
+      },
+      {
+        type: 'paragraph',
+        text: 'Use UTC. Local-time midnight in a DST-observing zone is either skipped or executed twice once a year. A duplicated rotation is survivable if the job is idempotent; a skipped one silently merges two days of logs into one file. Log timestamps should be UTC for the same reason. On where the schedule lives:',
+      },
+      {
+        type: 'list',
+        items: [
+          '`node-cron` (chosen) — the job runs inside the process that owns the file descriptor, so `reopen()` is a direct function call rather than a signal. Simplest correct option for a single instance. Drawback: it dies with the process, and it fires on every instance if you scale horizontally.',
+          'System crontab or a systemd timer — survives app restarts, but must signal the app externally and cannot easily report failures into your logging pipeline.',
+          'A BullMQ repeatable job — the right answer at multi-instance scale: Redis gives you a single winner per scheduled tick, retries with backoff, and observability. Drawback: the worker that wins the tick may not be on the host holding the file. That is the point at which local-file logging stops being the right architecture at all.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'For multiple instances today, the pragmatic fix is to include the instance identity in the filename and S3 key: `2026-07-25.api-7f3c9.log.gz`. Never let two processes rotate the same file. Guard against overlap with a lock — an in-memory boolean for a single instance, a Redis `SET NX` with a TTL otherwise. If yesterday\'s upload is still retrying when tonight\'s rotation fires, you want the second run to skip, not to interleave.',
+      },
+      {
+        type: 'heading',
+        text: 'Uploading archives to S3',
+      },
+      {
+        type: 'paragraph',
+        text: 'The upload step has one hard requirement: the local file may only be deleted after the object is provably in S3. Everything else is optimization.',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/jobs/log-archive/upload.ts',
+        code:
+          'import { S3Client, PutObjectCommand, HeadObjectCommand } from \'@aws-sdk/client-s3\';\n' +
+          'import { createReadStream, createWriteStream, promises as fs } from \'node:fs\';\n' +
+          'import { createGzip } from \'node:zlib\';\n' +
+          'import { pipeline } from \'node:stream/promises\';\n\n' +
+          'export async function archive(localPath: string, date: string) {\n' +
+          '  const gzPath = `${localPath}.gz`;\n' +
+          '  await pipeline(createReadStream(localPath), createGzip(), createWriteStream(gzPath));\n\n' +
+          '  const [year, month, day] = date.split(\'-\');\n' +
+          '  const key = `logs/service=api/year=${year}/month=${month}/day=${day}/${date}.log.gz`;\n\n' +
+          '  await s3.send(new PutObjectCommand({\n' +
+          '    Bucket: process.env.LOG_BUCKET,\n' +
+          '    Key: key,\n' +
+          '    Body: createReadStream(gzPath),\n' +
+          '    ContentType: \'application/x-ndjson\',\n' +
+          '    ContentEncoding: \'gzip\',\n' +
+          '    ChecksumAlgorithm: \'SHA256\',\n' +
+          '    ServerSideEncryption: \'aws:kms\',\n' +
+          '    SSEKMSKeyId: process.env.LOG_KMS_KEY_ID,\n' +
+          '  }));\n\n' +
+          '  // Verify independently before destroying the only other copy.\n' +
+          '  const head = await s3.send(new HeadObjectCommand({ Bucket: process.env.LOG_BUCKET, Key: key }));\n' +
+          '  const local = await fs.stat(gzPath);\n' +
+          '  if (head.ContentLength !== local.size) throw new Error(\'size mismatch, aborting delete\');\n\n' +
+          '  await fs.unlink(gzPath);\n' +
+          '  await fs.unlink(localPath);\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'The decisions inside that function, and why:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Gzip before upload — NDJSON is extremely repetitive (the same keys on every line), so it compresses very well. You pay a little CPU once, at midnight, and cut both storage cost and upload time. Tradeoff: the object is no longer directly readable without decompression, though Athena and most log tools read gzip natively.',
+          'Date-partitioned key prefixes — `year=/month=/day=` is Hive partition syntax. It costs nothing now and means partition pruning works immediately if you ever point Athena or Glue at the bucket: a query for one day scans one day. A flat `logs/2026-07-25.log.gz` layout forces full-bucket scans. (The old advice about randomizing prefixes for performance is obsolete; S3 scales per prefix automatically.)',
+          '`ChecksumAlgorithm: \'SHA256\'` — S3 validates the payload server-side and rejects a corrupted upload. Do not rely on comparing `ETag` to a local MD5: with multipart uploads or SSE-KMS the ETag is not the object\'s MD5, and that assumption fails silently exactly when you scale up.',
+          'Explicit `HeadObject` verification — a `PutObject` that resolves is strong evidence, but not proof of what you think it is (wrong bucket, wrong key, a retry that raced). Since the next operation is an irreversible delete, verify independently.',
+          'Failure keeps the file — if the upload fails, the archive stays on disk and the job exits with an error that itself gets logged and alerted. Tomorrow\'s run should sweep any `YYYY-MM-DD.log` files it finds, not just yesterday\'s, which makes the job self-healing across transient S3 or IAM failures.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: '`PutObject` handles up to 5 GB. If daily volume approaches that, switch to `@aws-sdk/lib-storage`\'s `Upload`, which handles multipart and retries per part. Always configure `AbortIncompleteMultipartUpload` in the lifecycle policy — orphaned parts are invisible in the console and billed forever.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The alternatives, weighed honestly:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Batch upload of a rotated file (this design) — simple, cheap, one PUT per day. Tradeoff: up to 24 hours of logs exist only on one disk.',
+          'Streaming each line to S3 or CloudWatch in real time — near-zero data loss window and immediate searchability. Costs per request or per GB ingested, adds a network dependency to the hot path, and needs buffering for outages.',
+          'A sidecar agent (Fluent Bit, Vector, the CloudWatch agent) — the standard answer for container fleets. Handles multi-instance, buffering, and backpressure properly. Tradeoff: another component to operate and configure.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Be honest about which you need. If losing up to a day of logs from a lost instance is unacceptable, this architecture is wrong for you and an agent is right.',
+      },
+      {
+        type: 'heading',
+        text: 'Automatic retention with S3 Lifecycle',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        filename: 'lifecycle.json',
+        code:
+          '{\n' +
+          '  "Rules": [\n' +
+          '    {\n' +
+          '      "ID": "expire-app-logs-90d",\n' +
+          '      "Status": "Enabled",\n' +
+          '      "Filter": { "Prefix": "logs/" },\n' +
+          '      "Expiration": { "Days": 90 }\n' +
+          '    },\n' +
+          '    {\n' +
+          '      "ID": "abort-incomplete-multipart",\n' +
+          '      "Status": "Enabled",\n' +
+          '      "Filter": { "Prefix": "" },\n' +
+          '      "AbortIncompleteMultipartUpload": { "DaysAfterInitiation": 7 }\n' +
+          '    }\n' +
+          '  ]\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Logs must never live forever, for three reasons:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Cost compounds silently. Log storage grows monotonically, and it is never urgent enough to fix until it is a line item someone notices.',
+          'Liability grows with the data. Every log line you keep is a line an attacker can exfiltrate and a line you may have to produce in discovery. Under data-minimisation principles in regimes like GDPR, keeping personal data indefinitely without justification is itself the violation.',
+          'Old logs have near-zero value. Debugging value decays sharply after days; compliance value is defined by a fixed window, not by "forever."',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Pick the window deliberately: 90 days is a common operational default, but regulated workloads (PCI DSS, for example, has explicit audit-log retention requirements measured in months) may require longer. The number should come from a policy, not from a developer\'s guess.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Why S3 Lifecycle beats a manual delete job',
+      },
+      {
+        type: 'paragraph',
+        text: 'Lifecycle makes deletion a declarative property of the bucket rather than an imperative task in your codebase, which kills the "cleanup cron that quietly died" class of failure — where retention appears to be enforced for eleven months and then is not. Against a `DeleteObjects` cron job it wins on every dimension:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Reliability — it runs as an AWS-managed service, with no compute of yours to crash. A delete job depends on your process, your scheduler, your credentials, and your error handling.',
+          'Cost — expiration deletes incur no request charges, and you stop paying for storage as soon as an object becomes eligible, even if physical deletion lags. A job costs LIST + DELETE requests plus the compute running them.',
+          'Blast radius — the rule is scoped to a prefix and reviewed as infrastructure code. A bug in a date comparison deletes 90 days of logs in one call.',
+          'Security posture — the application role needs no `s3:DeleteObject` permission at all. With a job, the app (or something holding app credentials) must hold delete rights on your audit trail.',
+          'Coverage and auditability — lifecycle applies to existing and future objects automatically and is visible in bucket config, enforceable via SCP or AWS Config. Job logic is buried in application code and must be maintained as prefixes and naming change.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'That fourth point is the strongest argument and the one most often missed. If your application can delete its own logs, an attacker who compromises your application can erase the evidence. Lifecycle rules let you build a bucket where the app can `PutObject` and nothing else, and where retention is enforced by a principal your app cannot reach.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The drawbacks, stated plainly:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Lifecycle is asynchronous. Objects are deleted after the threshold, not exactly at it — usually within a day or so. Billing stops at eligibility, so this costs nothing, but do not build a compliance claim on "deleted at exactly 90 days."',
+          'Bucket policies cannot prevent lifecycle actions. A misconfigured rule with a broad prefix will delete data regardless of a `Deny` policy. Review rules like you review IAM.',
+          'With versioning enabled, `Expiration` on a current object only creates a delete marker; you also need `NoncurrentVersionExpiration` and `ExpiredObjectDeleteMarker` or storage grows forever behind the scenes.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Security considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'Redact at the source, allow-list at the serializer. The `redact` config handles known-sensitive paths — `authorization`, `cookie`, `set-cookie`, `password`, tokens, card data — but redaction is subtractive and only removes what you predicted. Custom serializers that build an explicit object of permitted fields are additive and fail closed. Use both.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Never log full request bodies or full user objects. The moment someone writes `logger.info({ user })`, the password hash, email, phone, and national ID are in your archive forever — and now in S3, in a bucket with a different access model than your database.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Least privilege at the IAM layer means the instance or task role gets exactly one S3 action:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        filename: 'log-writer-policy.json',
+        code:
+          '{\n' +
+          '  "Effect": "Allow",\n' +
+          '  "Action": "s3:PutObject",\n' +
+          '  "Resource": "arn:aws:s3:::my-app-logs/logs/*"\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'No `s3:DeleteObject`. No `s3:GetObject` — the app writes logs, it does not read them back; reading is a human or analytics role. That turns the log bucket into an append-only sink from the application\'s perspective. The rest of the checklist:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Encryption — enable SSE-KMS with a customer-managed key. SSE-S3 is free and adequate for many cases, but a CMK gives you an independent access boundary and a CloudTrail record of every decryption. Tradeoff: KMS charges per request and adds a dependency; for very high object counts, enable S3 Bucket Keys to cut KMS calls substantially.',
+          'Block Public Access at the account level, plus an `aws:SecureTransport` deny in the bucket policy. A public log bucket is one of the most reliably damaging misconfigurations in cloud security.',
+          'Consider Object Lock in governance mode if these logs have audit value — it makes objects immutable for a retention period even against an administrator, which is the point of an audit log. Tradeoff: it requires versioning, complicates lifecycle, and mistakes are genuinely unfixable.',
+          'Filesystem permissions — `logs/` should be `0750`, owned by the service user. Logs on disk are as sensitive as the data in them.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Cost optimisation',
+      },
+      {
+        type: 'paragraph',
+        text: 'The pipeline is cheap by construction, but a few decisions matter:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Compress. Gzipping NDJSON reduces both stored bytes and transfer time. This is the single highest-leverage cost decision, and it costs one CPU-second a day.',
+          'One object per day, not per hour or per request. S3 bills per request: a batch design makes request costs effectively zero, while a per-event upload design makes them the dominant cost line.',
+          'Think carefully before adding storage-class transitions — this is where teams lose money trying to save it. S3 Standard-IA has a 30-day minimum billable duration and a 128 KB minimum billable object size; Glacier Instant Retrieval has a 90-day minimum duration and the same size floor; Glacier Flexible Retrieval has a 90-day minimum, and Deep Archive 180 days. Transitioning to Glacier at day 60 under a 90-day expiration means paying a full 90-day minimum for objects you delete at 90, plus a per-1,000 transition request charge. For a 90-day window with daily objects, S3 Standard plus gzip is usually the cheapest and simplest answer.',
+          'Skip Intelligent-Tiering here. It charges a per-object monitoring fee and is designed for unpredictable access patterns; log access is entirely predictable — read soon after write, then never.',
+          '`AbortIncompleteMultipartUpload`. Orphaned multipart parts are billed and do not appear in a normal object listing. One lifecycle rule eliminates the category.',
+          'Data transfer in is free. Uploading from EC2 to S3 in the same region costs nothing in transfer; avoid cross-region log buckets unless you have a specific durability requirement.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The payoff on the server side is that disk usage becomes bounded by one day of logs plus the retry backlog, rather than growing without limit. That converts an eventual, certain outage — disk full — into a fixed capacity requirement you provision for once. Reliability improves along three axes: the rotation is non-disruptive (no restart, no dropped lines); durability jumps from a single EBS volume to S3\'s multi-AZ storage, so an instance loss no longer means log loss for anything older than the current day; and every failure mode keeps the data — upload fails, file stays; verification fails, file stays; process restarts, the next run sweeps the backlog. The only irreversible action in the pipeline is gated on a verified success.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'list',
+        items: [
+          'Deleting the local file before confirming the upload — the most expensive one-line bug in this design.',
+          'Forgetting the file descriptor reopen. Rotation appears to work; archives silently contain the wrong day.',
+          'Using `copytruncate` and accepting the race. Fine for access logs nobody reads, unacceptable for audit trails.',
+          'Scheduling in local time. DST will corrupt exactly two days a year, and only in production.',
+          'Assuming a single instance. Two processes writing one file and both rotating it produces interleaved, truncated garbage.',
+          'Logging secrets and hoping redaction catches them. It only catches declared paths.',
+          '`logger.info(JSON.stringify(obj))` — this defeats the entire structured pipeline. You get a JSON string inside a JSON string, unqueryable by field.',
+          'Logging at `info` inside a hot loop. Log volume that scales with request work rather than request count is how a 200 MB/day service becomes a 40 GB/day service overnight.',
+          'No `requestId`. Without correlation, a 500 MB archive is a haystack.',
+          'Never testing the read path. If you have never once pulled an archive from S3 and answered a real question with it, you do not have a logging system — you have a backup of files nobody can use. Test it before the incident.',
+          'Storing logs "just in case," forever. That is a growing bill and a growing liability, not a strategy.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Practices worth keeping',
+      },
+      {
+        type: 'list',
+        items: [
+          'Emit NDJSON, always. Pretty-print only in development.',
+          'Stamp `service`, `env`, `version`, and `requestId` on every line via `base` and child loggers.',
+          'Propagate a correlation ID with `AsyncLocalStorage` so any code path can log with context without threading a logger parameter through every function.',
+          'Use log levels with discipline: `error` for things a human must act on, `warn` for degraded-but-handled, `info` for state transitions, `debug` for development. If everything is `error`, nothing is.',
+          'Sample high-volume, low-value routes (health checks, static assets) rather than dropping the level globally.',
+          'Log the decision, not just the event: not "payment failed", but "payment failed" with the provider code, idempotency key, attempt number, and correlation ID.',
+          'Keep logs immutable and append-only. Never edit an archive.',
+          'Alert on metrics, not on log volume. Logs are for investigation; metrics are for detection.',
+          'Encrypt at rest, restrict at the IAM layer, and enforce retention in infrastructure rather than in application code.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Where this goes next',
+      },
+      {
+        type: 'list',
+        items: [
+          'Hourly rotation with an hourly key prefix — reduces the worst-case data-loss window from 24 hours to 1 and produces smaller, faster-to-scan objects, at 24× the PUT requests (still negligible).',
+          'Query in place with Athena — the date-partitioned prefix layout means adding a Glue table over `s3://bucket/logs/` gives you SQL over the whole archive, paying only per byte scanned. Partition pruning makes single-day queries cheap. This is the highest-value next step for most teams.',
+          'Ship to OpenSearch or a vendor for the hot window while keeping S3 as the cold, cheap, long-term tier: hot search for 7 days, archive for 90.',
+          'Replace the file + cron pipeline with a sidecar (Fluent Bit or Vector) once you run more than a couple of instances — log to stdout and let the collector handle buffering, batching, and multi-destination fanout. That is the natural evolution path, and this architecture is explicitly the pre-scale version of it.',
+          'Adopt OpenTelemetry to unify `traceId` across logs, metrics, and traces, so one ID in a log line jumps straight to a distributed trace.',
+          'Emit metrics from the archive job itself — last successful upload timestamp, archive size, backlog file count — then alert when the last successful upload is older than 26 hours. A silent archiving job is indistinguishable from a working one until you need the data.',
+          'Object Lock plus a separate audit account for logs with genuine compliance value.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'The reopen step is the whole game. Everything else in this pipeline is mechanical. The rename/reopen interaction is the one place where the intuitive implementation is silently wrong, and the failure only surfaces when you go looking for a specific day\'s logs — which is always during an incident.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Make the irreversible step the last step, and gate it on verification. Ordering operations by reversibility is a general principle worth internalizing: compress (reversible), upload (reversible), verify (read-only), delete (irreversible). Any failure before the last step is a no-op you can retry.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Push retention into infrastructure. Every retention job written in application code eventually breaks, and no one notices because success is silent. Lifecycle rules do not have that failure mode, and they let you remove delete permissions from the application entirely — a security win disguised as an ops convenience.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Design the read path before the write path. Partitioned prefixes and structured JSON cost nothing on day one and determine whether the archive is queryable on day 400. Most log pipelines are optimized entirely for writing and are miserable to read.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And know when to stop using this. The architecture is correct for a single VM or a small fleet with per-instance keys. The moment you run ephemeral containers, autoscale, or need sub-minute searchability, local files stop making sense and a collector agent becomes the right answer — the same threshold logic that took [SRVJ from one EC2 box to Kubernetes](/blogs/aws-ec2-s3-kubernetes-production-deployments). Recognizing that boundary early is more valuable than making the file-based approach survive one more scaling step.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The best log pipeline is the one that is still working — and still affordable — eighteen months after the person who built it stopped thinking about it. Boring, verified, and declaratively bounded wins.',
+      },
+    ],
+  },
   {
     id: 5,
     slug: 'aws-ec2-s3-kubernetes-production-deployments',
@@ -66,7 +976,7 @@ export const blogs: BlogPost[] = [
       { name: 'Docker', sameAs: 'https://en.wikipedia.org/wiki/Docker_(software)' },
       { name: 'NGINX', sameAs: 'https://en.wikipedia.org/wiki/Nginx' },
     ],
-    relatedSlugs: ['crdts-yjs-collaborative-editing-srvj', 'server-sent-events-real-time-notifications-srvj'],
+    relatedSlugs: ['nodejs-pino-s3-log-archiving-cron', 'crdts-yjs-collaborative-editing-srvj', 'server-sent-events-real-time-notifications-srvj'],
     blocks: [
       {
         type: 'paragraph',

@@ -27,6 +27,7 @@ background job processing, and real-time notification infrastructure.
 
 ## Blog posts
 
+- [Automated log archiving in Node.js with Pino, cron, and S3](https://elrefai.me/blogs/nodejs-pino-s3-log-archiving-cron): Pino NDJSON logging, rename + fd reopen rotation, verified gzip upload to S3, and S3 Lifecycle retention
 - [Migrating a Node.js app from one EC2 box to Kubernetes on AWS](https://elrefai.me/blogs/aws-ec2-s3-kubernetes-production-deployments): EC2 + NGINX + pm2, Docker Compose, Kubernetes (kustomize, ingress, HPA), and S3 avatars + presigned uploads
 - [CRDTs & Yjs in production](https://elrefai.me/blogs/crdts-yjs-collaborative-editing-srvj): CRDT theory and a production Yjs WebSocket server with authenticated sync
 - [Scaling Server-Sent Events with Redis Pub/Sub](https://elrefai.me/blogs/server-sent-events-real-time-notifications-srvj): SSE notifications in Node.js with Redis pub/sub fan-out

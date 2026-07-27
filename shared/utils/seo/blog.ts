@@ -28,12 +28,19 @@ const blogTopicKeywords = [
   'BullMQ queues',
   'Production backend systems',
   'Backend architecture notes',
+  'Node.js logging',
+  'Structured logging',
+  'Observability',
+  'AWS S3',
+  'Cloud infrastructure blog',
+  'Log rotation',
+  'Log retention',
 ]
 
 export const blogsSEO = createSeo({
   title: 'Mohammed Mostafa • Blog',
   description:
-    'Read backend engineering notes by Mohammed Mostafa about Node.js, TypeScript, Express.js, API architecture, queues, Redis, and production systems.',
+    'Backend engineering notes by Mohammed Mostafa on Node.js, TypeScript, Express.js, API architecture, queues, Redis, logging, AWS, and production systems.',
   path: sitePaths.blogs,
   keywords: [
     ...brandKeywords,
@@ -80,6 +87,9 @@ export const blogsSEO = createSeo({
         'Payment token security',
         'Redis queues',
         'Production architecture',
+        'Structured logging',
+        'Observability',
+        'AWS',
       ],
     },
     personSchema,
