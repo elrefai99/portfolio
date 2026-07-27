@@ -375,6 +375,10 @@ html:not(.dark) body {
 
 /* filter tab */
 .bp-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   font-family: var(--bp-mono);
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -398,8 +402,8 @@ html:not(.dark) body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 2.1rem;
-  width: 2.1rem;
+  height: 2.75rem; /* 44px min tap target for mobile */
+  width: 2.75rem;
   font-size: 1.05rem;
   color: var(--bp-blue);
   border: 1px solid var(--bp-line-soft);
@@ -493,6 +497,9 @@ html:not(.dark) body {
 }
 
 .case-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   font-family: var(--bp-mono);
   font-size: 0.68rem;
   font-weight: 600;
@@ -517,6 +524,7 @@ html:not(.dark) body {
 .case-btn {
   display: inline-flex;
   align-items: center;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   gap: 0.5rem;
   font-family: var(--bp-mono);
   font-size: 0.7rem;

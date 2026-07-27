@@ -225,6 +225,7 @@ const tagChipClass = "bp-chip";
                     :aria-controls="`desc-${project.slug}`"
                     flex
                     items-center
+                    min-h-11
                     gap-2
                     text-sm
                     font-medium

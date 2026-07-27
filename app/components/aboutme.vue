@@ -291,6 +291,7 @@ const chartFailed = ref(false);
             aria-label="View elrefai99 on GitHub (opens in a new tab)"
             inline-flex
             items-center
+            min-h-11
             gap-2
             text-sm
             font-medium

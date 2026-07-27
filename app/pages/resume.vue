@@ -28,7 +28,7 @@ useHead(resumeSEO);
           <a
             href="/resume.pdf"
             download
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold text-sm hover:opacity-80 transition-all duration-200 shadow-lg hover:scale-105"
+            class="inline-flex items-center min-h-11 gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold text-sm hover:opacity-80 transition-all duration-200 shadow-lg hover:scale-105"
           >
             <i class="i-carbon:download w-4 h-4" />
             Download CV
@@ -59,14 +59,14 @@ useHead(resumeSEO);
                 <span class="text-gray-600 dark:text-gray-300">•</span>
                 <a
                   href="mailto:elrefai99@gmail.com"
-                  class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                  class="inline-flex items-center min-h-11 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                 >
                   elrefai99@gmail.com
                 </a>
                 <span class="text-gray-600 dark:text-gray-300">•</span>
                 <a
                   href="tel:+201142314446"
-                  class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                  class="inline-flex items-center min-h-11 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                 >
                   +20 114 231 4446
                 </a>
@@ -79,14 +79,14 @@ useHead(resumeSEO);
                     href="https://www.linkedin.com/in/elrefai99/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
+                    class="m2 inline-flex items-center min-h-11 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
                     >LinkedIn</a
                   >
                   <span class="text-gray-600 dark:text-gray-300">•</span>
                   <!-- Own site: an internal route, not an external _blank link. -->
                   <router-link
                     to="/"
-                    class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
+                    class="m2 inline-flex items-center min-h-11 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
                     >Portfolio</router-link
                   >
                   <span class="text-gray-600 dark:text-gray-300">•</span>
@@ -94,7 +94,7 @@ useHead(resumeSEO);
                     href="https://github.com/elrefai99"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="m2 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
+                    class="m2 inline-flex items-center min-h-11 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors"
                     >GitHub</a
                   >
                   <span class="text-gray-600 dark:text-gray-300">•</span>
@@ -207,7 +207,7 @@ useHead(resumeSEO);
                     href="https://srvj.elrefai.me/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-xs font-semibold text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-white transition-colors"
+                    class="inline-flex items-center min-h-11 text-xs font-semibold text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-white transition-colors"
                     >Live</a
                   >
                 </div>

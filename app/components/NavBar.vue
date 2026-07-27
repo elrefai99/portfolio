@@ -89,6 +89,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   font-size: 11px;
   color: var(--bp-blue);
   text-decoration: none;
@@ -126,6 +127,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   padding: 0.4rem 0.65rem;
   color: var(--bp-blue);
   opacity: 0.72;

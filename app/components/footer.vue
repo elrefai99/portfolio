@@ -130,6 +130,9 @@ const scrollToTop = () => {
   font-size: 11px;
 }
 .bp-footer__nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   color: var(--bp-blue);
   opacity: 0.72;
   text-decoration: none;

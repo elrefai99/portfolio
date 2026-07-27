@@ -6,7 +6,7 @@ export default defineConfig({
           'bg-base': 'bg-white dark:bg-[#1e1e1c]',
           'bg-canvas': 'bg-[#e8e6dc] dark:bg-[#0f0f0e]',
           'icon-btn': 'op30 hover:op100',
-          'social-link': 'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 bg-white/75 text-xl text-gray-600 shadow-[0_14px_32px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-black/15 hover:bg-white/90 hover:text-gray-900 hover:shadow-[0_18px_36px_rgba(0,0,0,0.14)] dark:border-white/15 dark:bg-white/10 dark:text-gray-200 dark:shadow-[0_14px_32px_rgba(0,0,0,0.28)] dark:hover:border-white/20 dark:hover:bg-white/16 dark:hover:text-white dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.36)]',
+          'social-link': 'inline-flex h-11 w-11 items-center justify-center rounded-xl border border-black/10 bg-white/75 text-xl text-gray-600 shadow-[0_14px_32px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-black/15 hover:bg-white/90 hover:text-gray-900 hover:shadow-[0_18px_36px_rgba(0,0,0,0.14)] dark:border-white/15 dark:bg-white/10 dark:text-gray-200 dark:shadow-[0_14px_32px_rgba(0,0,0,0.28)] dark:hover:border-white/20 dark:hover:bg-white/16 dark:hover:text-white dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.36)]',
           'social-icon': 'h-5 w-5',
      },
      presets: [

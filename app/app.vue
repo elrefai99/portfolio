@@ -38,6 +38,9 @@ html.dark {
   left: -9999px;
   top: 0;
   z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem; /* 44px min tap target for mobile */
   padding: 0.6rem 1rem;
   font-size: 12px;
   color: var(--bp-blue);
