@@ -47,10 +47,11 @@ const footerLinkClass = "bp-link";
             :href="project.link"
             target="_blank"
             rel="noopener noreferrer"
+            :aria-label="`Open ${project.name} live site (opens in new tab)`"
             :title="`${project.name} live site`"
-            class="shrink-0 text-gray-500 dark:text-gray-400 transition-colors duration-200 hover:text-black dark:hover:text-white"
+            class="shrink-0 grid place-items-center -m-2 p-2 min-w-11 min-h-11 text-gray-500 dark:text-gray-400 transition-colors duration-200 hover:text-black dark:hover:text-white"
           >
-            <i class="i-carbon:arrow-up-right w-5 h-5" />
+            <i class="i-carbon:arrow-up-right w-5 h-5" aria-hidden="true" />
           </a>
         </div>
 

@@ -7,5 +7,12 @@ const toggleDark = useToggle(isDark);
 </script>
 
 <template>
-  <button i-carbon-sun dark:i-carbon-moon @click="toggleDark()" />
+  <button
+    type="button"
+    :aria-label="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+    class="grid place-items-center -m-2 p-2 min-w-11 min-h-11"
+    @click="toggleDark()"
+  >
+    <span i-carbon-sun dark:i-carbon-moon class="text-xl" aria-hidden="true" />
+  </button>
 </template>

@@ -51,7 +51,7 @@ onUnmounted(() => {
           <router-link to="/blogs" class="bp-nav__link" active-class="is-active">
             <span class="bp-nav__code">04</span>Blogs
           </router-link>
-          <Darkmode class="bp-nav__theme" aria-label="Toggle theme" />
+          <Darkmode class="bp-nav__theme" />
         </div>
       </div>
       <div class="bp-nav__rule" aria-hidden="true" />
