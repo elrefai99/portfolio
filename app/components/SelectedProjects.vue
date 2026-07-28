@@ -16,7 +16,7 @@ const footerLinkClass = "bp-link";
 <template>
   <div max-w-4xl mx-auto p-6 md:p-10>
     <div class="flex items-center justify-between mb-8">
-      <h2 text-2xl font-bold text-black dark:text-white tracking-tight>Projects</h2>
+      <h2 text-2xl font-bold tracking-tight class="text-[var(--bp-blue)]">Projects</h2>
       <router-link to="/projects" :class="footerLinkClass">
         View all
         <i class="i-carbon:arrow-right w-4 h-4" />
@@ -38,7 +38,7 @@ const footerLinkClass = "bp-link";
               loading="lazy"
               decoding="async"
             />
-            <h3 font-semibold text-lg text-black dark:text-gray-300 class="truncate">
+            <h3 font-semibold text-lg class="truncate text-[var(--bp-blue)]">
               {{ project.name }}
             </h3>
           </div>
@@ -49,14 +49,14 @@ const footerLinkClass = "bp-link";
             rel="noopener noreferrer"
             :aria-label="`Open ${project.name} live site (opens in new tab)`"
             :title="`${project.name} live site`"
-            class="shrink-0 grid place-items-center -m-2 p-2 min-w-11 min-h-11 text-gray-500 dark:text-gray-400 transition-colors duration-200 hover:text-black dark:hover:text-white"
+            class="shrink-0 grid place-items-center -m-2 p-2 min-w-11 min-h-11 text-[var(--bp-muted)] transition-colors duration-200 hover:text-[var(--bp-blue)]"
           >
             <i class="i-carbon:arrow-up-right w-5 h-5" aria-hidden="true" />
           </a>
         </div>
 
         <!-- Description -->
-        <p text-sm text-black dark:text-gray-400 leading-relaxed class="line-clamp-3">
+        <p text-sm leading-relaxed class="line-clamp-3 text-[var(--bp-blue-dim)]">
           {{ getDesc(project.desc) }}
         </p>
 

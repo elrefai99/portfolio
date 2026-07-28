@@ -42,29 +42,29 @@ const darkThemeVariables = {
 
 const lightThemeVariables = {
   background: "transparent",
-  primaryColor: "#f4f1ea",
-  primaryBorderColor: "#c9c1af",
-  primaryTextColor: "#2b2822",
-  secondaryColor: "#eae5d9",
-  tertiaryColor: "#eae5d9",
-  lineColor: "#8f8875",
-  textColor: "#2b2822",
-  actorBkg: "#f4f1ea",
-  actorBorder: "#c9c1af",
-  actorTextColor: "#2b2822",
-  actorLineColor: "#8f8875",
-  signalColor: "#8f8875",
-  signalTextColor: "#2b2822",
-  labelBoxBkgColor: "#f4f1ea",
-  labelBoxBorderColor: "#c9c1af",
-  labelTextColor: "#2b2822",
-  loopTextColor: "#2b2822",
-  noteBkgColor: "#efe9dc",
-  noteTextColor: "#2b2822",
-  noteBorderColor: "#c9c1af",
-  activationBkgColor: "#efe9dc",
-  activationBorderColor: "#c9c1af",
-  sequenceNumberColor: "#f8f6f0",
+  primaryColor: "#d1cfc8",
+  primaryBorderColor: "#5d544f",
+  primaryTextColor: "#362f2a",
+  secondaryColor: "#d1cfc8",
+  tertiaryColor: "#d1cfc8",
+  lineColor: "#4a423c",
+  textColor: "#362f2a",
+  actorBkg: "#d1cfc8",
+  actorBorder: "#5d544f",
+  actorTextColor: "#362f2a",
+  actorLineColor: "#4a423c",
+  signalColor: "#4a423c",
+  signalTextColor: "#362f2a",
+  labelBoxBkgColor: "#d1cfc8",
+  labelBoxBorderColor: "#5d544f",
+  labelTextColor: "#362f2a",
+  loopTextColor: "#362f2a",
+  noteBkgColor: "#d1cfc8",
+  noteTextColor: "#362f2a",
+  noteBorderColor: "#5d544f",
+  activationBkgColor: "#d1cfc8",
+  activationBorderColor: "#5d544f",
+  sequenceNumberColor: "#e5e4e0",
 } as const;
 
 type MermaidModule = typeof import("mermaid")["default"];
@@ -140,13 +140,13 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="root"
-    class="overflow-hidden rounded-xl border border-slate-300/30 bg-white/74 shadow-[0_18px_48px_rgba(148,163,184,0.18)] dark:border-white/14 dark:bg-white/8 dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]"
+    class="overflow-hidden rounded-xl border border-[var(--bp-line-soft)] bg-[#f4f3ef]/80 shadow-[0_18px_48px_rgba(74,66,60,0.18)] dark:bg-[rgba(var(--bp-accent-rgb),0.08)] dark:shadow-[0_18px_48px_rgba(0,0,0,0.34)]"
   >
     <div
-      class="flex items-center justify-between gap-4 border-b border-slate-300/30 px-4 py-3 text-xs text-gray-500 dark:border-white/10 dark:text-white/70"
+      class="flex items-center justify-between gap-4 border-b border-[var(--bp-line-soft)] px-4 py-3 text-xs text-[var(--bp-blue-dim)]"
     >
       <span class="font-mono">{{ filename || "diagram" }}</span>
-      <span class="rounded-full bg-black/5 px-2 py-1 font-mono uppercase dark:bg-white/10"
+      <span class="rounded-full bg-[rgba(var(--bp-accent-rgb),0.05)] px-2 py-1 font-mono uppercase dark:bg-[rgba(var(--bp-accent-rgb),0.1)]"
         >mermaid</span
       >
     </div>
@@ -155,7 +155,7 @@ onBeforeUnmount(() => {
       <div v-if="svg" class="mermaid-diagram w-full overflow-x-auto p-4" v-html="svg" />
       <pre
         v-else
-        class="w-full overflow-x-auto p-4 text-sm leading-7 text-gray-700 dark:text-gray-300"
+        class="w-full overflow-x-auto p-4 text-sm leading-7 text-[var(--bp-blue-dim)]"
       ><code>{{ code }}</code></pre>
     </div>
   </div>

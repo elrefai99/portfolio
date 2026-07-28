@@ -55,8 +55,6 @@ const tagChipClass = "bp-chip";
         mx-auto
         space-y-10
         min-h-screen
-        text-black
-        dark:text-white
         flex
         justify-center
         items-start
@@ -72,10 +70,10 @@ const tagChipClass = "bp-chip";
           </nav>
           <section>
             <div class="flex flex-col items-center text-center mb-6">
-              <h1 text-5xl font-bold mb-2 text-black dark:text-white>
+              <h1 text-5xl font-bold mb-2 class="text-[var(--bp-blue)]">
                 Backend &amp; API Projects
               </h1>
-              <p text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl>
+              <p text-sm text-[var(--bp-muted)] mb-4 max-w-2xl>
                 Backend, API, payment, and developer tooling projects built with Node.js,
                 TypeScript, Express.js, AWS, Docker, Redis, and PostgreSQL. Includes
                 in-depth engineering case studies for
@@ -146,7 +144,7 @@ const tagChipClass = "bp-chip";
                         loading="lazy"
                         decoding="async"
                       />
-                      <h2 font-semibold text-lg text-black dark:text-gray-300>
+                      <h2 font-semibold text-lg class="text-[var(--bp-blue)]">
                         {{ project.name }}
                       </h2>
                     </div>
@@ -184,7 +182,7 @@ const tagChipClass = "bp-chip";
                     </div>
                   </div>
 
-                  <p v-if="project.tagline" text-sm text-gray-600 dark:text-gray-400 mb-4>
+                  <p v-if="project.tagline" text-sm class="text-[var(--bp-blue-dim)]" mb-4>
                     {{ project.tagline }}
                   </p>
 
@@ -202,11 +200,10 @@ const tagChipClass = "bp-chip";
                     <p
                       text-xs
                       font-semibold
-                      text-gray-500
-                      dark:text-gray-400
                       mb-3
                       uppercase
                       tracking-wide
+                      class="text-[var(--bp-muted)]"
                     >
                       Technologies
                     </p>
@@ -229,12 +226,10 @@ const tagChipClass = "bp-chip";
                     gap-2
                     text-sm
                     font-medium
-                    text-gray-600
-                    dark:text-gray-400
                     transition-colors
                     duration-200
-                    hover="text-black dark:text-white"
                     mt-4
+                    class="text-[var(--bp-blue-dim)] hover:text-[var(--bp-blue)]"
                   >
                     <i
                       class="transition-transform duration-300"
@@ -267,17 +262,16 @@ const tagChipClass = "bp-chip";
                   >
                     <ul
                       v-if="Array.isArray(project.desc)"
-                      text-black
-                      dark:text-gray-400
                       leading-relaxed
                       mt-3
                       list-disc
                       pl-5
                       space-y-2
+                      class="text-[var(--bp-blue-dim)]"
                     >
                       <li v-for="(point, idx) in project.desc" :key="idx">{{ point }}</li>
                     </ul>
-                    <p v-else text-black dark:text-gray-400 leading-relaxed mt-3>
+                    <p v-else leading-relaxed mt-3 class="text-[var(--bp-blue-dim)]">
                       {{ project.desc }}
                     </p>
                   </div>

@@ -119,8 +119,8 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-        { name: 'theme-color', content: '#faf9f5', media: '(prefers-color-scheme: light)' },
-        { name: 'theme-color', content: '#141413', media: '(prefers-color-scheme: dark)' },
+        { name: 'theme-color', content: '#E5E4E0', media: '(prefers-color-scheme: light)' },
+        { name: 'theme-color', content: '#0f0f0e', media: '(prefers-color-scheme: dark)' },
       ],
       link: [
         { rel: 'dns-prefetch', href: 'https://ghchart.rshah.org' },

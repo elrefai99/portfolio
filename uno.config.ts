@@ -2,11 +2,11 @@ import { defineConfig, presetUno, presetAttributify, presetIcons } from 'unocss'
 
 export default defineConfig({
      shortcuts: {
-          'border-base': 'border-gray/20 dark:border-gray/15',
-          'bg-base': 'bg-white dark:bg-[#1e1e1c]',
-          'bg-canvas': 'bg-[#e8e6dc] dark:bg-[#0f0f0e]',
+          'border-base': 'border-[#4A423C]/20 dark:border-gray/15',
+          'bg-base': 'bg-[#E5E4E0] dark:bg-[#191917]',
+          'bg-canvas': 'bg-[#D1CFC8] dark:bg-[#0f0f0e]',
           'icon-btn': 'op30 hover:op100',
-          'social-link': 'inline-flex h-11 w-11 items-center justify-center rounded-xl border border-black/10 bg-white/75 text-xl text-gray-600 shadow-[0_14px_32px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-black/15 hover:bg-white/90 hover:text-gray-900 hover:shadow-[0_18px_36px_rgba(0,0,0,0.14)] dark:border-white/15 dark:bg-white/10 dark:text-gray-200 dark:shadow-[0_14px_32px_rgba(0,0,0,0.28)] dark:hover:border-white/20 dark:hover:bg-white/16 dark:hover:text-white dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.36)]',
+          'social-link': 'inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#362F2A]/10 bg-[#E5E4E0]/75 text-xl text-[#443B36] shadow-[0_14px_32px_rgba(54,47,42,0.1)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#362F2A]/15 hover:bg-[#E5E4E0]/90 hover:text-[#362F2A] hover:shadow-[0_18px_36px_rgba(54,47,42,0.14)] dark:border-white/15 dark:bg-white/10 dark:text-gray-200 dark:shadow-[0_14px_32px_rgba(0,0,0,0.28)] dark:hover:border-white/20 dark:hover:bg-white/16 dark:hover:text-white dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.36)]',
           'social-icon': 'h-5 w-5',
      },
      presets: [
@@ -16,19 +16,19 @@ export default defineConfig({
      ],
      theme: {
           colors: {
-               whiteMode: "#141413",
+               whiteMode: "#362F2A",
                // Warm neutral palette (site-wide)
-               ink: "#141413",     // primary text / dark backgrounds
-               cream: "#faf9f5",   // light backgrounds / text on dark
-               mute: "#b0aea5",    // secondary elements (mid gray)
-               subtle: "#e8e6dc",  // subtle light backgrounds
+               ink: "#362F2A",      // primary text / light-mode ink
+               cream: "#E5E4E0",    // light backgrounds / text on dark
+               mute: "#5D544F",     // secondary elements (highlight gray)
+               subtle: "#D1CFC8",   // subtle light backgrounds
                // Architectural blueprint palette
                blueprint: {
-                    DEFAULT: "#4FC3F7",
-                    glow: "#7fd6fb",
-                    dim: "#2b6f8f",
-                    deep: "#0a1f2b",
-                    ink: "#0b3d5c",
+                    DEFAULT: "#362F2A",
+                    glow: "#443B36",
+                    dim: "#5D544F",
+                    deep: "#0f0f0e",
+                    ink: "#faf9f5",
                },
           },
           animation: {

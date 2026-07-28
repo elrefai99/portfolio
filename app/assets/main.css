@@ -86,7 +86,7 @@ a,
 
 @media (hover: hover) {
   a:hover {
-    color: var(--bp-muted, #b0aea5);
+    color: var(--bp-muted, #5d544f);
   }
 }
 

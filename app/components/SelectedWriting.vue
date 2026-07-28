@@ -9,7 +9,7 @@ const footerLinkClass = 'bp-link'
 <template>
   <div max-w-4xl mx-auto p-6 md:p-10>
     <div class="flex items-center justify-between mb-8">
-      <h2 text-2xl font-bold text-black dark:text-white tracking-tight>Writing</h2>
+      <h2 text-2xl font-bold tracking-tight class="text-[var(--bp-blue)]">Writing</h2>
       <router-link to="/blogs" :class="footerLinkClass">
         View all
         <i class="i-carbon:arrow-right w-4 h-4" />
@@ -24,11 +24,11 @@ const footerLinkClass = 'bp-link'
         :class="cardClass"
       >
         <p
-          class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          class="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
         >
           {{ post.category }}
         </p>
-        <h3 class="text-lg font-semibold text-black dark:text-gray-300">
+        <h3 class="text-lg font-semibold text-[var(--bp-blue)]">
           {{ post.title }}
         </h3>
       </router-link>

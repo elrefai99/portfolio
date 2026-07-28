@@ -52,8 +52,6 @@ const tagClass = 'bp-chip'
         max-w-4xl
         mx-auto
         min-h-screen
-        text-black
-        dark:text-white
         flex
         justify-center
         items-start
@@ -75,7 +73,7 @@ const tagClass = 'bp-chip'
 
           <header :class="`${panelClass} overflow-hidden p-6 md:p-8`">
             <div
-              class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
             >
               <span>{{ blog.category }}</span>
               <span aria-hidden="true">/</span>
@@ -85,22 +83,22 @@ const tagClass = 'bp-chip'
             </div>
 
             <h1
-              class="text-4xl font-bold leading-tight text-black dark:text-gray-300 md:text-5xl"
+              class="text-4xl font-bold leading-tight text-[var(--bp-blue)] md:text-5xl"
             >
               {{ blog.title }}
             </h1>
             <p
-              class="mt-4 max-w-3xl text-base leading-7 text-black dark:text-gray-400 md:text-lg"
+              class="mt-4 max-w-3xl text-base leading-7 text-[var(--bp-blue-dim)] md:text-lg"
             >
               {{ blog.excerpt }}
             </p>
 
             <!-- Visible authorship + freshness (E-E-A-T: schema dates need on-page corroboration) -->
-            <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-4 text-sm text-[var(--bp-blue-dim)]">
               By
               <router-link
                 to="/"
-                class="font-semibold text-black underline underline-offset-3 dark:text-gray-200"
+                class="font-semibold text-[var(--bp-blue)] underline underline-offset-3"
                 >Mohammed Mostafa</router-link
               >
               · Published <time :datetime="blog.date">{{ blog.date }}</time>
@@ -130,7 +128,7 @@ const tagClass = 'bp-chip'
           >
             <h2
               id="faq-heading"
-              class="scroll-mt-24 text-2xl font-semibold text-black dark:text-gray-300"
+              class="scroll-mt-24 text-2xl font-semibold text-[var(--bp-blue)]"
             >
               Frequently asked questions
             </h2>
@@ -138,11 +136,11 @@ const tagClass = 'bp-chip'
               <div v-for="entry in blog.faq" :key="entry.question">
                 <dt
                   :id="`faq-${slugifyHeading(entry.question)}`"
-                  class="scroll-mt-24 text-lg font-semibold text-black dark:text-gray-300"
+                  class="scroll-mt-24 text-lg font-semibold text-[var(--bp-blue)]"
                 >
                   {{ entry.question }}
                 </dt>
-                <dd class="mt-2 text-base leading-8 text-black dark:text-gray-400">
+                <dd class="mt-2 text-base leading-8 text-[var(--bp-blue-dim)]">
                   {{ entry.answer }}
                 </dd>
               </div>
@@ -156,7 +154,7 @@ const tagClass = 'bp-chip'
             aria-label="Related blog posts"
           >
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              class="text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
             >
               Related notes
             </p>
@@ -164,12 +162,12 @@ const tagClass = 'bp-chip'
               <li v-for="related in relatedPosts" :key="related.slug">
                 <router-link :to="`/blogs/${related.slug}`" class="group block">
                   <span
-                    class="block text-lg font-semibold text-black transition-opacity group-hover:opacity-70 dark:text-gray-300"
+                    class="block text-lg font-semibold text-[var(--bp-blue)] transition-opacity group-hover:opacity-70"
                   >
                     {{ related.title }}
                   </span>
                   <span
-                    class="mt-1 block text-sm leading-6 text-gray-700 dark:text-gray-400"
+                    class="mt-1 block text-sm leading-6 text-[var(--bp-blue-dim)]"
                     >{{ related.excerpt }}</span
                   >
                 </router-link>
@@ -184,7 +182,7 @@ const tagClass = 'bp-chip'
             aria-label="Related project deep dives"
           >
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              class="text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
             >
               From the projects behind this post
             </p>
@@ -192,12 +190,12 @@ const tagClass = 'bp-chip'
               <li v-for="cs in relatedCaseStudies" :key="cs.slug">
                 <router-link :to="`/projects/${cs.slug}`" class="group block">
                   <span
-                    class="block text-lg font-semibold text-black transition-opacity group-hover:opacity-70 dark:text-gray-300"
+                    class="block text-lg font-semibold text-[var(--bp-blue)] transition-opacity group-hover:opacity-70"
                   >
                     {{ cs.name }} — deep dive
                   </span>
                   <span
-                    class="mt-1 block text-sm leading-6 text-gray-700 dark:text-gray-400"
+                    class="mt-1 block text-sm leading-6 text-[var(--bp-blue-dim)]"
                     >{{ cs.summary }}</span
                   >
                 </router-link>

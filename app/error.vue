@@ -78,14 +78,14 @@ const handleBack = () => {
 <template>
   <main class="not-found-page px-4 pb-10 pt-6 sm:px-6 lg:px-8">
     <section
-      class="not-found-shell relative mx-auto grid w-full max-w-6xl gap-10 overflow-hidden rounded-[32px] border border-black/10 bg-white/60 p-6 shadow-[0_30px_120px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/14 dark:bg-white/8 sm:p-8 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-10"
+      class="not-found-shell relative mx-auto grid w-full max-w-6xl gap-10 overflow-hidden rounded-[32px] border border-[#362F2A]/10 bg-[#E5E4E0]/60 p-6 shadow-[0_30px_120px_rgba(54,47,42,0.08)] backdrop-blur-xl dark:border-[#faf9f5]/14 dark:bg-[#faf9f5]/8 sm:p-8 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-10"
     >
       <div class="orb orb-one"></div>
       <div class="orb orb-two"></div>
 
       <div class="panel-enter relative z-10 space-y-6" style="animation-delay: 0.05s">
         <div
-          class="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-black/70 dark:border-white/14 dark:bg-white/10 dark:text-white/78"
+          class="inline-flex items-center gap-2 rounded-full border border-[#362F2A]/10 bg-[#362F2A]/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-[#362F2A]/70 dark:border-[#faf9f5]/14 dark:bg-[#faf9f5]/10 dark:text-[#faf9f5]/78"
         >
           <span class="status-dot"></span>
           Missing Route
@@ -93,12 +93,12 @@ const handleBack = () => {
 
         <div>
           <p
-            class="mb-3 text-sm uppercase tracking-[0.3em] text-black/45 dark:text-white/45"
+            class="mb-3 text-sm uppercase tracking-[0.3em] text-[#362F2A]/45 dark:text-[#faf9f5]/45"
           >
             Error 404
           </p>
           <h1
-            class="error-code text-[clamp(5.2rem,18vw,11rem)] font-black leading-none text-black dark:text-white"
+            class="error-code text-[clamp(5.2rem,18vw,11rem)] font-black leading-none text-[#362F2A] dark:text-[#faf9f5]"
           >
             404
           </h1>
@@ -106,11 +106,11 @@ const handleBack = () => {
 
         <div class="max-w-xl space-y-3">
           <h2
-            class="text-3xl font-semibold tracking-tight text-black dark:text-white sm:text-4xl"
+            class="text-3xl font-semibold tracking-tight text-[#362F2A] dark:text-[#faf9f5] sm:text-4xl"
           >
             This route fell out of the map.
           </h2>
-          <p class="text-base leading-7 text-black/65 dark:text-white/65 sm:text-lg">
+          <p class="text-base leading-7 text-[#362F2A]/65 dark:text-[#faf9f5]/65 sm:text-lg">
             The URL may be mistyped, the page may have moved, or the link is no longer
             active. Use a stable route below to get back into the site.
           </p>
@@ -118,12 +118,12 @@ const handleBack = () => {
 
         <div class="path-card max-w-xl rounded-[24px] p-4 sm:p-5">
           <p
-            class="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-black/45 dark:text-white/45"
+            class="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#362F2A]/45 dark:text-[#faf9f5]/45"
           >
             Requested Path
           </p>
           <code
-            class="block break-all text-sm font-semibold text-black dark:text-white sm:text-base"
+            class="block break-all text-sm font-semibold text-[#362F2A] dark:text-[#faf9f5] sm:text-base"
             :title="requestedPath"
           >
             {{ compactPath }}
@@ -148,17 +148,17 @@ const handleBack = () => {
           <div class="mb-5 flex items-start justify-between gap-4">
             <div>
               <p
-                class="text-xs uppercase tracking-[0.24em] text-black/45 dark:text-white/45"
+                class="text-xs uppercase tracking-[0.24em] text-[#362F2A]/45 dark:text-[#faf9f5]/45"
               >
                 Recovery Routes
               </p>
-              <h3 class="mt-2 text-2xl font-semibold text-black dark:text-white">
+              <h3 class="mt-2 text-2xl font-semibold text-[#362F2A] dark:text-[#faf9f5]">
                 Pick a stable starting point.
               </h3>
             </div>
 
             <div
-              class="scan-chip hidden items-center gap-2 rounded-full px-3 py-1 text-xs font-medium text-black/60 dark:text-white/60 sm:inline-flex"
+              class="scan-chip hidden items-center gap-2 rounded-full px-3 py-1 text-xs font-medium text-[#362F2A]/60 dark:text-[#faf9f5]/60 sm:inline-flex"
             >
               <i class="i-carbon:route text-sm"></i>
               route.log
@@ -173,42 +173,42 @@ const handleBack = () => {
               class="route-card group flex items-start gap-4 rounded-[24px] p-4 transition-all duration-300"
             >
               <span
-                class="icon-tile flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl text-black dark:text-white"
+                class="icon-tile flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl text-[#362F2A] dark:text-[#faf9f5]"
               >
                 <i :class="item.icon"></i>
               </span>
 
               <span class="min-w-0 flex-1">
-                <span class="mb-1 block text-lg font-semibold text-black dark:text-white">
+                <span class="mb-1 block text-lg font-semibold text-[#362F2A] dark:text-[#faf9f5]">
                   {{ item.title }}
                 </span>
-                <span class="block text-sm leading-6 text-black/60 dark:text-white/60">
+                <span class="block text-sm leading-6 text-[#362F2A]/60 dark:text-[#faf9f5]/60">
                   {{ item.description }}
                 </span>
               </span>
 
               <i
-                class="i-carbon:arrow-up-right mt-1 text-lg text-black/35 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 dark:text-white/35"
+                class="i-carbon:arrow-up-right mt-1 text-lg text-[#362F2A]/35 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 dark:text-[#faf9f5]/35"
               ></i>
             </NuxtLink>
           </div>
 
           <div class="terminal-panel mt-5 rounded-[24px] p-4 font-mono text-sm">
             <div
-              class="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.24em] text-black/45 dark:text-white/45"
+              class="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.24em] text-[#362F2A]/45 dark:text-[#faf9f5]/45"
             >
               <span class="terminal-dot"></span>
               Diagnosis
             </div>
 
-            <p class="text-black/70 dark:text-white/70">
+            <p class="text-[#362F2A]/70 dark:text-[#faf9f5]/70">
               GET
-              <span class="break-all text-black dark:text-white">{{
+              <span class="break-all text-[#362F2A] dark:text-[#faf9f5]">{{
                 requestedPath
               }}</span>
             </p>
-            <p class="mt-2 text-black/55 dark:text-white/55">Response: 404 Not Found</p>
-            <p class="mt-2 text-black/55 dark:text-white/55">
+            <p class="mt-2 text-[#362F2A]/55 dark:text-[#faf9f5]/55">Response: 404 Not Found</p>
+            <p class="mt-2 text-[#362F2A]/55 dark:text-[#faf9f5]/55">
               Next step: choose one of the routes above or return to the landing page.
             </p>
           </div>
@@ -220,23 +220,23 @@ const handleBack = () => {
 
 <style scoped>
 .not-found-page {
-  --nf-surface: rgba(255, 255, 255, 0.72);
-  --nf-surface-strong: rgba(255, 255, 255, 0.84);
-  --nf-panel: rgba(255, 255, 255, 0.56);
-  --nf-border: rgba(15, 23, 42, 0.12);
-  --nf-border-strong: rgba(15, 23, 42, 0.18);
-  --nf-glow: rgba(15, 23, 42, 0.1);
-  --nf-grid: rgba(15, 23, 42, 0.06);
+  --nf-surface: rgba(229, 228, 224, 0.72);
+  --nf-surface-strong: rgba(229, 228, 224, 0.84);
+  --nf-panel: rgba(229, 228, 224, 0.56);
+  --nf-border: rgba(54, 47, 42, 0.12);
+  --nf-border-strong: rgba(54, 47, 42, 0.18);
+  --nf-glow: rgba(54, 47, 42, 0.1);
+  --nf-grid: rgba(54, 47, 42, 0.06);
 }
 
 .dark .not-found-page {
-  --nf-surface: rgba(8, 8, 8, 0.72);
-  --nf-surface-strong: rgba(255, 255, 255, 0.12);
-  --nf-panel: rgba(255, 255, 255, 0.09);
-  --nf-border: rgba(255, 255, 255, 0.14);
-  --nf-border-strong: rgba(255, 255, 255, 0.22);
-  --nf-glow: rgba(255, 255, 255, 0.08);
-  --nf-grid: rgba(255, 255, 255, 0.06);
+  --nf-surface: rgba(15, 15, 14, 0.72);
+  --nf-surface-strong: rgba(250, 249, 245, 0.12);
+  --nf-panel: rgba(250, 249, 245, 0.09);
+  --nf-border: rgba(250, 249, 245, 0.14);
+  --nf-border-strong: rgba(250, 249, 245, 0.22);
+  --nf-glow: rgba(250, 249, 245, 0.08);
+  --nf-grid: rgba(250, 249, 245, 0.06);
 }
 
 .not-found-shell::before,
@@ -250,19 +250,19 @@ const handleBack = () => {
 .not-found-shell::before {
   background: radial-gradient(
       circle at top left,
-      rgba(255, 255, 255, 0.28),
+      rgba(229, 228, 224, 0.28),
       transparent 35%
     ),
-    radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.08), transparent 30%);
+    radial-gradient(circle at bottom right, rgba(54, 47, 42, 0.08), transparent 30%);
 }
 
 .dark .not-found-shell::before {
   background: radial-gradient(
       circle at top left,
-      rgba(255, 255, 255, 0.08),
+      rgba(250, 249, 245, 0.08),
       transparent 35%
     ),
-    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.05), transparent 30%);
+    radial-gradient(circle at bottom right, rgba(250, 249, 245, 0.05), transparent 30%);
 }
 
 .not-found-shell::after {
@@ -300,7 +300,7 @@ const handleBack = () => {
   right: 12%;
   width: 14rem;
   height: 14rem;
-  background: rgba(15, 23, 42, 0.12);
+  background: rgba(54, 47, 42, 0.12);
   animation: drift 13s ease-in-out infinite;
 }
 
@@ -309,16 +309,16 @@ const handleBack = () => {
   left: 8%;
   width: 12rem;
   height: 12rem;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(229, 228, 224, 0.6);
   animation: drift 16s ease-in-out infinite reverse;
 }
 
 .dark .orb-one {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(250, 249, 245, 0.08);
 }
 
 .dark .orb-two {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(250, 249, 245, 0.04);
 }
 
 .panel-enter {
@@ -339,7 +339,7 @@ const handleBack = () => {
 .ghost-action {
   border: 1px solid var(--nf-border);
   background: var(--nf-panel);
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 20px 60px rgba(54, 47, 42, 0.06);
   backdrop-filter: blur(18px);
 }
 
@@ -359,18 +359,18 @@ const handleBack = () => {
 .route-card:hover {
   transform: translateY(-2px);
   border-color: var(--nf-border-strong);
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 24px 70px rgba(54, 47, 42, 0.1);
 }
 
 .primary-action {
-  background: rgba(15, 23, 42, 0.94);
-  color: #fff;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+  background: rgba(54, 47, 42, 0.94);
+  color: #e5e4e0;
+  box-shadow: 0 24px 60px rgba(54, 47, 42, 0.18);
 }
 
 .dark .primary-action {
-  background: rgba(255, 255, 255, 0.92);
-  color: #050505;
+  background: rgba(250, 249, 245, 0.92);
+  color: #0f0f0e;
 }
 
 .ghost-action {
@@ -448,11 +448,11 @@ const handleBack = () => {
   0%,
   100% {
     opacity: 0.55;
-    box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.2);
+    box-shadow: 0 0 0 0 rgba(74, 66, 60, 0.2);
   }
   50% {
     opacity: 1;
-    box-shadow: 0 0 0 8px rgba(148, 163, 184, 0);
+    box-shadow: 0 0 0 8px rgba(74, 66, 60, 0);
   }
 }
 

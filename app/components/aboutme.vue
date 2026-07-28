@@ -14,10 +14,8 @@ const chartFailed = ref(false);
           <p
             text-xl
             font-medium
-            text-gray-600
-            dark:text-gray-400
             mb-2
-            class="animate-slide-down-delay-1"
+            class="animate-slide-down-delay-1 text-[var(--bp-blue-dim)]"
           >
             Hello, I'm
           </p>
@@ -26,18 +24,14 @@ const chartFailed = ref(false);
             text="5xl md:6xl lg:7xl"
             font-extrabold
             leading-tight
-            text-black
-            dark:text-white
             tracking-tight
             my-2
-            class="animate-slide-down-lcp"
+            class="animate-slide-down-lcp text-[var(--bp-blue)]"
           >
             {{ fullText
             }}<span
-              class="cursor-blink"
+              class="cursor-blink text-[var(--bp-blue-dim)]"
               aria-hidden="true"
-              text-gray-600
-              dark:text-gray-400
               font-light
             ></span>
           </h1>
@@ -46,10 +40,8 @@ const chartFailed = ref(false);
             text-base
             md:text-lg
             font-medium
-            text-gray-600
-            dark:text-gray-400
             mt-2
-            class="animate-slide-down-delay-2"
+            class="animate-slide-down-delay-2 text-[var(--bp-blue-dim)]"
           >
             also known as
             <a
@@ -57,8 +49,7 @@ const chartFailed = ref(false);
               target="_blank"
               rel="noopener noreferrer"
               underline-offset-3
-              dark:text-gray-100
-              text-gray-900
+              class="text-[var(--bp-blue)]"
               >elrefai99</a
             >
           </p>
@@ -70,12 +61,11 @@ const chartFailed = ref(false);
             px-6
             py-3
             mt-6
-            bg="black/3 dark:white/8"
-            border="1 black/8 dark:white/14"
+            border-1
             rounded-full
-            class="animate-slide-down-delay-3"
+            class="animate-slide-down-delay-3 bg-[rgba(var(--bp-accent-rgb),0.03)] dark:bg-[rgba(var(--bp-accent-rgb),0.08)] border-[rgba(var(--bp-accent-rgb),0.08)] dark:border-[rgba(var(--bp-accent-rgb),0.14)]"
           >
-            <span text-sm text-gray-600 dark:text-gray-400 font-medium>
+            <span text-sm font-medium class="text-[var(--bp-blue-dim)]">
               Software Engineer II
             </span>
             <!-- <a 
@@ -100,14 +90,13 @@ const chartFailed = ref(false);
             px-6
             py-3
             mt-3
-            bg="black/4 dark:white/8"
-            border="1 black/8 dark:white/14"
+            border-1
             rounded-full
-            class="animate-slide-down-delay-3"
+            class="animate-slide-down-delay-3 bg-[rgba(var(--bp-accent-rgb),0.04)] dark:bg-[rgba(var(--bp-accent-rgb),0.08)] border-[rgba(var(--bp-accent-rgb),0.08)] dark:border-[rgba(var(--bp-accent-rgb),0.14)]"
           >
-            <i class="i-carbon:location" text-sm text-gray-600 dark:text-gray-400></i>
-            <span text-sm text-gray-600 dark:text-gray-400 font-medium>Based in</span>
-            <span font-bold text-black dark:text-white>Cairo, Egypt</span>
+            <i class="i-carbon:location text-[var(--bp-blue-dim)]" text-sm></i>
+            <span text-sm font-medium class="text-[var(--bp-blue-dim)]">Based in</span>
+            <span font-bold class="text-[var(--bp-blue)]">Cairo, Egypt</span>
           </div>
         </div>
 
@@ -121,15 +110,12 @@ const chartFailed = ref(false);
             px-8
             py-4
             rounded-xl
-            bg-black
-            dark:bg-white
-            text-white
-            dark:text-black
             font-semibold
             shadow-lg
             transition-all
             duration-300
             hover=" shadow-2xl"
+            class="bg-[var(--bp-blue)] text-[var(--bp-canvas)]"
           >
             <i class="i-carbon:email"></i>
             <span>Get in Touch</span>
@@ -143,13 +129,11 @@ const chartFailed = ref(false);
             py-4
             rounded-xl
             bg-transparent
-            text-black
-            dark:text-white
-            border="2 black/20 dark:white/20"
+            border-2
             font-semibold
             transition-all
             duration-300
-            hover=" bg-black/5 dark:bg-white/5 border-black/30 dark:border-white/30"
+            class="text-[var(--bp-blue)] border-[rgba(var(--bp-accent-rgb),0.2)] hover:bg-[rgba(var(--bp-accent-rgb),0.05)] hover:border-[rgba(var(--bp-accent-rgb),0.3)]"
           >
             <i class="i-carbon:document"></i>
             <span>View Resume</span>
@@ -161,10 +145,10 @@ const chartFailed = ref(false);
     <!-- About Section -->
     <div class="animate-slide-up-delay-5">
       <div max-w-700px mx-auto space-y-6>
-        <p text-lg leading-relaxed text-gray-700 dark:text-gray-300 text-left>
+        <p text-lg leading-relaxed text-left class="text-[var(--bp-blue-dim)]">
           I'm Mohammed Mostafa, a software engineer specializing in backend development,
           scalable APIs, payment integrations, and production systems with
-          <span inline-flex items-center gap-1.5 font-semibold text-black dark:text-white>
+          <span inline-flex items-center gap-1.5 font-semibold class="text-[var(--bp-blue)]">
             <TagIcon tag="Node.js" size="h-4 w-4" />Node.js </span
           >. I work across TypeScript, Express.js, MongoDB, PostgreSQL, Redis, Docker, and
           AWS, and I recently expanded into frontend development with Vue.js. As a backend
@@ -177,9 +161,7 @@ const chartFailed = ref(false);
             items-center
             gap-1.5
             font-semibold
-            text-black
-            dark:text-white
-            class="underline underline-offset-3 align-middle"
+            class="underline underline-offset-3 align-middle text-[var(--bp-blue)]"
           >
             <img
               :src="logo"
@@ -200,9 +182,7 @@ const chartFailed = ref(false);
             items-center
             gap-1.5
             font-semibold
-            text-black
-            dark:text-white
-            class="underline underline-offset-3 align-middle"
+            class="underline underline-offset-3 align-middle text-[var(--bp-blue)]"
           >
             <img
               :src="egystayLogo"
@@ -217,7 +197,7 @@ const chartFailed = ref(false);
           >.
         </p>
 
-        <p text-lg leading-relaxed text-gray-700 dark:text-gray-300 text-left>
+        <p text-lg leading-relaxed text-left class="text-[var(--bp-blue-dim)]">
           Turning ideas into real, functional systems is what drives me most. I'm
           passionate about building backend solutions, APIs, and tools that make life
           easier and boost productivity—whether for myself, my projects, or the developer
@@ -225,39 +205,35 @@ const chartFailed = ref(false);
           <router-link
             to="/projects"
             font-semibold
-            text-black
-            dark:text-white
             underline
             underline-offset-3
             transition-all
             duration-200
-            class="decoration-black/30 dark:decoration-white/30 hover:decoration-black/80 dark:hover:decoration-white/80"
+            class="text-[var(--bp-blue)] decoration-[rgba(var(--bp-accent-rgb),0.3)] hover:decoration-[rgba(var(--bp-accent-rgb),0.8)]"
           >
             projects </router-link
           >, or read my
           <router-link
             to="/blogs"
             font-semibold
-            text-black
-            dark:text-white
             underline
             underline-offset-3
             transition-all
             duration-200
-            class="decoration-black/30 dark:decoration-white/30 hover:decoration-black/80 dark:hover:decoration-white/80"
+            class="text-[var(--bp-blue)] decoration-[rgba(var(--bp-accent-rgb),0.3)] hover:decoration-[rgba(var(--bp-accent-rgb),0.8)]"
           >
             backend engineering writing </router-link
           >.
         </p>
 
-        <p text-lg leading-relaxed text-gray-700 dark:text-gray-300 text-left>
+        <p text-lg leading-relaxed text-left class="text-[var(--bp-blue-dim)]">
           Outside of coding, I enjoy photography and traveling. I'm also into anime,
           movies, and dramas, and I like to keep track of what I watch.
         </p>
       </div>
     </div>
     <div class="animate-slide-up-delay-7">
-      <div max-w-700px mx-auto p-6 bg="black/2 dark:white/1" rounded-2xl>
+      <div max-w-700px mx-auto p-6 rounded-2xl class="bg-[rgba(var(--bp-accent-rgb),0.02)] dark:bg-[rgba(var(--bp-accent-rgb),0.01)]">
         <a
           href="https://github.com/elrefai99"
           target="_blank"
@@ -274,7 +250,7 @@ const chartFailed = ref(false);
             height="112"
             w-full
             h-auto
-            class="github-chart bg-black/2 dark:bg-white/6"
+            class="github-chart bg-[rgba(var(--bp-accent-rgb),0.02)] dark:bg-[rgba(var(--bp-accent-rgb),0.06)]"
             @error="chartFailed = true"
           />
         </a>
@@ -290,11 +266,9 @@ const chartFailed = ref(false);
             gap-2
             text-sm
             font-medium
-            text-gray-600
-            dark:text-gray-400
             transition-colors
             duration-200
-            hover="text-black dark:text-white"
+            class="text-[var(--bp-blue-dim)] hover:text-[var(--bp-blue)]"
           >
             <i class="i-carbon:logo-github" aria-hidden="true" />
             <span>@elrefai99 on GitHub</span>

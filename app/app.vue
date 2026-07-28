@@ -27,7 +27,7 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 <style>
 html.dark {
-  background: #141413;
+  background: var(--bp-canvas);
   color: var(--color-text);
   color-scheme: dark;
 }

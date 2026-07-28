@@ -1,44 +1,43 @@
 /* =========================================================================
    Architectural Blueprint design system
-   Pure-black canvas + blueprint-blue structural linework.
-   Dark = "blueprint" (black). Light = "paper blueprint" (cyan paper).
+   Warm-ink palette: light mode = paper background + dark inks;
+   dark mode = dark-ink canvas + paper-tone inks (canvas/primary-ink swap).
    ========================================================================= */
 
 :root {
-  /* dark mode: warm off-white linework on warm near-black */
+  /* dark mode: original warm off-white linework, canvas pushed darker than before */
   --bp-accent-rgb: 250, 249, 245;
+  --bp-line-rgb: 250, 249, 245;
   --bp-blue: #faf9f5;
   --bp-blue-glow: #faf9f5;
   --bp-blue-dim: rgba(var(--bp-accent-rgb), 0.55);
-  --bp-line: rgba(var(--bp-accent-rgb), 0.55);
-  --bp-line-soft: rgba(var(--bp-accent-rgb), 0.18);
-  --bp-line-faint: rgba(var(--bp-accent-rgb), 0.08);
-  --bp-grid: rgba(var(--bp-accent-rgb), 0.06);
-  --bp-grid-major: rgba(var(--bp-accent-rgb), 0.12);
-  --bp-canvas: #141413;
+  --bp-line: rgba(var(--bp-line-rgb), 0.55);
+  --bp-line-soft: rgba(var(--bp-line-rgb), 0.18);
+  --bp-line-faint: rgba(var(--bp-line-rgb), 0.08);
+  --bp-grid: rgba(var(--bp-line-rgb), 0.06);
+  --bp-grid-major: rgba(var(--bp-line-rgb), 0.12);
+  --bp-canvas: #0f0f0e;
   --bp-muted: #b0aea5;
-  --bp-subtle: #1e1e1c;
+  --bp-subtle: #191917;
   --bp-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
   --bp-nav-h: 4.25rem;
 }
 
-/* Light mode: warm ink linework on warm paper */
+/* Light mode: dark ink linework on paper background */
 :root:not(.dark) {
-  --bp-accent-rgb: 20, 20, 19;
-  --bp-blue: #141413;
-  --bp-blue-glow: #141413;
-  /* 0.5 composited to rgb(135,135,132) on the paper canvas — 3.43:1, under the
-     4.5:1 floor, and this token colours the case-study <h2>s (.case-label),
-     .case-microlabel and .case-nav-link at 10-11px. 0.68 lands at 6.27:1. */
-  --bp-blue-dim: rgba(var(--bp-accent-rgb), 0.68);
-  --bp-line: rgba(var(--bp-accent-rgb), 0.5);
-  --bp-line-soft: rgba(var(--bp-accent-rgb), 0.16);
-  --bp-line-faint: rgba(var(--bp-accent-rgb), 0.07);
-  --bp-grid: rgba(var(--bp-accent-rgb), 0.06);
-  --bp-grid-major: rgba(var(--bp-accent-rgb), 0.11);
-  --bp-canvas: #faf9f5;
-  --bp-muted: #b0aea5;
-  --bp-subtle: #e8e6dc;
+  --bp-accent-rgb: 54, 47, 42; /* primary ink = #362F2A */
+  --bp-line-rgb: 74, 66, 60; /* shadow gray = #4A423C */
+  --bp-blue: #362f2a;
+  --bp-blue-glow: #362f2a;
+  --bp-blue-dim: #443b36; /* secondary ink — 8.58:1 on the paper canvas */
+  --bp-line: rgba(var(--bp-line-rgb), 0.5);
+  --bp-line-soft: rgba(var(--bp-line-rgb), 0.16);
+  --bp-line-faint: rgba(var(--bp-line-rgb), 0.07);
+  --bp-grid: rgba(var(--bp-line-rgb), 0.06);
+  --bp-grid-major: rgba(var(--bp-line-rgb), 0.11);
+  --bp-canvas: #e5e4e0;
+  --bp-muted: #5d544f; /* highlight gray — 5.80:1 on the paper canvas */
+  --bp-subtle: #d1cfc8;
 }
 
 html {
@@ -113,9 +112,9 @@ html:not(.dark) body {
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(var(--bp-accent-rgb), 0.05) 45%,
+    rgba(var(--bp-line-rgb), 0.05) 45%,
     var(--bp-line) 50%,
-    rgba(var(--bp-accent-rgb), 0.05) 55%,
+    rgba(var(--bp-line-rgb), 0.05) 55%,
     transparent
   );
   opacity: 0.5;
@@ -310,7 +309,7 @@ html:not(.dark) body {
 .bp-panel {
   position: relative;
   border: 1px solid var(--bp-line-soft);
-  background: linear-gradient(180deg, rgba(var(--bp-accent-rgb), 0.03), transparent 60%);
+  background: linear-gradient(180deg, rgba(var(--bp-line-rgb), 0.03), transparent 60%);
   transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 .bp-panel:hover {
@@ -328,7 +327,7 @@ html:not(.dark) body {
   position: relative;
   display: block;
   border: 1px solid var(--bp-line-soft);
-  background: linear-gradient(180deg, rgba(var(--bp-accent-rgb), 0.06), rgba(var(--bp-accent-rgb), 0.02));
+  background: linear-gradient(180deg, rgba(var(--bp-line-rgb), 0.06), rgba(var(--bp-line-rgb), 0.02));
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;

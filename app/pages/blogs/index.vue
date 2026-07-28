@@ -42,8 +42,6 @@ const tagClass = "bp-chip";
         mx-auto
         space-y-10
         min-h-screen
-        text-black
-        dark:text-white
         flex
         justify-center
         items-start
@@ -59,10 +57,10 @@ const tagClass = "bp-chip";
           </nav>
           <section>
             <div class="mb-6 flex flex-col items-center text-center">
-              <h1 text-5xl font-bold mb-2 text-black dark:text-white>
+              <h1 text-5xl font-bold mb-2 class="text-[var(--bp-blue)]">
                 Blog
               </h1>
-              <p text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl>
+              <p text-sm text-[var(--bp-muted)] mb-4 max-w-2xl>
                 Backend engineering notes by Mohammed Mostafa on Node.js, TypeScript,
                 Express.js, API architecture, message queues (BullMQ / Redis),
                 authentication and payment-token security, and real-time systems
@@ -85,21 +83,21 @@ const tagClass = "bp-chip";
                   :class="shellClass"
                   :style="{ animationDelay: `${(groupIndex + index) * 0.1}s` }"
                 >
-                  <article class="relative p-6">
+                  <article class="relative p-5 sm:p-6">
                     <div
-                      class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                      class="mb-4 flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
                     >
                       <time :datetime="blog.date">{{ blog.date }}</time>
                       <span aria-hidden="true">/</span>
                       <span>{{ blog.readTime }}</span>
                     </div>
 
-                    <div class="mb-4 flex items-start justify-between gap-4">
-                      <div>
-                        <h3 class="text-2xl font-semibold text-black dark:text-gray-300">
+                    <div class="mb-4 flex items-start justify-between gap-3 sm:gap-4">
+                      <div class="min-w-0">
+                        <h3 class="text-xl sm:text-2xl font-semibold text-[var(--bp-blue)]">
                           {{ blog.title }}
                         </h3>
-                        <p class="mt-3 leading-7 text-black dark:text-gray-400">
+                        <p class="mt-3 leading-7 text-[var(--bp-blue-dim)]">
                           {{ blog.excerpt }}
                         </p>
                       </div>

@@ -18,15 +18,15 @@ const anchorClass =
   "ml-2 align-middle text-[0.7em] font-normal opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-60";
 
 const inlineCodeClass =
-  "mx-0.5 rounded-md border border-red-500/25 bg-red-500/8 px-1.5 py-0.5 font-mono text-[0.85em] text-red-600 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400";
+  "mx-0.5 rounded-md border border-[var(--bp-line-soft)] bg-[rgba(var(--bp-line-rgb),0.08)] px-1.5 py-0.5 font-mono text-[0.85em] text-[var(--bp-blue-dim)]";
 const codeShellClass =
-  "overflow-hidden rounded-lg border border-[#202020] bg-[#121212] text-[#dbd7caee] shadow-[0_18px_48px_rgba(0,0,0,0.42)]";
+  "overflow-hidden rounded-lg border border-[#2a241f] bg-[#191917] text-[#e5e4e0ee] shadow-[0_18px_48px_rgba(0,0,0,0.42)]";
 const codeHeaderClass =
-  "flex items-center justify-between gap-4 border-b border-[#181818] bg-[#0e0e0e] px-4 py-2 text-xs text-[#a6a59d]";
+  "flex items-center justify-between gap-4 border-b border-[#221d19] bg-[#100e0c] px-4 py-2 text-xs text-[#a89e93]";
 const codeBadgeClass =
-  "rounded-full bg-[#181818] px-2 py-1 font-mono uppercase text-[#d7ba7d]";
+  "rounded-full bg-[#221d19] px-2 py-1 font-mono uppercase text-[#d7ba7d]";
 const codePreClass =
-  "vitesse-code min-h-36 overflow-x-auto bg-[#121212] p-4 text-[13px] leading-6";
+  "vitesse-code min-h-36 overflow-x-auto bg-[#191917] p-4 text-[13px] leading-6";
 
 const keywords = new Set([
   "as",
@@ -107,7 +107,7 @@ const parseInline = (text: string): InlinePart[] => {
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 
 const inlineLinkClass =
-  "font-medium text-black underline underline-offset-3 decoration-black/30 hover:decoration-black/80 dark:text-white dark:decoration-white/30 dark:hover:decoration-white/80";
+  "font-medium text-[var(--bp-blue)] underline underline-offset-3 decoration-[rgba(var(--bp-accent-rgb),0.3)] hover:decoration-[rgba(var(--bp-accent-rgb),0.8)]";
 
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (char) => {
@@ -194,7 +194,7 @@ const isMermaidCode = (block: BlogBlock) =>
     <template v-for="(block, index) in blocks" :key="index">
       <p
         v-if="block.type === 'paragraph'"
-        class="text-base leading-8 text-black dark:text-gray-400"
+        class="text-base leading-8 text-[var(--bp-blue-dim)]"
       >
         <template v-for="(part, partIndex) in parseInline(block.text)" :key="partIndex"
           ><code v-if="part.code" :class="inlineCodeClass">{{ part.text }}</code
@@ -216,8 +216,8 @@ const isMermaidCode = (block: BlogBlock) =>
         class="group scroll-mt-24"
         :class="
           block.level === 3
-            ? 'pt-1 text-xl font-semibold text-black dark:text-gray-300'
-            : 'pt-2 text-2xl font-semibold text-black dark:text-gray-300'
+            ? 'pt-1 text-xl font-semibold text-[var(--bp-blue)]'
+            : 'pt-2 text-2xl font-semibold text-[var(--bp-blue)]'
         "
       >
         {{ block.text
@@ -231,7 +231,7 @@ const isMermaidCode = (block: BlogBlock) =>
 
       <ul
         v-else-if="block.type === 'list'"
-        class="list-disc space-y-2 pl-5 text-base leading-7 text-black dark:text-gray-400"
+        class="list-disc space-y-2 pl-5 text-base leading-7 text-[var(--bp-blue-dim)]"
       >
         <li v-for="item in block.items" :key="item">
           <template v-for="(part, partIndex) in parseInline(item)" :key="partIndex"
@@ -267,7 +267,7 @@ const isMermaidCode = (block: BlogBlock) =>
 
 <style scoped>
 .vitesse-code {
-  color: #dbd7caee;
+  color: #e5e4e0ee;
   font-family: "Fira Code", "Cascadia Code", "JetBrains Mono", "SFMono-Regular", Consolas,
     "Liberation Mono", Menlo, monospace;
   font-feature-settings: "liga" 1, "calt" 1;
@@ -308,7 +308,6 @@ const isMermaidCode = (block: BlogBlock) =>
 }
 
 .vitesse-code :deep(.v-token-comment) {
-  /* Opaque — the old #758575dd blended to ~3.9:1 on #121212; this is 6.9:1 (WCAG AA). */
   color: #8fa38f;
   font-style: italic;
 }

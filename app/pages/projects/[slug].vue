@@ -97,7 +97,7 @@ onUnmounted(() => observer?.disconnect())
       :top-slab="false"
       eager
     >
-      <div class="min-h-screen text-black dark:text-white">
+      <div class="min-h-screen text-[var(--bp-blue)]">
         <article v-if="cs" class="mx-auto w-full max-w-3xl px-4 py-8 md:px-6 md:py-14">
           <!-- Visible breadcrumb corroborating the BreadcrumbList JSON-LD -->
           <nav aria-label="Breadcrumb" class="bp-mono text-xs">
@@ -132,23 +132,23 @@ onUnmounted(() => observer?.disconnect())
               {{ cs.name }}
               <span
                 v-if="cs.subtitle"
-                class="mt-3 block text-2xl font-semibold tracking-tight text-gray-600 dark:text-gray-400 md:text-3xl"
+                class="mt-3 block text-2xl font-semibold tracking-tight text-[var(--bp-blue-dim)] md:text-3xl"
               >
                 {{ cs.subtitle }}
               </span>
             </h1>
             <p
-              class="mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-gray-400 md:text-xl"
+              class="mt-6 max-w-2xl text-lg leading-8 text-[var(--bp-blue-dim)] md:text-xl"
             >
               {{ cs.summary }}
             </p>
 
             <!-- Visible authorship + freshness matching the TechArticle schema dates -->
-            <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-4 text-sm text-[var(--bp-blue-dim)]">
               By
               <router-link
                 to="/"
-                class="font-semibold text-black underline underline-offset-3 dark:text-gray-200"
+                class="font-semibold text-[var(--bp-blue)] underline underline-offset-3"
                 >Mohammed Mostafa</router-link
               >
               · Published <time :datetime="cs.datePublished">{{ cs.datePublished }}</time>
@@ -183,13 +183,13 @@ onUnmounted(() => observer?.disconnect())
             <dl class="case-rule mt-12 grid grid-cols-1 gap-8 pt-8 sm:grid-cols-3">
               <div>
                 <dt class="case-label">Role</dt>
-                <dd class="mt-2 text-sm leading-6 text-gray-700 dark:text-gray-300">
+                <dd class="mt-2 text-sm leading-6 text-[var(--bp-blue-dim)]">
                   {{ cs.role }}
                 </dd>
               </div>
               <div>
                 <dt class="case-label">Timeline</dt>
-                <dd class="mt-2 text-sm leading-6 text-gray-700 dark:text-gray-300">
+                <dd class="mt-2 text-sm leading-6 text-[var(--bp-blue-dim)]">
                   {{ cs.timeline || "—" }}
                 </dd>
               </div>
@@ -199,7 +199,7 @@ onUnmounted(() => observer?.disconnect())
                   <span
                     v-for="tech in cs.stack"
                     :key="tech"
-                    class="inline-flex items-center gap-1.5 text-sm leading-6 text-gray-700 dark:text-gray-300"
+                    class="inline-flex items-center gap-1.5 text-sm leading-6 text-[var(--bp-blue-dim)]"
                   >
                     <TagIcon :tag="tech" size="h-4 w-4" />
                     {{ tech }}

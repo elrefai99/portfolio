@@ -58,7 +58,7 @@ watch(() => props.blocks, () => nextTick(startObserving));
     aria-label="Table of contents"
   >
     <p
-      class="bp-mono text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+      class="bp-mono text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
     >
       On this page
     </p>

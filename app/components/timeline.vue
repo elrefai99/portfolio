@@ -19,7 +19,7 @@ const timeline = [
       "Collaborated closely with product and engineering teams to deliver new features, define technical solutions, and ensure platform reliability.",
     ],
     link: "https://lesoll.com",
-    color: "bg-green-400 dark:bg-green-500",
+    color: "bg-[var(--bp-blue)]",
   },
   {
     company: "Modern Academy (CS)",
@@ -29,14 +29,14 @@ const timeline = [
     logoWidth: 96,
     logoHeight: 43,
     desc: "Completed B.Sc. in Computing Web applications.",
-    color: "bg-yellow-500 dark:bg-yellow-400",
+    color: "bg-[var(--bp-blue-dim)]",
   },
   {
     company: ".md",
     role: "Founder",
     period: "2019 - Present",
     desc: "Freelance software projects built together with a friend from the academy.",
-    color: "bg-blue-500 dark:bg-blue-400",
+    color: "bg-[var(--bp-muted)]",
   },
 ];
 </script>
@@ -47,15 +47,14 @@ const timeline = [
     mx-auto
     space-y-15
     p1
-    text-black
-    dark:text-white
+    text-[var(--bp-blue)]
     flex
     justify-center
     items-start
   >
     <div w-full p="4 md:10">
       <section class="animate-fade-in">
-        <h2 text-2xl font-bold mb-8 text-black dark:text-white tracking-tight>
+        <h2 text-2xl font-bold mb-8 text-[var(--bp-blue)] tracking-tight>
           Timeline
         </h2>
 
@@ -82,16 +81,16 @@ const timeline = [
               </span>
               <div
                 v-if="i < timeline.length - 1"
-                class="w-px flex-1 bg-gray-300 dark:bg-gray-600 mt-2"
+                class="w-px flex-1 bg-[var(--bp-line-soft)] mt-2"
               ></div>
             </div>
 
             <!-- Box card -->
             <div
-              class="timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-white/10 dark:bg-white/1 border border-black/10 dark:border-white/7 shadow-md transition-all duration-300 group-hover:shadow-xl"
+              class="timeline-content flex-1 mb-4 p-4 rounded-xl backdrop-blur-sm bg-[rgba(var(--bp-line-rgb),0.06)] border border-[var(--bp-line-soft)] shadow-md transition-all duration-300 group-hover:shadow-xl"
             >
               <div class="flex flex-wrap items-start justify-between gap-1 mb-1">
-                <h3 font-bold text-black dark:text-white class="flex items-center gap-2">
+                <h3 font-bold text-[var(--bp-blue)] class="flex items-center gap-2">
                   <img
                     v-if="item.logo"
                     :src="item.logo"
@@ -107,25 +106,25 @@ const timeline = [
                     :href="item.link"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
+                    class="hover:text-[var(--bp-blue-dim)] transition-colors duration-200"
                     >{{ item.company }}</a
                   >
                   <span v-else>{{ item.company }}</span>
                 </h3>
-                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{
+                <span class="text-xs font-medium text-[var(--bp-muted)]">{{
                   item.period
                 }}</span>
               </div>
 
-              <p italic text-sm text-gray-600 dark:text-gray-400 mb-2>{{ item.role }}</p>
+              <p italic text-sm text-[var(--bp-blue-dim)] mb-2>{{ item.role }}</p>
 
               <ul
                 v-if="Array.isArray(item.desc)"
-                class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
+                class="list-disc pl-5 space-y-1 text-sm text-[var(--bp-blue-dim)] leading-relaxed"
               >
                 <li v-for="(point, idx) in item.desc" :key="idx">{{ point }}</li>
               </ul>
-              <p v-else class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p v-else class="text-sm text-[var(--bp-blue-dim)] leading-relaxed">
                 {{ item.desc }}
               </p>
             </div>

@@ -66,7 +66,7 @@ const tspans = (lines: string[], x: number, startY: number, lineHeight: number) 
     .join('')
 
 const buildSvg = (card: OgCard) => {
-  const accent = '#6cb6ff'
+  const accent = '#faf9f5'
   const titleLines = wrapText(card.title, 62, WIDTH - 160, 3)
   const subtitleLines = wrapText(card.subtitle, 28, WIDTH - 160, titleLines.length >= 3 ? 1 : 2)
   const titleY = 250
@@ -77,7 +77,7 @@ const buildSvg = (card: OgCard) => {
   for (let y = 48; y < HEIGHT; y += 48) grid += `<line x1="0" y1="${y}" x2="${WIDTH}" y2="${y}" />`
 
   return `<svg width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="#0b0f17"/>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="#0f0f0e"/>
   <g stroke="${accent}" stroke-width="1" opacity="0.06">${grid}</g>
   <rect x="24" y="24" width="${WIDTH - 48}" height="${HEIGHT - 48}" fill="none" stroke="${accent}" stroke-opacity="0.35" stroke-width="1.5"/>
   <g stroke="${accent}" stroke-width="2">
@@ -87,14 +87,14 @@ const buildSvg = (card: OgCard) => {
     <path d="M${WIDTH - 60} ${HEIGHT - 24} H${WIDTH - 24} V${HEIGHT - 60}" fill="none"/>
   </g>
   <text x="80" y="96" font-family="Inter" font-weight="600" font-size="22" letter-spacing="4" fill="${accent}" fill-opacity="0.85">${escapeXml(card.eyebrow)}</text>
-  <text x="${WIDTH - 80}" y="96" text-anchor="end" font-family="Inter" font-weight="600" font-size="22" letter-spacing="2" fill="#9fb2c7">elrefai.me</text>
+  <text x="${WIDTH - 80}" y="96" text-anchor="end" font-family="Inter" font-weight="600" font-size="22" letter-spacing="2" fill="#b0aea5">elrefai.me</text>
   <rect x="80" y="140" width="${card.chip.length * 15 + 44}" height="44" rx="22" fill="${accent}" fill-opacity="0.12" stroke="${accent}" stroke-opacity="0.5"/>
   <text x="${80 + 22}" y="169" font-family="Inter" font-weight="600" font-size="22" letter-spacing="2" fill="${accent}">${escapeXml(card.chip.toUpperCase())}</text>
-  <text font-family="Inter Display" font-weight="700" font-size="62" fill="#f4f7fb">${tspans(titleLines, 80, titleY, 74)}</text>
-  <text font-family="Inter" font-weight="400" font-size="28" fill="#9fb2c7">${tspans(subtitleLines, 80, subtitleY, 40)}</text>
+  <text font-family="Inter Display" font-weight="700" font-size="62" fill="#faf9f5">${tspans(titleLines, 80, titleY, 74)}</text>
+  <text font-family="Inter" font-weight="400" font-size="28" fill="#b0aea5">${tspans(subtitleLines, 80, subtitleY, 40)}</text>
   <line x1="80" y1="${HEIGHT - 92}" x2="${WIDTH - 80}" y2="${HEIGHT - 92}" stroke="${accent}" stroke-opacity="0.25" stroke-width="1"/>
-  <text x="80" y="${HEIGHT - 52}" font-family="Inter" font-weight="600" font-size="24" fill="#c7d4e3">${escapeXml(card.footerLeft)}</text>
-  <text x="${WIDTH - 80}" y="${HEIGHT - 52}" text-anchor="end" font-family="Inter" font-weight="400" font-size="20" fill="#7d90a6">${escapeXml(card.footerRight)}</text>
+  <text x="80" y="${HEIGHT - 52}" font-family="Inter" font-weight="600" font-size="24" fill="#faf9f5" fill-opacity="0.78">${escapeXml(card.footerLeft)}</text>
+  <text x="${WIDTH - 80}" y="${HEIGHT - 52}" text-anchor="end" font-family="Inter" font-weight="400" font-size="20" fill="#b0aea5">${escapeXml(card.footerRight)}</text>
 </svg>`
 }
 
@@ -102,7 +102,7 @@ export const renderOgPng = (card: OgCard): Buffer => {
   const resvg = new Resvg(buildSvg(card), {
     fitTo: { mode: 'width', value: WIDTH },
     font: { fontFiles, loadSystemFonts: false, defaultFontFamily: 'Inter' },
-    background: '#0b0f17',
+    background: '#0f0f0e',
   })
   return resvg.render().asPng()
 }
