@@ -305,6 +305,52 @@ export const projects: IProject[] = [
   },
   {
     id: 4,
+    name: "Gen Import",
+    slug: "gen-import",
+    category: "Package",
+    logo: GenImport,
+    logoWidth: 95,
+    logoHeight: 96,
+    class: "w-5 h-5",
+    github: "https://github.com/elrefai99/Gen-Import",
+    npm: "https://www.npmjs.com/package/gen-import",
+    tagline: "Automatically generate TypeScript/JavaScript barrel files using the TypeScript compiler API",
+    desc: [
+      "Builds a full **module dependency graph** (static imports, `export *`, dynamic `import()`, `require()`, class heritage, decorators) and detects **circular dependencies**",
+      "Classifies the barrel itself as **safe / type-safe / ordered / unsafe**, and explains exactly which line breaks it at runtime",
+      "Sorts files **topologically** so the barrel import order is safe for CommonJS",
+      "Optionally emits **lazy (getter-based) re-exports** so the barrel itself never causes a circular-require crash",
+      "Detects **export name collisions** across source files",
+      "Diffs against the previous barrel to report **newly added exports**",
+      "Prints **diagnostics** (with fix suggestions), a **summary box**, and an **import/export graph**, using `boxen` + `chalk`"
+    ],
+    tags: [
+      "TypeScript",
+      "Express",
+      "pnpm",
+      "git/github",
+      "Github Actions",
+      "fs"
+    ],
+    keywords: [
+      "Gen Import",
+      "gen-import",
+      "TypeScript Barrel File Generator",
+      "Barrel File",
+      "TypeScript Compiler API",
+      "npm Package",
+      "Node.js CLI",
+      "Topological Sort",
+      "Cycle Detection",
+      "Developer Tooling",
+      "TypeScript",
+      "Express"
+    ],
+    metaDescription:
+      "Gen Import is an npm package that generates TypeScript/JavaScript barrel files for Express/Node projects using the TypeScript compiler API, with cycle detection, topological sort, and a globals mode."
+  },
+  {
+    id: 6,
     name: "KeepITs",
     slug: "keepits",
     category: "Live",
@@ -423,48 +469,6 @@ export const projects: IProject[] = [
     ],
     metaDescription:
       "Technical case study of 0Gosha, a self-contained rule-based prompt-optimization engine that rewrites raw text into structured LLM prompts and learns from feedback — built with TypeScript, Express.js, MongoDB, Redis, and BullMQ, with no external AI API calls."
-  },
-  {
-    id: 6,
-    name: "Gen Import",
-    slug: "gen-import",
-    category: "Package",
-    logo: GenImport,
-    logoWidth: 95,
-    logoHeight: 96,
-    class: "w-5 h-5",
-    github: "https://github.com/elrefai99/Gen-Import",
-    npm: "https://www.npmjs.com/package/gen-import",
-    tagline: "TypeScript barrel-file generator built on the TypeScript compiler API",
-    desc: [
-      "Generate a TypeScript barrel file for your Express/Node project using the TypeScript compiler API.",
-      "Automatically generate TypeScript/JavaScript barrel files using the TypeScript compiler API.",
-      "Cycle detection, topological sort, globals mode, and rich console output."
-    ],
-    tags: [
-      "TypeScript",
-      "Express",
-      "pnpm",
-      "git/github",
-      "Github Actions",
-      "fs"
-    ],
-    keywords: [
-      "Gen Import",
-      "gen-import",
-      "TypeScript Barrel File Generator",
-      "Barrel File",
-      "TypeScript Compiler API",
-      "npm Package",
-      "Node.js CLI",
-      "Topological Sort",
-      "Cycle Detection",
-      "Developer Tooling",
-      "TypeScript",
-      "Express"
-    ],
-    metaDescription:
-      "Gen Import is an npm package that generates TypeScript/JavaScript barrel files for Express/Node projects using the TypeScript compiler API, with cycle detection, topological sort, and a globals mode."
   },
   {
     id: 7,

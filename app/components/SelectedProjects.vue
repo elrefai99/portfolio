@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { projects } from "~~/shared/utils/projects";
 
 const selectedProjects = computed(() =>
-  projects.filter((p: any) => p.category === "Live").slice(0, 4)
+  projects.filter((p: any) => p.category === "Live" || p.slug === "gen-import").slice(0, 4)
 );
 
 const getDesc = (desc: string | string[]) => (Array.isArray(desc) ? desc[0] : desc);
@@ -97,6 +97,16 @@ const footerLinkClass = "bp-link";
           >
             <i class="i-carbon:logo-github w-4 h-4" />
             Source
+          </a>
+          <a
+            v-if="project.npm"
+            :href="project.npm"
+            target="_blank"
+            rel="noopener noreferrer"
+            :class="footerLinkClass"
+          >
+            <i class="i-carbon:logo-npm w-4 h-4" />
+            npm
           </a>
         </div>
       </div>

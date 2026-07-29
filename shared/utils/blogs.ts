@@ -82,6 +82,711 @@ export type BlogPost = {
 }
 
 export const blogs: BlogPost[] = [
+  {
+    id: 8,
+    slug: 'gen-import-typescript-barrel-generator-deep-dive',
+    ogImage: '/og/blog-gen-import-typescript-barrel-generator-deep-dive.png',
+    title: 'gen-import: Everything I Learned Building a Barrel Generator That Understands Your Module Graph',
+    excerpt:
+      'A full tour of gen-import: how it classifies every import edge as eager or deferred, models the generated barrel as a real node in the module graph, runs Tarjan\'s SCC to tell a broken cycle from a merely fragile one, and picks between four barrel-emission strategies depending on what it finds.',
+    metaTitle: 'Inside gen-import: A Graph-Aware TypeScript Barrel Generator',
+    metaDescription:
+      'How gen-import uses the TypeScript compiler API to classify import edges, model the barrel as a graph node, and catch unsafe cycles with Tarjan\'s SCC.',
+    category: 'Developer Tooling',
+    date: '2026-07-29',
+    readTime: '18 min read',
+    tags: ['TypeScript', 'Node.js', 'Static Analysis', 'Compiler API', 'AST', 'Barrel Files', 'CLI Tooling', 'CommonJS', 'Graph Theory'],
+    entities: [
+      { name: 'TypeScript', sameAs: ['https://en.wikipedia.org/wiki/TypeScript', 'https://www.typescriptlang.org'] },
+      { name: 'Node.js', sameAs: ['https://en.wikipedia.org/wiki/Node.js', 'https://nodejs.org'] },
+      { name: 'npm', sameAs: 'https://en.wikipedia.org/wiki/Npm' },
+      { name: 'Circular dependency', sameAs: 'https://en.wikipedia.org/wiki/Circular_dependency' },
+      { name: 'Tarjan\'s strongly connected components algorithm', sameAs: 'https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm' },
+      { name: 'CommonJS', sameAs: 'https://en.wikipedia.org/wiki/CommonJS' },
+    ],
+    relatedSlugs: ['nodejs-pino-s3-log-archiving-cron'],
+    faq: [
+      {
+        question: 'What is gen-import?',
+        answer:
+          'gen-import is an MIT-licensed npm CLI that generates a barrel file for a TypeScript or JavaScript project. It reads the module graph with the TypeScript compiler API, classifies every export as a type or a value, detects unsafe import cycles, and picks an emission strategy: static re-exports, lazy CommonJS getters, or globals mode.',
+      },
+      {
+        question: 'Why can\'t a regex-based barrel generator tell types from values?',
+        answer:
+          'Because that distinction lives in the type system, not the syntax. An interface and a class can look identical as text, but only one exists at runtime. Re-exporting a type as a value under isolatedModules or verbatimModuleSyntax produces a real import of something that no longer exists after compilation, which throws at import time.',
+      },
+      {
+        question: 'Is every circular import a bug?',
+        answer:
+          'No. A cycle only breaks when something reads a binding while a module body is still executing — a class heritage clause, a decorator argument, a static field. If every reference inside the cycle is deferred into a function body, both modules finish initialising fine and the cycle never gets a chance to matter.',
+      },
+      {
+        question: 'What does the --safe-barrels flag do?',
+        answer:
+          'It refuses to include an export in the generated barrel if doing so would put the barrel inside an unsafe cycle. Files that export types get demoted to type-only re-exports; files with only values get dropped entirely, with the direct-import line printed as a replacement. The barrel is then re-analysed to confirm the result is actually safe.',
+      },
+      {
+        question: 'When should you not use a barrel file?',
+        answer:
+          'When cold-start time or test isolation matters. Importing one symbol from a barrel evaluates every module it touches, so a single import in a Lambda handler or a unit test can boot an entire application\'s worth of unrelated modules. The pattern that scales is barrels at package boundaries, direct imports inside a package.',
+      },
+      {
+        question: 'Why do the generated CommonJS getters use module.exports instead of exports?',
+        answer:
+          'Because esbuild-based loaders such as tsx and bun reassign module.exports for any file containing export syntax. Getters installed on the original exports object end up attached to an object nothing points at anymore, so property access silently returns undefined instead of throwing.',
+      },
+    ],
+    howTo: {
+      name: 'Adopt gen-import safely in an existing TypeScript project',
+      totalTime: 'PT10M',
+      tool: ['Node.js', 'TypeScript'],
+      steps: [
+        {
+          name: 'Look at the graph before generating anything',
+          text: 'Run `npx gen-import --map` to see every export, every import edge, and the barrel each file would feed into — before any file gets written.',
+          anchor: 'map',
+        },
+        {
+          name: 'Generate with unsafe exports withheld',
+          text: 'Run `npx gen-import --safe-barrels` so any export that would put the barrel inside a cycle is demoted to a type-only re-export or dropped, with the direct-import line to use instead.',
+          anchor: 'safe-barrels-refusing-to-generate-the-broken-thing',
+        },
+        {
+          name: 'Gate cycles and collisions in CI',
+          text: 'Add `npx gen-import --strict` to CI so an init-time cycle, an unsafe barrel, or an export-name collision fails the build instead of shipping.',
+          anchor: 'stage-5-diagnostics',
+        },
+      ],
+    },
+    proficiencyLevel: 'Expert',
+    dependencies: ['Node.js 16+', 'TypeScript'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'This is the long one — how gen-import reads your code, how it builds the graph, why it emits four different kinds of barrel depending on what it finds, every diagnostic it can produce, and — honestly — when you should not use it at all.',
+      },
+      {
+        type: 'paragraph',
+        text: '`gen-import` is on npm, MIT, and currently at v1.10.11. Node 16+. Three runtime dependencies: `typescript`, `boxen`, `chalk`.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        filename: 'terminal',
+        code:
+          'npm i -D gen-import\n' +
+          'npx gen-import',
+      },
+      {
+        type: 'heading',
+        text: 'The 30-second version',
+      },
+      {
+        type: 'paragraph',
+        text: 'You have this in every file:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/user.controller.ts',
+        code:
+          'import { UserService } from \'../user/user.service\'\n' +
+          'import { UserDto } from \'../user/user.dto\'\n' +
+          'import { authMiddleware } from \'../middleware/auth.middleware\'\n' +
+          'import { PORT } from \'../config/env\'',
+      },
+      {
+        type: 'paragraph',
+        text: 'You run `npx gen-import` and you get this:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/user.controller.ts',
+        code: 'import { UserService, UserDto, authMiddleware, PORT } from \'./gen-import\'',
+      },
+      {
+        type: 'paragraph',
+        text: 'That part is easy. Any tool can do that with a regex and twenty lines. Everything else in this post exists because the easy version breaks real projects, and once I understood why, the tool stopped being a code generator and became a static analyser that happens to write a file at the end.',
+      },
+      {
+        type: 'heading',
+        text: 'The pipeline',
+      },
+      {
+        type: 'paragraph',
+        text: 'Here\'s the whole thing, top to bottom. Every run does all of this.',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'gen-import-pipeline.mmd',
+        code:
+          'flowchart TD\n' +
+          '  A["walk(srcDir)"] --> B["filter: .d.ts, skipPatterns,<br/>pureReexports, generated files"]\n' +
+          '  B --> C["split: regular files | module files<br/>(.module.ts .router.ts .routes.ts .route.ts)"]\n' +
+          '  C --> D["createTsProgram — ONE ts.Program per run"]\n' +
+          '  D --> E["analyzeFiles<br/>TypeChecker.getExportsOfModule<br/>→ type | value | default"]\n' +
+          '  D --> F["scanFile → classify every import edge<br/>kind + eager? + eagerVia + line"]\n' +
+          '  F --> G["buildModuleGraph<br/>+ contract the barrel as a real node"]\n' +
+          '  G --> H["tarjanScc → SCCs → condensation → topoOrder"]\n' +
+          '  H --> I["analyzeBarrel<br/>safe | type-safe | ordered | unsafe"]\n' +
+          '  E --> I\n' +
+          '  I --> J{"--safe-barrels?"}\n' +
+          '  J -->|yes| K["selectSafeExports<br/>demote to types / drop values"]\n' +
+          '  J -->|no| L["keep everything"]\n' +
+          '  K --> M["diagnostics GI001–GI009"]\n' +
+          '  L --> M\n' +
+          '  M --> N{"emit strategy"}\n' +
+          '  N --> O["static re-export (ESM)"]\n' +
+          '  N --> P["lazy require getters (CJS)"]\n' +
+          '  N --> Q["globals mode"]\n' +
+          '  N --> R[".js + .d.ts pair (JS projects)"]\n' +
+          '  M --> S{"--strict?"}\n' +
+          '  S -->|blocking finding| T["exit 1"]\n' +
+          '  S -->|clean| U["summary box + graph box"]',
+      },
+      {
+        type: 'paragraph',
+        text: 'Six stages that matter: read → classify → graph → analyse → decide → emit. I\'ll take them in order.',
+      },
+      {
+        type: 'heading',
+        text: 'Stage 1 — Reading your code (and why not regex)',
+      },
+      {
+        type: 'paragraph',
+        text: 'Everything goes through the TypeScript compiler API. One `ts.Program` is created per run and shared by both the export analyser and the graph builder, so files are parsed once, not twice.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The reason it\'s the compiler and not a fast hand-rolled parser is a single question I can\'t answer any other way: is `UserDto` a type or a value?',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'the type-vs-value question',
+        code:
+          'export interface UserDto { id: string }   // type — erased at compile time\n' +
+          'export class UserService {}                // value — exists at runtime\n' +
+          'export const PORT = 3000                   // value\n' +
+          'export type Role = \'admin\' | \'user\'        // type\n' +
+          'export default router                      // value, needs an alias',
+      },
+      {
+        type: 'paragraph',
+        text: 'The classification comes from `TypeChecker.getExportsOfModule` and the symbol flags: something carrying `Interface` or `TypeAlias` without the `Value` flag is type-only. Everything else is a value.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Get this wrong and you emit:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'gen-import.ts',
+        code: 'export { UserDto } from \'./user/user.dto\'',
+      },
+      {
+        type: 'paragraph',
+        text: '…which under `isolatedModules`, `verbatimModuleSyntax`, or literally any transpile-only loader becomes a real runtime import of a thing that doesn\'t exist after compilation. Crash, at import time, with a stack trace pointing at a generated file.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So types go out as `export type { ... }`, values as `export { ... }`, and default exports get an alias derived from the filename. A regex cannot tell you which bucket a name belongs in, because the answer lives in the type system, not the syntax.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Default exclusions, always on: `.d.ts` files, `__tests__`, `.test.`, `.spec.`, plus the generated files themselves (`gen-import`, `gen-app-config`, `gen-package`) — otherwise the barrel re-exports itself and you get an infinite loop of a very stupid kind.',
+      },
+      {
+        type: 'heading',
+        text: 'Stage 2 — Classifying edges (the important part)',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is the idea the whole tool is built on, and it took me embarrassingly long to arrive at.',
+      },
+      {
+        type: 'paragraph',
+        text: 'A circular dependency is only a bug if something reads a binding while a module body is still executing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'If `a.ts` and `b.ts` import each other but only touch each other\'s exports inside function bodies, the cycle is completely harmless. Both modules finish initialising, and by the time anything is called, everything is defined. That\'s not a warning-worthy event — that\'s just how a lot of well-factored code looks.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So instead of a boolean "is there a cycle", every import edge gets classified: what kind of edge, is the binding read eagerly, and if so, via what.',
+      },
+      {
+        type: 'code',
+        language: 'mermaid',
+        filename: 'edge-classification.mmd',
+        code:
+          'flowchart TD\n' +
+          '  A["import binding found"] --> B{"where is it read?"}\n\n' +
+          '  B -->|"class X extends Y"| C1["EAGER · heritage"]\n' +
+          '  B -->|"decorator argument"| C2["EAGER · decorator"]\n' +
+          '  B -->|"static field / static block"| C3["EAGER · static"]\n' +
+          '  B -->|"export * from \'./x\'"| C4["EAGER · star-reexport"]\n' +
+          '  B -->|"import \'./x\' — side effect only"| C5["EAGER · side-effect"]\n' +
+          '  B -->|"any other top-level statement"| C6["EAGER · module body"]\n' +
+          '  B -->|"inside a function / method body"| D["DEFERRED — resolved at call time"]\n' +
+          '  B -->|"type position only"| E["ERASED — not a runtime edge at all"]\n\n' +
+          '  C1 --> F["counts toward INIT_EDGE_KINDS"]\n' +
+          '  C2 --> F\n' +
+          '  C3 --> F\n' +
+          '  C4 --> F\n' +
+          '  C5 --> F\n' +
+          '  C6 --> F\n' +
+          '  D --> G["in the graph, but harmless for init order"]\n' +
+          '  E --> H["type graph only"]',
+      },
+      {
+        type: 'paragraph',
+        text: '`INIT_EDGE_KINDS` is the set of edge kinds that actually participate in module initialisation. Cycle analysis runs over that subgraph, not over the naive "file A mentions file B" graph. Dynamic `import()` and `require()` calls anywhere in the file are also tracked, but as deferred edges.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The payoff is that the tool can say things like: "Breaks at `src/user/user.service.ts:14` — class heritage clause (`class X extends Y`)." instead of "Warning: circular dependency detected." One of those you fix. The other you learn to ignore, and then the tool has failed.',
+      },
+      {
+        type: 'heading',
+        text: 'Stage 3 — The graph layer',
+      },
+      {
+        type: 'paragraph',
+        text: 'Once every edge is classified, the graph work is textbook, and I\'m glad it is, because this is the part where being clever gets you subtle bugs.',
+      },
+      {
+        type: 'list',
+        items: [
+          '`tarjanScc` — strongly connected components in one pass. Every SCC with more than one member (or a self-loop) is a cycle.',
+          '`condensation` — collapse each SCC into a single node, giving you a DAG.',
+          '`topoOrder` — topological order over that DAG. This is what determines the order of re-export lines in the barrel, so that for CommonJS the initialisation order is at least plausible. `--no-topo-sort` falls back to alphabetical if you want the legacy behaviour.',
+          '`shortestCycle` — when reporting, don\'t dump the whole SCC. Find the shortest actual cycle through it and print that path. A 40-file SCC printed in full is not a bug report, it\'s a wall.',
+          '`cycleEdges` — the edges internal to a cycle, so you can filter them to the eager ones and name the exact line that will break.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The non-obvious piece: the barrel is modelled as a node in the graph. `contractBarrel` and `withBarrelExports` insert the generated file into the graph with edges to everything it re-exports, then re-run the analysis. That\'s how the tool can answer "does adding this barrel create a cycle that didn\'t exist before" — which is the actual question, and one you cannot answer by analysing the source alone.',
+      },
+      {
+        type: 'heading',
+        text: 'Stage 4 — The barrel safety model',
+      },
+      {
+        type: 'paragraph',
+        text: 'Running `analyzeBarrel` gives one of four states. This is basically the tool\'s worldview:',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        filename: 'barrel safety states',
+        code:
+          'safe        not part of any cycle                     nothing to do\n' +
+          'type-safe   cycle only through type positions          erased at compile time; becomes real if someone drops an import type, or verbatimModuleSyntax turns on\n' +
+          'ordered     runtime cycle, every read is deferred      works today — one eager read away from unsafe\n' +
+          'unsafe      cycle with an init-time read               fails at runtime, not "might"',
+      },
+      {
+        type: 'paragraph',
+        text: 'The `ordered` state is the one I\'m most glad exists. It\'s the state most large Express and Nest codebases are actually in, and neither "you\'re fine" nor "you have a circular dependency" is a true description of it. It\'s a loaded gun with the safety on.',
+      },
+      {
+        type: 'heading',
+        text: 'Stage 5 — Diagnostics',
+      },
+      {
+        type: 'paragraph',
+        text: 'Nine codes. Each one carries a severity, the files involved, the shortest cycle path, and advice that\'s specific to that cycle rather than generic.',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        filename: 'diagnostic codes',
+        code:
+          'GI001  error  Cycle with an init-time read — will break at runtime\n' +
+          'GI002  error  The barrel is inside a cycle with an init-time read\n' +
+          'GI003  warn   Cycle exists, all reads deferred — resolves at call time\n' +
+          'GI004  warn   Barrel inside a cycle, all reads deferred — fragile, not broken\n' +
+          'GI005  info   Type-only cycle — erased before runtime\n' +
+          'GI006  warn   Export name collision — two files export the same name\n' +
+          'GI007  info   Exports withheld by --safe-barrels to keep the barrel acyclic\n' +
+          'GI008  info   Direct or dynamic import recommended for this edge\n' +
+          'GI009  info   NestJS forwardRef recommended — decorator-time read between framework files',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two of those deserve a note.',
+      },
+      {
+        type: 'paragraph',
+        text: '`GI006` (collisions) — if `user.service.ts` and `admin.service.ts` both export `createUser`, the barrel physically cannot re-export both. First one wins, the second is silently dropped, and you spend an hour wondering why you\'re calling the wrong function. So it\'s reported, with both file paths, and the advice is: rename one, or exclude the losing file with `--skip`.',
+      },
+      {
+        type: 'paragraph',
+        text: '`GI009` — when a decorator-time read appears in a cycle and the files match the NestJS naming convention (`.module.ts`, `.service.ts`, `.controller.ts`, `.guard.ts`, `.resolver.ts`, `.interceptor.ts`, `.pipe.ts`, `.filter.ts`), the fix is almost always `forwardRef`, so the tool says that specifically instead of giving general advice about module graphs.',
+      },
+      {
+        type: 'paragraph',
+        text: 'For CI, `--strict` turns findings into exit code 1, and you can scope it:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        filename: 'terminal',
+        code:
+          'npx gen-import --strict=cycles       # GI001 only\n' +
+          'npx gen-import --strict=barrels      # GI002 / GI004\n' +
+          'npx gen-import --strict=collisions   # GI006\n' +
+          'npx gen-import --strict              # everything (default)',
+      },
+      {
+        type: 'paragraph',
+        text: '`--strict-cycles` still works as a deprecated alias for `--strict=cycles`.',
+      },
+      {
+        type: 'heading',
+        text: 'Stage 6 — Emission: four different barrels',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is where I stopped believing there\'s one correct output. What gets written depends on module system, language, and what the analysis found.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Static re-exports (ESM default)',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'gen-import.ts',
+        code:
+          'export type { UserDto } from \'./user/user.dto\'\n' +
+          'export { UserService } from \'./user/user.service\'',
+      },
+      {
+        type: 'paragraph',
+        text: 'Clean, standard, tree-shakeable by any bundler. Also the one that can genuinely deadlock on a cycle, because ESM live bindings resolve during evaluation and there is no escape hatch.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Lazy getters (CJS default)',
+      },
+      {
+        type: 'paragraph',
+        text: 'For CommonJS, the barrel doesn\'t resolve anything until you touch it:',
+      },
+      {
+        type: 'code',
+        language: 'js',
+        filename: 'gen-import.js',
+        code:
+          'Object.defineProperty(module.exports, \'UserService\', {\n' +
+          '  get() { return require(\'./user/user.service\').UserService },\n' +
+          '  enumerable: true,\n' +
+          '  configurable: true,\n' +
+          '})',
+      },
+      {
+        type: 'paragraph',
+        text: 'Paired with a `declare` line so TypeScript still knows the type:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'gen-import.d.ts',
+        code: 'export declare const UserService: typeof import(\'./user/user.service\').UserService',
+      },
+      {
+        type: 'paragraph',
+        text: 'Nothing is required until first property access, so the cycle never gets a chance to bite. `--lazy` is on by default for CJS, `--no-lazy` forces static, and if your `package.json` says `"type": "module"` the tool warns and falls back to static — because you genuinely cannot do this in ESM.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The bug that cost me a night: I originally installed the getters on `exports`, not `module.exports`. Works in plain `node`. Returns `undefined` in `tsx`. The reason is that esbuild-based loaders (tsx, and bun does it too) reassign `module.exports` for any file containing `export` syntax — so my getters were sitting on an object nothing pointed at anymore. One word. No stack trace. That explanation is now hard-coded into the header of every generated file so I never rediscover it.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Globals mode',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        filename: 'terminal',
+        code: 'npx gen-import --globals',
+      },
+      {
+        type: 'paragraph',
+        text: 'Registers every value export on Node\'s `global`, plus a `declare global` block so the IDE still type-checks. Import the barrel once in your entry point and no other file needs an import statement at all:',
+      },
+      {
+        type: 'code',
+        language: 'ts',
+        filename: 'src/main.ts',
+        code:
+          '// src/main.ts\n' +
+          'import \'./gen-import\'\n\n' +
+          '// anywhere else — no import needed\n' +
+          'const svc = new UserService()',
+      },
+      {
+        type: 'paragraph',
+        text: 'Only values get registered, obviously. A type on `global` is an undefined property with a confident name.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is the most "magic" mode and I\'d only use it in an app you own end to end. It kills tree-shaking completely and makes every symbol look like it came from nowhere.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'JS projects',
+      },
+      {
+        type: 'paragraph',
+        text: 'If there\'s no `tsconfig.json` and no `.ts` files, you get `gen-import.js` (runtime) plus `gen-import.d.ts` (types) as a pair, so JS projects keep IDE completion. TS projects get a single `.ts` file, and `--no-js` / `generateJs` controls whether a `.js` companion is emitted alongside.',
+      },
+      {
+        type: 'heading',
+        text: '--safe-barrels: refusing to generate the broken thing',
+      },
+      {
+        type: 'paragraph',
+        text: 'The most opinionated flag. If including an export would put the barrel inside a cycle, don\'t include it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two outcomes per file:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Demoted — the file has types, so the types are re-exported and the values are stripped. Types are erased before runtime, so they can\'t create a runtime cycle. You lose nothing.',
+          'Dropped — the file has only values, so it\'s excluded entirely. The tool prints the exact direct-import line to use instead, plus why it was withheld: either it reads through the barrel while its own module body runs, or it shares the barrel\'s cycle and withholding it is what breaks the loop.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'After withholding, the barrel is re-analysed to confirm the result is actually `safe` or `type-safe`, and if it is, `GI007` reports what it cost you. The summary box shows the transition, struck-through:',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        filename: 'summary box excerpt',
+        code:
+          'Barrel        unsafe → safe\n' +
+          'Safe barrels  on · 2 demoted, 1 dropped',
+      },
+      {
+        type: 'paragraph',
+        text: 'I like this flag because it\'s the tool admitting the limits of its own approach. A generator that will happily write a file it knows will crash is not a good tool.',
+      },
+      {
+        type: 'heading',
+        text: 'Everything else',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: '--app-config',
+      },
+      {
+        type: 'paragraph',
+        text: 'Generates `gen-app-config.ts`, an aggregator that re-exports from `gen-import` (and `gen-package` if present). The point is a single stable import surface for your app: downstream code imports only from `gen-app-config` and never from an individual source path or from a barrel directly.',
+      },
+      {
+        type: 'paragraph',
+        text: 'By default it auto-updates — it rescans, diffs against the names already present, and appends only the new ones. `--no-auto-update` turns that off.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: '--map',
+      },
+      {
+        type: 'paragraph',
+        text: 'Export map visualisation, three formats:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        filename: 'terminal',
+        code:
+          'npx gen-import --map                      # tree in the terminal\n' +
+          'npx gen-import --map --map-format json\n' +
+          'npx gen-import --map --map-format mermaid --map-out docs/graph.md',
+      },
+      {
+        type: 'paragraph',
+        text: 'Console gives you a tree per file — values, types, defaults, and who imports it. JSON gives you the raw structure for other tooling. Mermaid gives you a `flowchart LR` you can paste straight into a README or dev.to post (labels truncate at 50 characters so the diagram stays readable).',
+      },
+      {
+        type: 'paragraph',
+        text: 'Regardless of format, every `--map` run also writes `docs/export-map.json`, so you can commit it and diff your public surface between branches. On this repo it currently reports 15 files, 303 exports, 18 internal import edges.',
+      },
+      {
+        type: 'paragraph',
+        text: '`--no-imports` skips the import-relationship pass if you only want the export inventory and want it fast.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: '--watch',
+      },
+      {
+        type: 'paragraph',
+        text: 'Recursive `fs.watch` on `srcDir` with a 150ms debounce, filtered to `.ts` / `.js`, with a re-entrancy guard so a slow regeneration can\'t overlap itself, and a `SIGINT` handler that closes the watcher cleanly. Regenerates every barrel you asked for on every change.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Module file deferral',
+      },
+      {
+        type: 'paragraph',
+        text: 'Files matching `.module.ts`, `.routes.ts`, `.router.ts`, `.route.ts` are always appended last in the barrel. These files reference services and repositories, so if they\'re initialised before their dependencies you get a circular-require at startup — the classic NestJS and Express-router failure. `-m` / `--module-pattern` (repeatable) lets you add your own patterns.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is a heuristic, and I\'d rather it eventually be replaced by pure graph ordering. But it\'s a heuristic that has never once been wrong on a real project, which is more than I can say for some of my principled solutions.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: '--skip and --pure-reexport',
+      },
+      {
+        type: 'paragraph',
+        text: '`--skip <substring>` excludes anything whose path contains it. `--pure-reexport <path>` marks a file that is already re-exported by another barrel — an `index.ts` you wrote by hand — so it doesn\'t get double-exported. Note that `pureReexports` paths are relative to `rootDir`, not `srcDir`, which has bitten more than one person, including me.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'Config file',
+      },
+      {
+        type: 'paragraph',
+        text: '`gen-import.config.js` (or `.cjs` on ESM projects) in the project root: `srcDir`, `outFileName`, `moduleFilePattern`, `skipPatterns`, `pureReexports`, `generateJs`. CLI flags always win over config values.',
+      },
+      {
+        type: 'heading',
+        level: 3,
+        text: 'The console output',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two boxes on every run: a summary (files, exports, language, module type, globals/lazy/toposort state, import edge count, cycle count split into total vs init-time, barrel safety, collisions, and a diff of newly added exports) and an import/export graph showing every file, its exports tagged `[T]` / `[V]` / `[D]`, and the barrel they feed into.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The "new exports" diff is the feature I use most day to day. It reads the previous barrel before overwriting it and tells you exactly what appeared — a quiet, free review of what you added since the last run.',
+      },
+      {
+        type: 'heading',
+        text: 'Programmatic API',
+      },
+      {
+        type: 'paragraph',
+        text: 'Everything the CLI does is exported: `genImport`, `genAppConfig`, `genExportMap`, `watchSrc`, and `genPackage`.',
+      },
+      {
+        type: 'paragraph',
+        text: '`genPackage` is deliberately not in the CLI. It reads `dependencies` (optionally `devDependencies`) from `package.json` and generates a `gen-package.ts` of `export * from \'<pkg>\'` lines. It\'s useful, but it has a sharp edge: packages using `export =` (Express is the obvious one) are fundamentally incompatible with `export * from`, so they have to be excluded and imported directly. That\'s too much footgun for a flag people will discover by reading `--help`, so it stays API-only until I have a better answer.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The graph utilities are exported too — `buildModuleGraph`, `tarjanScc`, `topoOrder`, `cyclicSccs`, `shortestCycle`, `cycleEdges`, `condensation`, `analyzeBarrel`, `selectSafeExports`, `detectCycles`, `buildDepGraph`, `createTsProgram`. If you want the analyser and none of the code generation, take it. That\'s what it\'s there for.',
+      },
+      {
+        type: 'heading',
+        text: 'Design decisions, and what they cost',
+      },
+      {
+        type: 'list',
+        items: [
+          'One `ts.Program` per run. Created once, passed to both the export analyser and the graph builder. Creating two would roughly double the slowest part of the run.',
+          'Compiler API over regex. Slower — noticeably so on big projects, and this is the tool\'s main performance ceiling. Also the only way to get type-vs-value classification right, which is non-negotiable.',
+          'Manual `process.argv` parsing, no CLI parser dependency. Three runtime deps total (`typescript`, `boxen`, `chalk`), and I\'d like to keep it that way. A dev tool that installs 40 transitive packages to print a box is not a dev tool I want to maintain.',
+          'The barrel is analysed as part of the graph, not separately. More code, but it\'s the only way to answer the question that actually matters.',
+          'No test script, `tsc` is the CI gate. That\'s a real gap, not a design decision, and it\'s the next thing I\'m fixing. Being honest about it here so I actually do it.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'When you should not use this',
+      },
+      {
+        type: 'paragraph',
+        text: 'I\'d rather say this than have someone find out the hard way.',
+      },
+      {
+        type: 'paragraph',
+        text: 'A barrel means importing one symbol evaluates everything the barrel touches. On a 400-file Express app, one import from `./gen-import` initialises all 400 modules. You feel that immediately as:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Serverless cold starts. If you deploy to Lambda or Cloud Run, don\'t route production code through a full-project barrel. Measure it.',
+          'Test startup. A unit test that needs one pure function now boots your DB config, your Redis client, and your queue.',
+          'Tree-shaking. Bundlers can shake barrels, but re-export chains defeat it more often than anyone admits, and side effects in any barrel member kill it outright.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'The pattern that holds up in large repos: barrels at package boundaries, direct imports inside a package. `gen-import` is at its best generating that boundary barrel, or being used purely as an analyser via `--map` and `--strict`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s also why `--safe-barrels` and the whole diagnostic layer exist. I\'d rather ship a barrel generator that tells you when not to use a barrel than one that pretends the tradeoff isn\'t there.',
+      },
+      {
+        type: 'heading',
+        text: 'Where it\'s going',
+      },
+      {
+        type: 'paragraph',
+        text: 'Three things, in order:',
+      },
+      {
+        type: 'list',
+        items: [
+          'Types-only as the primary artifact. A `.d.ts` with `declare global` gives you the IDE experience with zero runtime edges — which means zero cycles, structurally. The physical barrel becomes opt-in rather than the default.',
+          'A resolver API. Right now the tool only knows your `src`. A resolver would let `z`, `Router`, `Queue`, `PrismaClient` resolve from your dependencies too, with shipped presets for Express, Prisma, Zod, BullMQ and `node:*`. This is the `unplugin-vue-components` idea properly applied to a backend.',
+          'Transform-time injection. Skip the barrel entirely where the build allows it and inject the direct import per file. Best runtime characteristics, worst configuration surface — so it comes last, and it starts with exactly one adapter.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Try it',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        filename: 'terminal',
+        code:
+          'npm i -D gen-import\n' +
+          'npx gen-import --map           # look before you generate\n' +
+          'npx gen-import --safe-barrels  # then generate\n' +
+          'npx gen-import --strict        # then gate it in CI',
+      },
+      {
+        type: 'paragraph',
+        text: '[github.com/elrefai99/Gen-Import](https://github.com/elrefai99/Gen-Import) · MIT · the repo dogfoods itself, so `src/gen-import.ts` in there is generated output you can read.',
+      },
+      {
+        type: 'paragraph',
+        text: 'If it breaks on your repo, open an issue. Most of what\'s in this post exists because it broke on someone\'s repo first — usually mine.',
+      },
+    ],
+  },
   // {
   //   id: 7,
   //   slug: 'tsc-passes-import-cycles-break-at-runtime',
