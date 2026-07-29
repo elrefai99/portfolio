@@ -316,13 +316,13 @@ export const projects: IProject[] = [
     npm: "https://www.npmjs.com/package/gen-import",
     tagline: "Automatically generate TypeScript/JavaScript barrel files using the TypeScript compiler API",
     desc: [
-      "Builds a full **module dependency graph** (static imports, `export *`, dynamic `import()`, `require()`, class heritage, decorators) and detects **circular dependencies**",
-      "Classifies the barrel itself as **safe / type-safe / ordered / unsafe**, and explains exactly which line breaks it at runtime",
-      "Sorts files **topologically** so the barrel import order is safe for CommonJS",
-      "Optionally emits **lazy (getter-based) re-exports** so the barrel itself never causes a circular-require crash",
-      "Detects **export name collisions** across source files",
-      "Diffs against the previous barrel to report **newly added exports**",
-      "Prints **diagnostics** (with fix suggestions), a **summary box**, and an **import/export graph**, using `boxen` + `chalk`"
+      "Builds a full module dependency graph (static imports, `export *`, dynamic `import()`, `require()`, class heritage, decorators) and detects circular dependencies",
+      "Classifies the barrel itself as safe / type-safe / ordered / unsafe, and explains exactly which line breaks it at runtime",
+      "Sorts files topologically so the barrel import order is safe for CommonJS",
+      "Optionally emits lazy (getter-based) re-exports so the barrel itself never causes a circular-require crash",
+      "Detects export name collisions across source files",
+      "Diffs against the previous barrel to report newly added exports",
+      "Prints diagnostics (with fix suggestions), a summary box, and an import/export graph, using `boxen` + `chalk`"
     ],
     tags: [
       "TypeScript",
