@@ -74,7 +74,6 @@ useHead(resumeSEO);
               <br>
                 <div>
                   <span class="text-[var(--bp-muted)]">•</span>
-
                   <a
                     href="https://www.linkedin.com/in/elrefai99/"
                     target="_blank"
@@ -249,6 +248,53 @@ useHead(resumeSEO);
                   </li>
                 </ul>
               </div>
+
+              <!-- Gen-Import -->
+              <div mt-6>
+                <div class="flex items-baseline gap-1.5 flex-wrap mb-2">
+                  <h3 class="text-sm font-bold text-[var(--bp-blue)]">
+                    Gen-Import
+                  </h3>
+                  <a
+                    href="https://github.com/elrefai99/Gen-Import"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center min-h-11 text-xs font-semibold text-[var(--bp-blue-dim)] underline hover:text-[var(--bp-blue)] transition-colors"
+                    >GitHub</a
+                  >
+                  <a
+                    href="https://www.npmjs.com/package/gen-import"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center min-h-11 text-xs font-semibold text-[var(--bp-blue-dim)] underline hover:text-[var(--bp-blue)] transition-colors"
+                    >npm</a
+                  >
+                </div>
+                <ul
+                  class="list-disc pl-5 space-y-1.5 text-sm text-[var(--bp-blue-dim)] leading-relaxed"
+                >
+                  <li>
+                    Built an open-source CLI tool that automatically generates
+                    index.ts barrel exports for large TypeScript codebases,
+                    reducing manual maintenance and import errors.
+                  </li>
+                  <li>
+                    Implemented recursive directory traversal with
+                    configurable exclusion rules, supporting scalable project
+                    structures and clean module organization.
+                  </li>
+                  <li>
+                    Designed the tool for developer productivity with
+                    automatic export generation, file watching, and seamless
+                    integration into existing Node.js/TypeScript workflows.
+                  </li>
+                  <li>
+                    Focused on Developer Experience (DX) by providing a
+                    lightweight, zero-runtime utility that integrates easily
+                    into existing development workflows.
+                  </li>
+                </ul>
+              </div>
             </section>
 
             <!-- Education -->
@@ -259,7 +305,7 @@ useHead(resumeSEO);
                 Education
               </h2>
               <hr class="border-[var(--bp-line-soft)] mb-4" />
-              <p class="text-sm text-[var(--bp-blue-dim)]">
+              <p class="text-sm text-[var(--bp-blue-dim)] mb-1.5">
                 <span class="font-bold text-[var(--bp-blue)]"
                   >Bachelor of Computer Science</span
                 >
@@ -267,6 +313,14 @@ useHead(resumeSEO);
                   · Modern Academy – Maadi, Cairo, Jul 2022</span
                 >
               </p>
+              <ul
+                class="list-disc pl-5 text-sm text-[var(--bp-blue-dim)] leading-relaxed"
+              >
+                <li>
+                  Courses: Databases, Operating Systems, OOP, Data Structures,
+                  Distributed Systems
+                </li>
+              </ul>
             </section>
 
             <!-- Technical Skills -->
@@ -280,6 +334,10 @@ useHead(resumeSEO);
 
               <div class="space-y-1.5 text-sm text-[var(--bp-blue-dim)]">
                 <p>
+                  <span class="font-bold text-[var(--bp-blue)]">Languages:</span>
+                  JavaScript, Python, Go Lang, C++
+                </p>
+                <p>
                   <span class="font-bold text-[var(--bp-blue)]">Backend:</span>
                   Node.js, Express.js, TypeScript, RESTful APIs, WebSockets, SSE
                 </p>
@@ -287,13 +345,13 @@ useHead(resumeSEO);
                   <span class="font-bold text-[var(--bp-blue)]"
                     >Databases &amp; Caching:</span
                   >
-                  MongoDB, Mongoose, PostgreSQL, Prisma, Redis
+                  MongoDB, PostgreSQL, Prisma, Redis
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]"
                     >Messaging &amp; Async:</span
                   >
-                  BullMQ, message queues, Redis pub/sub
+                  BullMQ, message queues, AWS SQS, Redis pub/sub
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]">Payments:</span>
@@ -303,8 +361,8 @@ useHead(resumeSEO);
                   <span class="font-bold text-[var(--bp-blue)]"
                     >Cloud &amp; DevOps:</span
                   >
-                  AWS (EC2, EKS, S3, ECR), Docker &amp; Docker Compose, GitHub Actions
-                  CI/CD
+                  AWS (EC2, EKS, S3, ECR, Lambda), Docker &amp; Docker Compose,
+                  GitHub Actions CI/CD
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]">Frontend:</span>
