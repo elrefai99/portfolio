@@ -1,5 +1,5 @@
 import { sitePaths } from './shared/utils/site'
-import { blogs } from './shared/utils/blogs'
+import { blogs, blogsPageCount } from './shared/utils/blogs'
 import { caseStudies } from './shared/utils/caseStudies'
 import { projects } from './shared/utils/projects'
 import { featuredPosts } from './shared/utils/featuredPosts'
@@ -41,6 +41,12 @@ import { featuredPosts } from './shared/utils/featuredPosts'
 }
 
 const blogRoutes = blogs.map((blog) => `${sitePaths.blogs}/${blog.slug}`)
+// Page 1 is /blogs itself; deeper archive pages start at 2 (blogsPageCount is
+// always >= 1, so this is a no-op range once the corpus fits on one page).
+const blogPageRoutes = Array.from(
+  { length: blogsPageCount - 1 },
+  (_, i) => `${sitePaths.blogs}/page/${i + 2}`,
+)
 const caseStudyRoutes = caseStudies.map((cs) => `${sitePaths.projects}/${cs.slug}`)
 
 const ogRoutes = [
@@ -76,6 +82,7 @@ export default defineNuxtConfig({
         '/llms.txt',
         ...caseStudyRoutes,
         ...blogRoutes,
+        ...blogPageRoutes,
         ...ogRoutes,
       ],
     },

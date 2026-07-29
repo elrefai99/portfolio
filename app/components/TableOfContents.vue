@@ -52,17 +52,17 @@ watch(() => props.blocks, () => nextTick(startObserving));
 </script>
 
 <template>
-  <nav
+  <CollapsibleSection
     v-if="show"
-    class="bp-card p-6 md:p-8"
+    heading="On this page"
+    variant="label"
+    tag="nav"
     aria-label="Table of contents"
+    label-class="bp-mono"
+    content-gap="1rem"
+    max-height="2000px"
   >
-    <p
-      class="bp-mono text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
-    >
-      On this page
-    </p>
-    <ol class="mt-4 space-y-2">
+    <ol class="space-y-2">
       <li
         v-for="entry in entries"
         :key="entry.id"
@@ -78,7 +78,7 @@ watch(() => props.blocks, () => nextTick(startObserving));
         </a>
       </li>
     </ol>
-  </nav>
+  </CollapsibleSection>
 </template>
 
 <style scoped>

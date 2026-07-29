@@ -38,68 +38,86 @@ const blogTopicKeywords = [
   'Log retention',
 ]
 
-export const blogsSEO = createSeo({
-  title: 'Mohammed Mostafa • Blog',
-  description:
-    'Production backend engineering write-ups by Mohammed Mostafa: queues, payments, real-time systems, authentication, observability, and AWS — with the code and the numbers.',
-  path: sitePaths.blogs,
-  keywords: [
-    ...brandKeywords,
-    'Mohammed Mostafa blog',
-    'Elrefai blog',
-    ...blogTopicKeywords,
-  ],
-  image: `${siteUrl}/og/page-blogs.png`,
-  imageAlt: 'Mohammed Mostafa Blog',
-  schema: [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Blog',
-      '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog`,
-      name: 'Mohammed Mostafa Blog',
-      description:
-        'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
-      url: new URL(sitePaths.blogs, siteUrl).toString(),
-      author: { '@id': personId },
-      publisher: { '@id': publisherId },
-      isPartOf: { '@id': websiteId },
-      inLanguage: 'en',
-      keywords: blogTopicKeywords,
-      // Enumerate the posts so crawlers see the collection's members and dates.
-      blogPost: blogs.map((post) => ({
-        '@type': 'BlogPosting',
-        headline: post.title,
-        name: post.title,
-        description: post.metaDescription ?? post.excerpt,
-        url: new URL(`${sitePaths.blogs}/${post.slug}`, siteUrl).toString(),
-        datePublished: toIsoDateTime(post.date),
-        dateModified: toIsoDateTime(post.updated ?? post.date),
-        articleSection: post.category,
-        keywords: post.tags,
+// /blogs is page 1; deeper pages live at /blogs/page/<n> (see
+// shared/utils/blogs.ts's BLOGS_PER_PAGE / blogsPageCount). Each page gets its
+// own canonical + title so they aren't duplicate-content against each other,
+// but all pages describe the same Blog entity (`#blog`) and enumerate the
+// full post corpus — pagination is a presentation slice, not a different
+// collection.
+export const blogsIndexPath = (page: number) =>
+  page <= 1 ? sitePaths.blogs : `${sitePaths.blogs}/page/${page}`
+
+export const createBlogsIndexSEO = (page: number) => {
+  const path = blogsIndexPath(page)
+  const pageSuffix = page > 1 ? ` — Page ${page}` : ''
+
+  return createSeo({
+    title: `Mohammed Mostafa • Blog${pageSuffix}`,
+    description:
+      page > 1
+        ? `Page ${page} of production backend engineering write-ups by Mohammed Mostafa: queues, payments, real-time systems, authentication, observability, and AWS.`
+        : 'Production backend engineering write-ups by Mohammed Mostafa: queues, payments, real-time systems, authentication, observability, and AWS — with the code and the numbers.',
+    path,
+    keywords: [
+      ...brandKeywords,
+      'Mohammed Mostafa blog',
+      'Elrefai blog',
+      ...blogTopicKeywords,
+    ],
+    image: `${siteUrl}/og/page-blogs.png`,
+    imageAlt: 'Mohammed Mostafa Blog',
+    schema: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        '@id': `${new URL(sitePaths.blogs, siteUrl).toString()}#blog`,
+        name: 'Mohammed Mostafa Blog',
+        description:
+          'Backend engineering notes about Node.js, TypeScript, Express.js, APIs, queues, Redis, authentication, payment tokens, and production systems.',
+        url: new URL(sitePaths.blogs, siteUrl).toString(),
         author: { '@id': personId },
-      })),
-      about: [
-        'Backend engineering',
-        'Node.js',
-        'TypeScript',
-        'Express.js',
-        'API architecture',
-        'Authentication security',
-        'Payment token security',
-        'Redis queues',
-        'Production architecture',
-        'Structured logging',
-        'Observability',
-        'AWS',
-      ],
-    },
-    personSchema,
-    createBreadcrumb([
-      { name: 'Home', path: sitePaths.home },
-      { name: 'Blog', path: sitePaths.blogs },
-    ]),
-  ],
-})
+        publisher: { '@id': publisherId },
+        isPartOf: { '@id': websiteId },
+        inLanguage: 'en',
+        keywords: blogTopicKeywords,
+        // Enumerate the posts so crawlers see the collection's members and dates,
+        // independent of which page of the archive is currently rendering.
+        blogPost: blogs.map((post) => ({
+          '@type': 'BlogPosting',
+          headline: post.title,
+          name: post.title,
+          description: post.metaDescription ?? post.excerpt,
+          url: new URL(`${sitePaths.blogs}/${post.slug}`, siteUrl).toString(),
+          datePublished: toIsoDateTime(post.date),
+          dateModified: toIsoDateTime(post.updated ?? post.date),
+          articleSection: post.category,
+          keywords: post.tags,
+          author: { '@id': personId },
+        })),
+        about: [
+          'Backend engineering',
+          'Node.js',
+          'TypeScript',
+          'Express.js',
+          'API architecture',
+          'Authentication security',
+          'Payment token security',
+          'Redis queues',
+          'Production architecture',
+          'Structured logging',
+          'Observability',
+          'AWS',
+        ],
+      },
+      personSchema,
+      createBreadcrumb([
+        { name: 'Home', path: sitePaths.home },
+        { name: 'Blog', path: sitePaths.blogs },
+        ...(page > 1 ? [{ name: `Page ${page}`, path }] : []),
+      ]),
+    ],
+  })
+}
 
 const toSchemaThing = (entity: BlogEntity) => ({
   '@type': 'Thing',

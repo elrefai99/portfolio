@@ -120,19 +120,15 @@ const tagClass = 'bp-chip'
 
           <!-- FAQ: rendered visibly because the FAQPage JSON-LD describes it.
                Structured data for content that is not on the page is a policy
-               violation, so these two must always ship together. -->
-          <section
+               violation, so these two must always ship together (the section
+               stays in the DOM collapsed or not — see CollapsibleSection). -->
+          <CollapsibleSection
             v-if="blog.faq?.length"
-            :class="`${panelClass} p-6 md:p-8`"
-            aria-labelledby="faq-heading"
+            heading="Frequently asked questions"
+            heading-id="faq-heading"
+            max-height="4000px"
           >
-            <h2
-              id="faq-heading"
-              class="scroll-mt-24 text-2xl font-semibold text-[var(--bp-blue)]"
-            >
-              Frequently asked questions
-            </h2>
-            <dl class="mt-6 space-y-6">
+            <dl class="space-y-6">
               <div v-for="entry in blog.faq" :key="entry.question">
                 <dt
                   :id="`faq-${slugifyHeading(entry.question)}`"
@@ -145,20 +141,19 @@ const tagClass = 'bp-chip'
                 </dd>
               </div>
             </dl>
-          </section>
+          </CollapsibleSection>
 
           <!-- Related posts: keyword-rich internal links between articles -->
-          <aside
+          <CollapsibleSection
             v-if="relatedPosts.length"
-            :class="`${panelClass} p-6 md:p-8`"
+            heading="Related notes"
+            variant="label"
+            tag="aside"
             aria-label="Related blog posts"
+            content-gap="1rem"
+            max-height="2000px"
           >
-            <p
-              class="text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
-            >
-              Related notes
-            </p>
-            <ul class="mt-4 space-y-4">
+            <ul class="space-y-4">
               <li v-for="related in relatedPosts" :key="related.slug">
                 <router-link :to="`/blogs/${related.slug}`" class="group block">
                   <span
@@ -173,20 +168,19 @@ const tagClass = 'bp-chip'
                 </router-link>
               </li>
             </ul>
-          </aside>
+          </CollapsibleSection>
 
           <!-- Project deep dives this post supports -->
-          <aside
+          <CollapsibleSection
             v-if="relatedCaseStudies.length"
-            :class="`${panelClass} p-6 md:p-8`"
+            heading="From the projects behind this post"
+            variant="label"
+            tag="aside"
             aria-label="Related project deep dives"
+            content-gap="1rem"
+            max-height="2000px"
           >
-            <p
-              class="text-xs font-semibold uppercase tracking-wide text-[var(--bp-muted)]"
-            >
-              From the projects behind this post
-            </p>
-            <ul class="mt-4 space-y-4">
+            <ul class="space-y-4">
               <li v-for="cs in relatedCaseStudies" :key="cs.slug">
                 <router-link :to="`/projects/${cs.slug}`" class="group block">
                   <span
@@ -201,7 +195,7 @@ const tagClass = 'bp-chip'
                 </router-link>
               </li>
             </ul>
-          </aside>
+          </CollapsibleSection>
         </article>
         </div>
       </div>

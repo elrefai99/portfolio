@@ -5,4 +5,6 @@ Disallow: /404.html
 Disallow: /200
 Disallow: /404
 
+Disallow: /*?
+
 Sitemap: https://elrefai.me/sitemap.xml

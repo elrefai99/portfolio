@@ -83,7 +83,7 @@ export type BlogPost = {
 
 export const blogs: BlogPost[] = [
   {
-    id: 8,
+    id: 7,
     slug: 'gen-import-typescript-barrel-generator-deep-dive',
     ogImage: '/og/blog-gen-import-typescript-barrel-generator-deep-dive.png',
     title: 'gen-import: Everything I Learned Building a Barrel Generator That Understands Your Module Graph',
@@ -787,247 +787,6 @@ export const blogs: BlogPost[] = [
       },
     ],
   },
-  // {
-  //   id: 7,
-  //   slug: 'tsc-passes-import-cycles-break-at-runtime',
-  //   ogImage: '/og/blog-tsc-passes-import-cycles-break-at-runtime.png',
-  //   title: 'tsc Says Fine, Node Says TypeError: Import Cycles Type-Checkers Cannot See',
-  //   excerpt:
-  //     'A two-file cycle that compiles cleanly and throws `Class extends value undefined` the moment you run it — and how gen-import models module evaluation (edge kinds, eager reads, barrel contraction, Tarjan SCCs) to catch it before Node does.',
-  //   metaTitle: 'Why tsc Passing Says Nothing About Import-Cycle Safety',
-  //   metaDescription:
-  //     'A TypeScript cycle that passes tsc and throws at runtime, and how a static analyzer models eager vs deferred reads, barrel contraction, and Tarjan SCCs to catch it.',
-  //   category: 'Developer Tooling',
-  //   date: '2026-07-27',
-  //   readTime: '8 min read',
-  //   tags: ['TypeScript', 'Node.js', 'Static Analysis', 'Tooling', 'AST', 'CommonJS', 'Barrel Files', 'Compiler API'],
-  //   entities: [
-  //     { name: 'TypeScript', sameAs: ['https://en.wikipedia.org/wiki/TypeScript', 'https://www.typescriptlang.org'] },
-  //     { name: 'Node.js', sameAs: ['https://en.wikipedia.org/wiki/Node.js', 'https://nodejs.org'] },
-  //     { name: 'Circular dependency', sameAs: 'https://en.wikipedia.org/wiki/Circular_dependency' },
-  //     { name: 'Tarjan\'s strongly connected components algorithm', sameAs: 'https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm' },
-  //   ],
-  //   relatedSlugs: ['nodejs-pino-s3-log-archiving-cron', 'jwt-vs-paseto-tokens'],
-  //   faq: [
-  //     {
-  //       question: 'Does a passing tsc build mean my imports are safe?',
-  //       answer:
-  //         'No. The type checker resolves names across the whole module graph and does not care what order modules execute in, because types do not run. Module evaluation is a linear order, and a cycle can leave a binding undefined at the moment another module needs it.',
-  //     },
-  //     {
-  //       question: 'What causes \'Class extends value undefined is not a constructor or null\'?',
-  //       answer:
-  //         'A circular import evaluated in the wrong order. In CommonJS a module caught mid-cycle returns whatever it has exported so far, which can be an empty object, so the base class is undefined at exactly the instant the extends clause needs a constructor.',
-  //     },
-  //     {
-  //       question: 'Are barrel files the cause of import cycles?',
-  //       answer:
-  //         'Barrels do not create the cycle, they hide it. Routing every import through one re-export file makes two modules that never reference each other directly look like neighbours, so a cycle that would be obvious in the direct-import graph becomes invisible.',
-  //     },
-  //     {
-  //       question: 'Is every circular import a bug?',
-  //       answer:
-  //         'No, which is why a yes-or-no answer is not useful. A cycle only breaks when a binding is read eagerly during module evaluation, such as in an extends clause or a top-level call. A cycle whose references are all deferred inside function bodies runs fine.',
-  //     },
-  //     {
-  //       question: 'How do you detect unsafe import cycles automatically?',
-  //       answer:
-  //         'Model the graph the way the runtime does: distinguish eager reads from deferred ones, contract barrel re-exports back to their real sources, then find strongly connected components with Tarjan\'s algorithm and report only the cycles containing an eager edge.',
-  //     },
-  //   ],
-  //   blocks: [
-  //     {
-  //       type: 'paragraph',
-  //       text: 'Here are two files. Both import through a generated barrel, the way most of my projects do. Nothing about them looks dangerous.',
-  //     },
-  //     {
-  //       type: 'code',
-  //       language: 'ts',
-  //       filename: 'src/audit.entity.ts · src/entity.base.ts',
-  //       code:
-  //         '// src/audit.entity.ts\n' +
-  //         'import { BaseEntity } from \'./gen-import\'\n\n' +
-  //         'export class AuditEntity extends BaseEntity {\n' +
-  //         '  tag(): string {\n' +
-  //         '    return \'audit/\' + super.tag()\n' +
-  //         '  }\n' +
-  //         '}\n\n' +
-  //         'export const formatTag = (s: string): string => `[${s}]`\n\n' +
-  //         '// src/entity.base.ts\n' +
-  //         'import { formatTag } from \'./gen-import\'\n\n' +
-  //         'export class BaseEntity {\n' +
-  //         '  tag(): string {\n' +
-  //         '    return formatTag(\'base\')\n' +
-  //         '  }\n' +
-  //         '}',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'The compiler is happy. The process is not.',
-  //     },
-  //     {
-  //       type: 'code',
-  //       language: 'text',
-  //       filename: 'terminal',
-  //       code:
-  //         '$ npx tsc -p tsconfig.json\n' +
-  //         '$ echo $?\n' +
-  //         '0\n\n' +
-  //         '$ node dist/main.js\n' +
-  //         'dist/audit.entity.js:5\n' +
-  //         'class AuditEntity extends gen_import_1.BaseEntity {\n' +
-  //         '                                       ^\n\n' +
-  //         'TypeError: Class extends value undefined is not a constructor or null\n' +
-  //         '    at Object.<anonymous> (dist/audit.entity.js:5:40)',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'That is the whole problem with treating a green `tsc` as a safety signal for cycles. The type checker resolves names across a graph — it does not care what order the files run in, because types do not run. Module evaluation is a linear order, and in CommonJS a module caught mid-cycle hands back whatever it has exported so far, which here is an empty object. `BaseEntity` is `undefined` at exactly the instant the `extends` clause needs a constructor.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'And it is order-dependent, which is the nasty part. I built the same cycle twice, changing nothing but the filenames. In one spelling the barrel happened to re-export the base first and the program printed `PROBE:user/[base]` like nothing was wrong. Rename the files so the subclass sorts first, and it throws. Same code, same compiler result, different luck.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'I wrote [gen-import](https://github.com/elrefai99/Gen-Import) to generate those barrels, so this is my bug to catch. What follows is what the analyzer actually does about it.',
-  //     },
-  //     {
-  //       type: 'code',
-  //       language: 'mermaid',
-  //       filename: 'analysis-pipeline.mmd',
-  //       code:
-  //         'flowchart TD\n' +
-  //         '    A[Source files] --> B[scanFile: walk the AST]\n' +
-  //         '    B --> C[classifyReference per identifier]\n' +
-  //         '    C --> D{position}\n' +
-  //         '    D -- extends / decorator / static --> E[eager read]\n' +
-  //         '    D -- inside a function body --> F[deferred read]\n' +
-  //         '    D -- type position --> G[type-only, erased]\n' +
-  //         '    E --> H[buildModuleGraph: edges carry kind + eager]\n' +
-  //         '    F --> H\n' +
-  //         '    G --> H\n' +
-  //         '    H --> I[contractBarrel: rewrite barrel edges to owner files]\n' +
-  //         '    I --> J[tarjanScc over INIT_EDGE_KINDS only]\n' +
-  //         '    J --> K{cyclic SCC?}\n' +
-  //         '    K -- no --> L[verdict: safe]\n' +
-  //         '    K -- yes, no eager edge --> M[GI003 / GI004 warn: ordered]\n' +
-  //         '    K -- yes, eager edge --> N[GI001 / GI002 error: unsafe]',
-  //     },
-  //     {
-  //       type: 'heading',
-  //       text: 'Not every import is an edge',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'The first thing that has to go is the idea that an import statement is a dependency. `src/@types/index.d.ts` splits `EdgeKind` five ways — `value-static`, `type-only`, `dynamic`, `require`, `side-effect` — and only three of those can ever break initialisation. `graph.ts` names that set explicitly:',
-  //     },
-  //     {
-  //       type: 'code',
-  //       language: 'ts',
-  //       filename: 'src/analysis/graph.ts',
-  //       code:
-  //         'export const INIT_EDGE_KINDS: ReadonlySet<EdgeKind> = new Set<EdgeKind>([\n' +
-  //         '    \'value-static\',\n' +
-  //         '    \'side-effect\',\n' +
-  //         '    \'require\',\n' +
-  //         '])',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: '`type-only` is gone before the code runs, so it cannot participate in a runtime cycle. `dynamic` — an `import()` call — resolves later by definition. `scan.ts` decides `require` versus `dynamic` by asking whether the call sits at the top level: a `require()` in the module body is eager, the same call inside a function is not. Getting this wrong in either direction is how a cycle checker becomes noise: count type imports and you flag cycles that do not exist, ignore `export *` and you miss ones that do.',
-  //     },
-  //     {
-  //       type: 'heading',
-  //       text: 'Where the identifier sits decides everything',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'A cycle only breaks when someone reads a binding while the other module is still evaluating. So `classifyReference` in `scan.ts` walks up from each identifier and classifies the position it was used in — `eager-heritage` for an `extends` clause, `eager-decorator` for anything inside a decorator argument, `eager-static` for a static field or static block, `deferred` once it hits a function, `type` for type nodes and import specifiers. `scanFile` then marks the edge that introduced the binding as eager, keeping the strongest reason it saw.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'That distinction is the entire verdict. A cycle where every read happens inside a function body still initialises — both modules finish loading, then somebody calls something. A cycle with one `extends` in it does not, and a base class is the one case with no escape: you cannot lazily resolve it, which is why the tool tells you to import it from its source file rather than offering a workaround.',
-  //     },
-  //     {
-  //       type: 'heading',
-  //       text: 'The barrel is not a real node',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'In the failing example neither file imports the other — both import `./gen-import`. Left alone, the graph would report a cycle through the barrel and blame the generated file, which is useless advice. `contractBarrel` rewrites it: for every edge into the barrel it looks the imported bindings up in an owner map, redirects the edge to the file that actually exports each name, and tags it `viaBarrel`. The barrel drops out and the cycle appears between the two modules that genuinely depend on each other. The diagnostic still mentions the routing, because knowing your import goes through a barrel is useful — believing the barrel caused the cycle is not.',
-  //     },
-  //     {
-  //       type: 'heading',
-  //       text: 'Tarjan, not a boolean',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: '`scc.ts` runs an iterative Tarjan pass over the restricted edge set and returns strongly connected components. Marking a component cyclic is the easy part — `members.length > 1`, or a single node with a self-loop. What matters more is what comes next: `cycleEdges` collects the edges inside the component and `shortestCycle` does a BFS back to the entry node to recover an actual path. A boolean tells you that you have a problem somewhere; the path plus the eager edge tells you the line to open. The topological order falls out of the same pass and is what the emitter uses to sort the barrel, so dependencies get re-exported before their dependents.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'Here is the run on the same two files:',
-  //     },
-  //     {
-  //       type: 'code',
-  //       language: 'text',
-  //       filename: 'npx gen-import',
-  //       code:
-  //         'error GI001  Circular dependency read during module evaluation — class heritage clause (`class X extends Y`)\n' +
-  //         '    src/audit.entity.ts → src/entity.base.ts → src/audit.entity.ts\n' +
-  //         '    fix: `BaseEntity` is read to build a class at src/audit.entity.ts:3. A base class cannot be lazily resolved — import it directly from its source file.\n\n' +
-  //         'error GI002  src/gen-import.ts is inside a cycle with an init-time read — this fails at runtime\n' +
-  //         '    src/audit.entity.ts → src/entity.base.ts → src/audit.entity.ts\n' +
-  //         '    fix: Breaks at src/audit.entity.ts:3 — class heritage clause (`class X extends Y`). Run with --safe-barrels to withhold the offending exports and print direct-import lines.\n\n' +
-  //         '╭────────────────────  gen-import  ─────────────────────╮\n' +
-  //         '│ Source files   2                                      │\n' +
-  //         '│ Total exports  3                                      │\n' +
-  //         '│ Language       TypeScript                             │\n' +
-  //         '│ Output file    src/gen-import.ts                      │\n' +
-  //         '│ Module         cjs                                    │\n' +
-  //         '│ Globals        off                                    │\n' +
-  //         '│ Lazy           off                                    │\n' +
-  //         '│ Topo sort      on                                     │\n' +
-  //         '│ Import edges   7                                      │\n' +
-  //         '│ Cycles         1 (1 init-time ✖)                     │\n' +
-  //         '│ Barrel         unsafe ✖                              │\n' +
-  //         '│ Collisions     none                                   │\n' +
-  //         '│ New exports    +3: AuditEntity, formatTag, BaseEntity │\n' +
-  //         '╰───────────────────────────────────────────────────────╯',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'Two codes, because they answer different questions. GI001 is about your modules: this cycle contains a read that happens during evaluation. GI002 is about the generated barrel: it sits inside that cycle, so importing from it is what triggers the failure. Both are errors in `SEVERITY_BY_CODE`. When every read on a cycle is deferred, the same situation downgrades to GI003 / GI004 at warn level, and the barrel verdict is `ordered` rather than `unsafe` — it works today, and one `extends` added through the barrel turns it into the output above.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'There is a fourth verdict I like more than I expected to. If the barrel is acyclic over runtime edges but cyclic once `type-only` edges are added back, that is `type-safe` — GI005, info severity, with advice that says it becomes real the moment an `import type` annotation is dropped or `verbatimModuleSyntax` is switched on. It is not a problem. It is a problem with a specific trigger, and I would rather know where those are.',
-  //     },
-  //     {
-  //       type: 'heading',
-  //       text: 'Checking the checker',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'A static analyzer that is confidently wrong is worse than no analyzer, and emit-shape assertions cannot catch that — a barrel can look perfectly well-formed and still hand back `undefined`. So `test/integration/runtime-oracle.test.ts` generates each scenario, runs the CLI, parses the `Barrel` row straight out of the summary box, and then actually executes the result under both `tsc` + node and `tsx`, in lazy and static emit modes, asserting an exact `PROBE:` line. The genuine-cycle scenario expects `BROKEN` rather than a fixed string, because the same cycle corrupts differently per loader: tsc yields a silent `undefined`, esbuild throws. Pinning one spelling would make the test loader-specific; asserting "this must not produce a clean result" is the real invariant.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'The property that matters is the other direction. If the tool says a barrel is safe, importing from it has to work everywhere — under every loader, in both emit modes. That is the claim worth testing, and it is the claim `tsc` was never making.',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       text: 'In CI I want the run to fail, not to print something nobody reads. `--strict=cycles` blocks on GI001 only; `--strict=barrels` on GI002 and GI004; `--strict` on its own blocks on all of them plus export-name collisions, and exits 1:',
-  //     },
-  //     {
-  //       type: 'code',
-  //       language: 'text',
-  //       filename: 'terminal',
-  //       code: 'npx gen-import --strict=cycles',
-  //     },
-  //   ],
-  // },
   {
     id: 6,
     slug: 'nodejs-pino-s3-log-archiving-cron',
@@ -4022,6 +3781,12 @@ export const blogs: BlogPost[] = [
 ]
 
 export const getBlogBySlug = (slug: string) => blogs.find((blog) => blog.slug === slug)
+
+/** Archive page size for /blogs — keep in sync with nuxt.config.ts's prerender route list. */
+export const BLOGS_PER_PAGE = 5
+export const blogsPageCount = Math.max(1, Math.ceil(blogs.length / BLOGS_PER_PAGE))
+export const getBlogsPage = (page: number) =>
+  blogs.slice((page - 1) * BLOGS_PER_PAGE, page * BLOGS_PER_PAGE)
 
 /** Total word count across all textual blocks — feeds BlogPosting.wordCount for rich results. */
 export const blogWordCount = (blog: BlogPost) =>
