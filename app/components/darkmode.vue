@@ -22,14 +22,18 @@ function onToggle(event: MouseEvent) {
     return;
   }
 
+  const root = document.documentElement;
   const rect = button.value?.getBoundingClientRect();
-  const x = event.clientX || (rect ? rect.left + rect.width / 2 : window.innerWidth / 2);
+  const x = event.clientX || (rect ? rect.left + rect.width / 2 : root.clientWidth / 2);
   const y = event.clientY || (rect ? rect.top + rect.height / 2 : 0);
 
-  const radius = Math.hypot(
-    Math.max(x, window.innerWidth - x),
-    Math.max(y, window.innerHeight - y),
-  );
+  // The snapshot is sized to the large viewport — mobile chrome retracted — so
+  // innerHeight under-measures it while the URL bar is showing and the circle
+  // stops short of the bottom of the screen. clientHeight tracks the layout
+  // viewport; the margin absorbs what's left. Over-covering is invisible.
+  const vw = Math.max(window.innerWidth, root.clientWidth);
+  const vh = Math.max(window.innerHeight, root.clientHeight);
+  const radius = Math.hypot(Math.max(x, vw - x), Math.max(y, vh - y)) + 120;
 
   const collapse = !isDark.value;
   const covering = `circle(${radius}px at ${x}px ${y}px)`;
