@@ -560,6 +560,25 @@ html:not(.dark) body {
 }
 
 /* =========================================================================
+   Theme toggle: circular reveal (View Transitions API)
+   Only the reset lives here. Chrome's UA sheet gives both root snapshots a
+   cross-fade *and* mix-blend-mode: plus-lighter — left alone the two snapshots
+   blend additively into a bright wash, which reads as a flash on its own. Kill
+   both so the clip-path circle is the only motion.
+
+   The circle itself is injected per-click by darkmode.vue (see the comment
+   there): its geometry depends on where the button is, and pushing that
+   through custom properties means depending on them inheriting into the
+   view-transition pseudo tree — which is exactly what breaks the grow
+   direction. Literal values in an injected rule have no such dependency.
+   ========================================================================= */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* =========================================================================
    Accessibility: honour reduced-motion
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
