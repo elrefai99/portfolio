@@ -24,18 +24,6 @@ export type BlogEntity = {
   sameAs: string | string[]
 }
 
-/**
- * Question/answer pairs rendered visibly at the foot of the post and emitted as
- * FAQPage JSON-LD.
- *
- * People Also Ask boxes and AI Overviews are assembled from question → concise
- * answer pairs, and extraction is far more reliable when the answer is
- * self-contained: no "as described above", no pronoun whose referent lives three
- * paragraphs up. Keep answers under ~60 words and restate the subject noun.
- *
- * The markup is only ever emitted alongside the visible list — FAQ structured
- * data describing content that is not on the page is a policy violation.
- */
 export type BlogFaq = {
   question: string
   answer: string
@@ -44,13 +32,11 @@ export type BlogFaq = {
 export type BlogHowToStep = {
   name: string
   text: string
-  /** Fragment id of the heading this step maps to; defaults to a slug of `name`. */
   anchor?: string
 }
 
 export type BlogHowTo = {
   name: string
-  /** ISO 8601 duration, e.g. 'PT45M'. */
   totalTime: string
   tool?: string[]
   supply?: string[]
@@ -75,13 +61,3095 @@ export type BlogPost = {
   ogImage?: string
   faq?: BlogFaq[]
   howTo?: BlogHowTo
-  /** TechArticle audience hint: how much background a reader needs. */
   proficiencyLevel?: 'Beginner' | 'Expert'
-  /** TechArticle prerequisites, e.g. ['Node.js 20+', 'Redis 7', 'An AWS account']. */
   dependencies?: string[]
 }
 
 export const blogs: BlogPost[] = [
+  {
+    id: 8,
+    slug: 'github-actions-build-gate-trigger',
+    ogImage: '/og/blog-github-actions-build-gate-trigger.png',
+    title: 'GitHub Actions in Production, Part 1: The Build Gate That Wasn\'t Guarding Anything',
+    excerpt:
+      'A CI workflow that ran on every push to the production branch, went green for months, and protected nothing — because it fired at the same moment as the deploys it was supposed to gate. On the difference between reporting and enforcement, and why the trigger matters more than the steps.',
+    metaTitle: 'GitHub Actions CI: Why Your Build Gate Runs Too Late',
+    metaDescription:
+      'A CI check on push to your production branch reports; a check on pull_request with branch protection enforces. Plus pnpm caching order, frozen lockfiles, and least-privilege permissions.',
+    category: 'Cloud & DevOps',
+    date: '2026-08-01',
+    readTime: '11 min read',
+    tags: ['GitHub Actions', 'CI/CD', 'TypeScript', 'pnpm', 'Node.js', 'DevOps', 'Continuous Integration'],
+    entities: [
+      { name: 'GitHub Actions', sameAs: ['https://en.wikipedia.org/wiki/GitHub', 'https://github.com/features/actions'] },
+      { name: 'Continuous integration', sameAs: 'https://en.wikipedia.org/wiki/Continuous_integration' },
+      { name: 'TypeScript', sameAs: ['https://en.wikipedia.org/wiki/TypeScript', 'https://www.typescriptlang.org'] },
+      { name: 'pnpm', sameAs: 'https://pnpm.io' },
+    ],
+    relatedSlugs: ['automated-github-releases-tags', 'github-actions-script-injection'],
+    faq: [
+      {
+        question: 'Why is a GitHub Actions check on push different from a check on pull_request?',
+        answer:
+          'A check triggered by push to your production branch runs after the merge has already happened, so it can only report a failure. A check triggered by pull_request, combined with branch protection, blocks the merge itself. The YAML is nearly identical; only the guarantee differs.',
+      },
+      {
+        question: 'Why must pnpm/action-setup run before actions/setup-node?',
+        answer:
+          'actions/setup-node with cache set to pnpm shells out to `pnpm store path` to locate the store it caches, so the pnpm binary must already be on PATH. Reversing the two steps produces `Unable to locate executable file: pnpm`, an error that points at the Node step while the real cause is the step below it.',
+      },
+      {
+        question: 'Should CI use pnpm install or pnpm install --frozen-lockfile?',
+        answer:
+          'Use --frozen-lockfile. Bare `pnpm install` rewrites pnpm-lock.yaml when it has drifted from package.json, so the pipeline validates a dependency tree nobody committed. pnpm defaults the flag to true when CI=true, but stating it explicitly keeps the guarantee when the workflow is copied elsewhere.',
+      },
+      {
+        question: 'What permissions does a build-only GitHub Actions job need?',
+        answer:
+          'Only `contents: read`. Granting `contents: write` lets the run\'s GITHUB_TOKEN push commits, move tags, and edit releases, and `id-token: write` mints OIDC tokens for cloud federation a compile job never performs. Over-broad permissions blocks usually arrive by copy-paste rather than by decision.',
+      },
+      {
+        question: 'What is the default timeout for a GitHub Actions job?',
+        answer:
+          'Six hours. A dependency install hanging against an unresponsive registry will hold a runner slot for a full working day before GitHub kills it. Setting timeout-minutes to roughly ten on a job that normally takes ninety seconds turns a silent resource leak into a fast, obvious failure.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['Node.js 20+', 'pnpm 9', 'A GitHub repository'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'We had a workflow called `test-build.yml`. It ran on every push to `live`, installed dependencies with pnpm, ran `pnpm build`, and went green. It did that for months before I looked at it properly and realised it wasn\'t protecting anything at all.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Thirty lines. No test runner, no linter, no coverage threshold. Just a compile.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'I\'m starting the series with this one because it\'s the least impressive workflow I\'ve written and the one I learned the most from. Everything I got wrong here was invisible. The pipeline was green, the deploys worked, nobody complained. The problem was structural, and structural problems don\'t announce themselves.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The short version: a build check that runs after the merge isn\'t a gate. It\'s a report. I spent time tuning the steps inside a workflow whose trigger made the steps irrelevant, which is a specific kind of wasted effort that I now watch for.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'Everything in this stack is TypeScript on Node, and before there was any CI at all, the most common way we broke production wasn\'t a logic bug. It was a build error that only showed up on the server.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The shape of it was always the same. Someone renames a field on an interface. Their editor is fine with it because the dev server runs through a transpile-only path that strips types without checking them, so nothing complains locally. They push. The deploy script SSHes into the box, runs `npm run build`, and `tsc` dies on some file they never opened, three imports downstream of the thing they renamed.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now you\'ve got a half-deployed service. The `git pull` worked. `node_modules` is updated. The build output is stale or missing. And you found out about it because the deploy script printed a stack trace at eleven at night.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s a bad failure mode, and not because the error is hard to fix. It\'s bad because you\'re not preventing a bad release anymore, you\'re recovering from a partial one. Different problem, much worse timing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So the goal was narrow: prove `tsc` succeeds on a clean checkout with a fresh install, on a machine that isn\'t mine, before that same command runs on a box serving traffic.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Notice what\'s not in there. No unit tests. No linting. I scoped it to the failure I was actually having rather than the checks that would look good in a README, and I\'d still defend that. Starting with the check that maps to your real incidents beats starting with the check that maps to your insecurity about not having enough checks.',
+      },
+      {
+        type: 'paragraph',
+        text: 'What I won\'t defend is the name. `test-build.yml`, titled "Test Build TypeScript Project", running no tests. That\'s a small lie in a filename, and it costs you the first time someone opens the file expecting a test suite and finds a compile.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'paragraph',
+        text: 'One job, one runner, four steps in a line. No matrix, no fan-out, nothing uploaded.',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          'push → live  ──┐\n' +
+          '               ├──► ubuntu-latest ──► checkout ──► pnpm ──► node 20 (+cache)\n' +
+          'workflow_dispatch ─┘                                            │\n' +
+          '                                                                ▼\n' +
+          '                                                    pnpm install ──► pnpm build\n' +
+          '                                                                       │\n' +
+          '                                                        pass ──────────┴────────── fail\n' +
+          '                                                          │                          │\n' +
+          '                                                   (deploy already                (red X on a\n' +
+          '                                                    running in parallel)          commit that\n' +
+          '                                                                                  already merged)',
+      },
+      {
+        type: 'paragraph',
+        text: 'I drew the flaw into the diagram on purpose. This workflow triggers on `push` to `live`, which is the same event that fires the Docker build, the ECS deploy, the EC2 deploy, and the S3 backup. Six workflows, one event, all starting at the same instant. Nothing connects them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So when the build fails, the deploy is already running. The gate and the thing it\'s supposedly gating are siblings. There\'s no parent-child relationship anywhere in the setup.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The obvious response is "make it a required check on pull requests," and that is the right answer, but I want to be honest that it isn\'t free. Branch protection means no direct pushes to `live`, every change goes through a PR, and every hotfix waits for CI to finish before you can merge it. On a two-person team pushing fixes to a live property, that friction is real, and plenty of teams look at it and reasonably decide speed matters more.',
+      },
+      {
+        type: 'paragraph',
+        text: 'My actual mistake wasn\'t choosing speed. It was never making the choice. The friction never got weighed, it just never got confronted, and "we didn\'t think about it" is a worse position than either option.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'The trigger:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'on:\n' +
+          '  push:\n' +
+          '    branches: ["live"]\n' +
+          '  workflow_dispatch:',
+      },
+      {
+        type: 'paragraph',
+        text: '`workflow_dispatch` is the underrated half of that. It puts a manual re-run button on the Actions tab, and the reason that matters is what it replaces. Without it, re-running a pipeline means pushing an empty commit. Every `chore: retrigger CI` sitting in your production branch history is a small permanent tax on `git log` and a landmine for `git bisect`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Runner is `ubuntu-latest`. For a Node compile that\'s correct and I wouldn\'t change it. The floating tag means GitHub upgrades the image underneath me without asking, which is technically a supply chain surface, but this job holds no credentials and touches nothing, so I\'ll take the maintenance saving.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then pnpm before Node, and the order is load-bearing:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: pnpm/action-setup@v4\n' +
+          '  with: { version: 9 }\n' +
+          '\n' +
+          '- uses: actions/setup-node@v4\n' +
+          '  with:\n' +
+          '    node-version: "20"\n' +
+          '    cache: \'pnpm\'',
+      },
+      {
+        type: 'paragraph',
+        text: 'People get this backwards constantly. `setup-node` with `cache: \'pnpm\'` shells out to `pnpm store path` to find the content-addressable store it\'s meant to be caching, so pnpm has to already be on `PATH`. Swap those two steps and you get `Error: Unable to locate executable file: pnpm`, which points at the Node setup step while the actual cause is the step below it. I\'ve watched two different people lose twenty minutes to that error message.',
+      },
+      {
+        type: 'paragraph',
+        text: 'What you get for the correct ordering is pnpm\'s global store cached against the lockfile hash. On a commit where dependencies haven\'t moved, install drops from tens of seconds to a couple, and because pnpm hard-links out of the store instead of copying files, the restore is cheap in a way that a lot of "cached" installs aren\'t.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the install itself:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- run: pnpm install',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is the line I\'d change first, and it\'s one flag. Bare `pnpm install` will happily rewrite `pnpm-lock.yaml` if the lockfile and `package.json` have drifted apart. In CI that\'s backwards. It means the pipeline quietly resolves a dependency tree that nobody committed, and the build you just validated isn\'t the build anyone else will get.',
+      },
+      {
+        type: 'paragraph',
+        text: '`--frozen-lockfile` fails loudly instead of silently fixing it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now, pnpm does default `--frozen-lockfile` to true when `CI=true`, and GitHub Actions sets that. So in practice this is safer than it reads. I still want it written down. Relying on an implicit environment-dependent default for something that determines whether your build is reproducible feels wrong, and the moment anyone copies this template into a CI system that doesn\'t set `CI`, the protection vanishes without a word.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The build:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- run: pnpm build',
+      },
+      {
+        type: 'paragraph',
+        text: 'Which runs `tsc` underneath, and that\'s the whole gate. Type checking earns its place here. It won\'t tell you the code does the right thing, but it catches an entire family of refactor breakage that tests routinely miss, and it does it across every file rather than only the paths someone bothered to write assertions for. Tests check the behaviour you thought of. The compiler checks every consumer of every symbol you touched.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Last, the permissions:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'permissions:\n' +
+          '  contents: write\n' +
+          '  id-token: write',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is too much and I\'d fix it today. A job that checks out code and compiles it needs `contents: read`. `contents: write` hands the run\'s `GITHUB_TOKEN` the ability to push commits, move tags, and edit releases. `id-token: write` mints OIDC tokens for cloud federation that this workflow never does.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Neither is exploitable by itself. But the entire argument for least privilege in CI is that you don\'t get to know in advance which package in your dependency tree turns hostile, and `permissions` is about the cheapest control GitHub gives you. There\'s no reason to leave it open.',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'The thing I keep coming back to is that if you\'re only going to run one check on a TypeScript codebase, `tsc` is probably the right one. It needs no fixtures, no test database, no setup. It has close to zero false positive rate, its failures are unambiguous, and it\'s whole-program. That\'s a lot of coverage for `pnpm build`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The other detail worth pulling out is the six-hour default job timeout, which I didn\'t know about for an embarrassingly long time. A `pnpm install` hanging against a wedged registry connection will sit there burning a runner slot for a full working day before GitHub kills it. `timeout-minutes: 10` on a job that normally takes ninety seconds turns a silent resource leak into a fast obvious failure, and it costs one line.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'The big one is treating "the build ran" as "the change is safe." A green compile says your types line up. It says nothing about whether the code does what it\'s supposed to. Naming the workflow "Test Build" actively invites that confusion, including from the person who wrote it, which in this case was me.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Second is the one this whole article is about: putting the gate downstream of the merge. A check on `push: live` is reporting. A check on `pull_request` with branch protection is enforcement. The YAML is nearly identical and the guarantee isn\'t remotely the same.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then there\'s the `setup-node` ordering, where the error message misdirects you. Bare `install` in CI, where lockfile drift resolves silently instead of failing. And copying `permissions` blocks between workflows, which is how least privilege actually decays in practice. Nobody decides to over-permission a job. They paste a block from a workflow that needed it into one that doesn\'t, and nothing breaks, so nobody removes it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'One that\'s subtler: assuming a cache hit means a correct cache. `cache: \'pnpm\'` keys on the lockfile hash, so if you\'re not enforcing the lockfile, you can end up restoring a store built from a resolution that no longer matches what you\'re about to install.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'Design the trigger before you design the steps. I put real thought into the pnpm and Node ordering and zero thought into whether `push: live` was the right event, and the trigger made all of that careful work decorative. Now the first question I answer for any new workflow is what it\'s allowed to prevent, and everything else follows from that.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Scope to your real incidents, then be honest about what you scoped to. Building a compile-only gate because compile errors were the actual problem was fine engineering. Calling the result "test-build" wasn\'t. Names are the cheapest documentation you\'ll ever write, and vague ones are how a team ends up believing it has coverage it doesn\'t have.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The cheapest controls are the ones you skip. `permissions: contents: read`. `timeout-minutes: 10`. `--frozen-lockfile`. Three lines, no ongoing maintenance, real risk reduction. They get skipped because nothing visibly breaks without them, which is exactly the property that makes them worth adding deliberately rather than waiting to need them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And a fast pipeline is a pipeline people actually use. The store cache isn\'t a micro-optimisation. Once CI takes more than a couple of minutes, people stop waiting for it before they merge, and a check nobody waits for has stopped being a check.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'The ordering problem has a middle path I didn\'t see at first. Running the gate in parallel with the deploys is fast and wrong. Chaining everything with `needs:` is correct and serialises your deploy behind a compile. What actually works is keeping this as a fast PR gate and letting the deploy workflows fire unconditionally on `live`, because if the merge was already blocked by the PR check, the code reaching `live` has been verified. You get enforcement without adding latency to the deploy path.',
+      },
+      {
+        type: 'paragraph',
+        text: 'On secrets: this job doesn\'t touch any, which is why the over-broad `permissions` block is latent rather than active. That distinction is worth sitting with. It\'s fine today because of a property of the job that one added step could change, and nobody\'s going to re-audit the permissions block when they add that step.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Cost is real on private repos. Public repos get free minutes, private ones don\'t, and a six-hour ceiling on a job that fires on every push to your production branch is a billing exposure rather than a theoretical one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Supply chain, finally. Every action here is pinned to a major version tag, and tags are mutable. A compromised or force-moved `@v4` executes attacker code inside a job that currently has `contents: write`. Pinning to full commit SHAs with Dependabot handling the bumps removes that entirely and costs you nothing except uglier YAML.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Roughly in order of what I\'d do first.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Move the trigger to `pull_request` and make it a required status check. That\'s the whole thing. It converts the workflow from observation into enforcement and everything below it is detail. Keep `push: live` alongside if you want a post-merge sanity check.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add the checks the name already promises, as separate jobs so the failures are individually readable:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'jobs:\n' +
+          '  verify:\n' +
+          '    strategy:\n' +
+          '      fail-fast: false\n' +
+          '      matrix:\n' +
+          '        task: [lint, typecheck, test]\n' +
+          '    steps:\n' +
+          '      # ... setup ...\n' +
+          '      - run: pnpm ${{ matrix.task }}',
+      },
+      {
+        type: 'paragraph',
+        text: '`fail-fast: false` is the part people leave off. You want every failure from one run, not just whichever one lost the race.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Tighten the job contract:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'permissions:\n' +
+          '  contents: read\n' +
+          'timeout-minutes: 10\n' +
+          'concurrency:\n' +
+          '  group: ci-${{ github.ref }}\n' +
+          '  cancel-in-progress: true',
+      },
+      {
+        type: 'paragraph',
+        text: 'The concurrency block kills superseded runs when someone pushes three times in a row, which cuts queue contention and gets you feedback faster on the commit that actually matters.',
+      },
+      {
+        type: 'paragraph',
+        text: 'After that: `--frozen-lockfile` explicitly, SHA-pin the actions with Dependabot configured for `github-actions`, and convert the whole thing to a `workflow_call` reusable workflow with `node-version` and `pnpm-version` inputs. That last one matters more than it sounds, because right now this job is copy-pasted across every Node service I run, and every copy diverges the moment someone fixes a bug in one of them and not the others.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then rename it. `ci.yml`, or `build.yml` until it genuinely runs tests. The file is currently writing a cheque it can\'t cash.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Next: `release.yml`, which is thirty-two lines and is probably the highest-leverage thing in the whole library.',
+      },
+    ],
+  },
+  {
+    id: 9,
+    slug: 'automated-github-releases-tags',
+    ogImage: '/og/blog-automated-github-releases-tags.png',
+    title: 'GitHub Actions in Production, Part 2: Thirty-Two Lines That Replaced a Job Nobody Was Doing',
+    excerpt:
+      'The shortest workflow I have written returns more than pipelines I spent days on. Tag-triggered GitHub Releases with generated notes, why releasing and deploying are different events, and why I deliberately stopped short of full semantic-release automation.',
+    metaTitle: 'Automated GitHub Releases from Version Tags (32 Lines)',
+    metaDescription:
+      'Tag-triggered release automation with generate_release_notes: why tags beat branch triggers for continuously deployed services, the fetch-depth trap, and curating notes with .github/release.yml.',
+    category: 'Cloud & DevOps',
+    date: '2026-08-01',
+    readTime: '10 min read',
+    tags: ['GitHub Actions', 'CI/CD', 'Automation', 'Git', 'Semantic Versioning', 'DevOps', 'Release Management'],
+    entities: [
+      { name: 'GitHub Actions', sameAs: ['https://en.wikipedia.org/wiki/GitHub', 'https://github.com/features/actions'] },
+      { name: 'Git', sameAs: ['https://en.wikipedia.org/wiki/Git', 'https://git-scm.com'] },
+      { name: 'Software versioning', sameAs: 'https://en.wikipedia.org/wiki/Software_versioning' },
+    ],
+    relatedSlugs: ['github-actions-build-gate-trigger', 'docker-buildx-caching-github-actions'],
+    faq: [
+      {
+        question: 'Why trigger releases from tags instead of pushes to main?',
+        answer:
+          'For a continuously deployed service, "is this code live" and "is this a version" are different questions. Code reaches production several times a week; versions get declared far less often, at points where you want a stable reference. Tags keep deployment automatic and versioning deliberate.',
+      },
+      {
+        question: 'Why did my tag push not trigger the release workflow?',
+        answer:
+          'Plain `git push` does not push tags. You need `git push origin v1.4.0` or `git push --follow-tags`. Nearly every team hits this once, tags, pushes, sees nothing happen, and concludes the workflow is broken. Putting --follow-tags in a written release procedure fixes it permanently.',
+      },
+      {
+        question: 'Does generate_release_notes need fetch-depth: 0 on actions/checkout?',
+        answer:
+          'No. GitHub computes those notes server-side from the commit graph and merged pull requests, so a shallow clone is fine. Tools that generate changelogs locally, such as semantic-release or git-cliff, do need fetch-depth: 0, and most "my changelog is empty" reports trace back to that.',
+      },
+      {
+        question: 'What happens if you delete and re-push a Git tag?',
+        answer:
+          'The workflow triggers again and creates a second release for the same version, and anything already pinned to that tag now points at different code. Tags are immutable by convention, so the correct recovery from a bad release is a new patch version rather than a moved tag.',
+      },
+      {
+        question: 'How do you group generated GitHub release notes into sections?',
+        answer:
+          'Add a .github/release.yml file. GitHub reads it and groups pull requests into titled categories by label, and excludes labels such as dependencies or ci. It turns a flat PR list into a structured changelog without changing the workflow at all.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['A GitHub repository', 'Git tags following v*.*.*'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'The best workflow I\'ve written is also the shortest one. Three steps, no conditionals, no error handling:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'name: Auto Release on Version Tag\n' +
+          '\n' +
+          'on:\n' +
+          '  push:\n' +
+          '    tags: ["v*.*.*"]\n' +
+          '\n' +
+          'permissions:\n' +
+          '  contents: write\n' +
+          '\n' +
+          'jobs:\n' +
+          '  release:\n' +
+          '    runs-on: ubuntu-latest\n' +
+          '    steps:\n' +
+          '      - uses: actions/checkout@v4\n' +
+          '      - uses: softprops/action-gh-release@v2\n' +
+          '        with:\n' +
+          '          tag_name: ${{ github.ref_name }}\n' +
+          '          name: Release ${{ github.ref_name }}\n' +
+          '          generate_release_notes: true',
+      },
+      {
+        type: 'paragraph',
+        text: 'It has never failed. I\'ve never debugged it. It has never woken anyone up. And it took over the one task in our process that was reliably not getting done.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'Most CI/CD writing gravitates toward the complicated stuff, which makes sense because that\'s where the interesting failures are. But a decent chunk of the value I\'ve gotten out of automation came from workflows shaped like this one. Small, boring, and executed every single time without anyone remembering to do it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The engineering in here isn\'t in the YAML. There\'s barely any YAML. It\'s in deciding what event should count as "a release," and that decision took longer than writing the file.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'Release notes lose every priority argument they\'re ever in. They\'re useful to everybody and urgent to nobody, so they get written when there\'s spare time, and there\'s never spare time. What you end up with is a repo where the tag list is the only changelog and `v2.4.0` tells you precisely one thing, which is that it came after `v2.3.0`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The specific pain that pushed me into building this was support archaeology. Someone reports a bug. You need to know whether the fix is already out. That means finding the commit that fixed it, working out which tag contains it, and then figuring out whether that tag was actually deployed. Step two is `git tag --contains <sha>`, which is fine if you happen to remember it exists and you\'re sitting in front of a clone. Useless to a project manager asking in Slack.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The other reason was more conceptual, and I only articulated it later. We had no artifact that said this set of changes is a version we\'re standing behind. The deploy pipeline runs on every push to `live`, so production just moves continuously. "Released" wasn\'t a state anything tracked. It was a vibe.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Those two problems shaped the design. Releases had to be explicit, created by a deliberate human act rather than falling out of every merge. And the notes had to be generated, because anything requiring someone to sit down and write prose was going to get skipped. I knew that because it had already been getting skipped for a year.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          '   developer                GitHub                    Actions\n' +
+          '       │                       │                          │\n' +
+          '       │  git tag v1.4.0       │                          │\n' +
+          '       │  git push --tags ────►│                          │\n' +
+          '       │                       │ ref matches "v*.*.*"     │\n' +
+          '       │                       │─────────────────────────►│\n' +
+          '       │                       │                          │ checkout\n' +
+          '       │                       │                          │ diff tag..previous-tag\n' +
+          '       │                       │                          │ collect merged PRs\n' +
+          '       │                       │◄─────────────────────────│ POST /releases\n' +
+          '       │                       │  (GITHUB_TOKEN,          │\n' +
+          '       │                       │   contents: write)       │\n' +
+          '       │  ◄── Release page ────│                          │',
+      },
+      {
+        type: 'paragraph',
+        text: 'The decision worth defending is tag-triggered rather than branch-triggered.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Cutting a release on every push to `main` is common and I think it\'s usually wrong for a service. It smashes together two questions that aren\'t the same question: is this code live, and is this a version. For anything continuously deployed those genuinely differ. Code hits production several times a week. Versions get declared much less often, at moments where you want a stable reference point. Before a risky migration. After a feature lands. When a client integration needs something to pin to.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Tags keep those separate. Deployment stays automatic and frequent, versioning stays manual and meaningful.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The cost is that a human has to remember to tag, and that cost is real. I\'ll come back to it, because the obvious fix isn\'t one I\'ve taken.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The glob is worth a note. `v*.*.*` enforces the shape without enforcing the semantics. `v1.4.0` matches, `v1.4` doesn\'t, `release-4` doesn\'t. `v1.4.0-rc.1` does match, because the pattern isn\'t anchored at the end, which turned out to be convenient. Prereleases flow through the same path. They just don\'t get flagged as prereleases, which I\'ll get to.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two things about the trigger that bite people.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It\'s a glob, not a regex. `*` in Actions ref filters doesn\'t cross `/` but matches basically everything else, including letters. So `v*.*.*` will cheerfully match `vfoo.bar.baz`. If you actually care about SemVer, validate it in a step rather than trusting the filter to do it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And `git push` doesn\'t push tags. You need `git push origin v1.4.0` or `git push --follow-tags`. Everyone hits this exactly once: they tag, they push, nothing happens, and they conclude the workflow is broken. Putting `--follow-tags` in a written release procedure fixes it permanently.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The permissions block:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'permissions:\n' +
+          '  contents: write',
+      },
+      {
+        type: 'paragraph',
+        text: 'Here the scope is right and necessary. Creating a release writes to repository contents, and since GitHub moved default token permissions to read-only for new repos, dropping this block gets you a 403 from the release API.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s a nice illustration of something I\'ve come to prefer, actually. Declaring `permissions` explicitly beats inheriting the default, because the default varies by repo age and by org policy. A workflow that works in one repository can fail in another for reasons that aren\'t visible in the file. When a setting is required, you\'re forced to think about it. In the build workflow, where it was optional, it got copy-pasted wrong and sat there.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then checkout:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: actions/checkout@v4',
+      },
+      {
+        type: 'paragraph',
+        text: 'Here\'s a subtlety I didn\'t know when I wrote this. `generate_release_notes: true` is computed server-side by the GitHub API, not locally from git history. GitHub already has the commit graph and the PR associations, so it doesn\'t need your working tree. The checkout isn\'t strictly required.',
+      },
+      {
+        type: 'paragraph',
+        text: 'I keep it anyway, for two reasons. The moment you want to attach a build artifact, a changelog file, or a signature, you need the tree, and this is the natural place for that to go. And `action-gh-release` reads repository context that behaves more predictably with a checkout present. It costs about two seconds. Cutting it to save that would be optimising the wrong axis.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The release step:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: softprops/action-gh-release@v2\n' +
+          '  with:\n' +
+          '    tag_name: ${{ github.ref_name }}\n' +
+          '    name: Release ${{ github.ref_name }}\n' +
+          '    generate_release_notes: true',
+      },
+      {
+        type: 'paragraph',
+        text: '`github.ref_name` on a tag push gives you the bare tag (`v1.4.0`) rather than the full ref, which is why it works directly in both fields. Setting `tag_name` explicitly even though the action can infer it means the workflow still behaves if it ever gets invoked through some other trigger.',
+      },
+      {
+        type: 'paragraph',
+        text: '`generate_release_notes` is doing all the work. GitHub walks back from this tag to the previous one, collects the pull requests merged in that range, groups them by label, credits the authors, and adds a "New Contributors" section. The output is genuinely decent.',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'The part I find most interesting is that the quality of the output is entirely downstream of your process. The action doesn\'t parse commits, it reads merged PRs. A team squash-merging with clean titles gets a changelog that reads like someone wrote it. A team merging branches with `fix stuff` and force-pushing to main gets noise.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Which produces a feedback loop I didn\'t design and wouldn\'t have predicted. Sloppy PR titles now show up in a public artifact that people look at, so PR titles got better. Not because anyone made a rule. The automation just made the sloppiness visible.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two operational things worth knowing before you need them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Re-running against an existing tag isn\'t cleanly idempotent. Depending on the inputs you\'ll either update the existing release or get an error. Not something you want to discover while re-running a release job at 2am.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And deleting a tag then re-pushing it triggers this again and produces a second release for the same version. Since tags are supposed to be immutable references, and something out there may already have pinned to that one, the correct recovery from a bad release is a new patch version. Never a moved tag. I know this because I moved a tag once.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Forgetting to push the tag is the universal one, and it\'s a documentation problem rather than a workflow problem.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Omitting `permissions: contents: write` gives you a 403 that reads like an authentication failure when it\'s actually an authorisation failure, which sends people off debugging the wrong thing entirely.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The one that catches more experienced people is assuming `fetch-depth: 0` is unnecessary in general. It\'s unnecessary here, specifically because generation happens server-side. Carry that assumption into a `semantic-release` or `git-cliff` setup and you\'ll get empty changelogs, because those tools read local history and `actions/checkout` defaults to a depth-1 clone. A good chunk of the "my changelog is empty" issues on those projects trace back to exactly this. It\'s a landmine sitting one refactor away from this file.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Moving tags produces duplicate releases and breaks anyone pinned to them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And nothing in this workflow verifies that the tagged commit ever passed CI. You can tag a broken commit and get a beautiful release page for it, which is a hole I\'ve left open.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Last one, which is more of a design opinion: don\'t couple release creation to deployment. Different concerns, different failure modes. Keeping them in separate workflows means a Docker Hub outage can\'t stop you cutting a version.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'The value of automation is frequency times friction, not complexity. This workflow is trivial and it returns more than pipelines I\'ve spent days on, because the task it replaced was high-friction, high-frequency, and boring. That\'s exactly the profile humans skip. Complex automation replaces work you\'d have done carefully anyway. Simple automation replaces work you\'d have quietly not done, which is why it wins.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Make the machine\'s output depend on the human\'s discipline. Generating notes from PR titles created a loop that improved PR titles. Automation that surfaces the quality of your inputs is worth more than automation that papers over it, and I\'d like to find more places to apply that.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Separate "deployed" from "released." For anything continuously deployed those are different states, and collapsing them means you lose the ability to reference a version at all.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'The thing that gives me slight pause is that this is third-party code running with `contents: write`. `softprops/action-gh-release` is widely used and well maintained, and it\'s still someone else\'s code with write access to my repository. Pin it by commit SHA rather than `@v2`. Tags are mutable, SHAs aren\'t. This is the one workflow in the library where I don\'t think SHA pinning is optional, precisely because the permission is real rather than latent.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s no verification that the tagged commit is releasable. In a stricter setup I\'d want the release job to check the CI status for that SHA before publishing, either via `needs:` in a combined workflow or by querying the check-runs API and refusing to publish against a red commit. Right now it trusts the human completely.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Prereleases come out undifferentiated. `v1.4.0-rc.1` matches the glob and produces a normal release, so anyone watching for stable versions sees it. Detecting the hyphen and setting `prerelease: true` is a one-liner and prevents a real confusion.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And there are no artifacts attached. For a service that\'s fine, because the deployable thing is a container image in ECR, not a tarball on a release page. For anything other people consume, a CLI or a library or something self-hosted, an empty release is a lot less useful, and attaching build output plus checksums is the obvious next move.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Pin the action to a SHA, with Dependabot on `github-actions` so the pin moves through reviewable PRs instead of silently.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Auto-detect prereleases:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: softprops/action-gh-release@<sha>\n' +
+          '  with:\n' +
+          '    tag_name: ${{ github.ref_name }}\n' +
+          '    name: Release ${{ github.ref_name }}\n' +
+          '    generate_release_notes: true\n' +
+          '    prerelease: ${{ contains(github.ref_name, \'-\') }}',
+      },
+      {
+        type: 'paragraph',
+        text: 'One expression, correctly classifies every SemVer prerelease identifier.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Validate the tag properly, since the glob accepts non-SemVer strings. A short guard rejecting anything that doesn\'t match `^v[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$` catches typos like `v1.40` before they become a permanent public release.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Gate on green CI by querying check-runs for the tagged SHA. Closes the hole above.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The one with the best effort-to-output ratio, though, is curating the generated notes with `.github/release.yml`. GitHub reads that file and uses it to group PRs into sections by label:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'changelog:\n' +
+          '  exclude:\n' +
+          '    labels: [dependencies, ci]\n' +
+          '  categories:\n' +
+          '    - title: Breaking Changes\n' +
+          '      labels: [breaking]\n' +
+          '    - title: Features\n' +
+          '      labels: [feature, enhancement]\n' +
+          '    - title: Fixes\n' +
+          '      labels: [bug, fix]',
+      },
+      {
+        type: 'paragraph',
+        text: 'That turns a flat list of PR titles into something structured, and it doesn\'t touch the workflow at all.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Attach artifacts and checksums if anything downstream consumes releases rather than images.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And then there\'s full automation, which I\'ve deliberately not done. `semantic-release` or release-please can derive the version from Conventional Commits and remove the manual tagging step entirely. I\'ve read the setup guides twice and backed off both times. Manual tagging is the last human checkpoint in a path that is otherwise fully automatic from merge to production, and I value that checkpoint more than I value saving thirty seconds. Automate the tedious part. Keep the decision.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Next: `push-docker-hub.yml`, where layer caching saved us minutes per build and a nested expression I never noticed made the whole file invalid.',
+      },
+    ],
+  },
+  {
+    id: 10,
+    slug: 'docker-buildx-caching-github-actions',
+    ogImage: '/og/blog-docker-buildx-caching-github-actions.png',
+    title: 'GitHub Actions in Production, Part 3: Docker Layer Caching and Graceful Degradation',
+    excerpt:
+      'A Docker publishing pipeline with my favourite design decision and my most instructive bug four lines apart: credential probing that keeps fork builds useful, BuildKit remote caching that turns multi-minute builds into seconds, and a nested expression that made the whole file invalid.',
+    metaTitle: 'Docker Layer Caching in GitHub Actions: A Production Guide',
+    metaDescription:
+      'BuildKit cache-to mode=max on the GitHub Actions cache backend, credential probing for fork PRs, immutable SHA tags, and the nested-expression bug actionlint would have caught.',
+    category: 'Cloud & DevOps',
+    date: '2026-08-01',
+    readTime: '13 min read',
+    tags: ['Docker', 'GitHub Actions', 'BuildKit', 'CI/CD', 'DevOps', 'Containers', 'Supply Chain Security'],
+    entities: [
+      { name: 'Docker', sameAs: ['https://en.wikipedia.org/wiki/Docker_(software)', 'https://www.docker.com'] },
+      { name: 'GitHub Actions', sameAs: ['https://en.wikipedia.org/wiki/GitHub', 'https://github.com/features/actions'] },
+      { name: 'Open Container Initiative', sameAs: 'https://en.wikipedia.org/wiki/Open_Container_Initiative' },
+    ],
+    relatedSlugs: ['ecs-deployment-github-actions', 'github-actions-build-gate-trigger'],
+    faq: [
+      {
+        question: 'Why is my Docker layer cache not working in GitHub Actions?',
+        answer:
+          'Most often because docker/setup-buildx-action is missing. The type=gha cache backend only exists under BuildKit, so without that step cache-from and cache-to are silently ignored. You get a working build with no caching and no error explaining why it is slow.',
+      },
+      {
+        question: 'What is the difference between cache-to mode=min and mode=max?',
+        answer:
+          'mode=min caches only the layers present in the final image and discards intermediate stages. On a multi-stage Node build where the expensive stage is a dependency install in a builder that gets thrown away, min caches almost nothing useful. mode=max keeps every stage.',
+      },
+      {
+        question: 'Why should you never deploy the Docker latest tag?',
+        answer:
+          'latest is a mutable pointer, so two deploys "of the same image" can be different bytes, and nothing records which digest was running. Tag every image with the commit SHA as well, and pin deployments to that immutable tag or to a digest.',
+      },
+      {
+        question: 'Why does comparing a GitHub Actions step output to true always fail?',
+        answer:
+          'Step outputs are always strings. Writing `if: steps.x.outputs.flag == true` compares a string to a boolean and is always false, so the step silently skips. Compare against the quoted string instead: `== \'true\'`.',
+      },
+      {
+        question: 'What happens when a GitHub Actions workflow references an undefined secret?',
+        answer:
+          'It interpolates to an empty string rather than raising an error. That makes a misspelled secret name silently disable whatever depended on it while the workflow still reports green, which is why probing for a credential before using it should be paired with a summary that says which path actually ran.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['Docker', 'A Dockerfile', 'A container registry account'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'This is the workflow I\'d most want to walk someone through in an interview, because it has my favourite decision in the whole library and my most instructive bug sitting about four lines apart.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The decision: the pipeline checks whether it has credentials before it tries to use them, and does something useful either way. With Docker Hub secrets set, it builds and pushes. Without them, it still builds, tags locally, and says plainly that it didn\'t push. Someone who forks the repo gets a real build validation instead of a red X caused by a secret they can never have.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The bug: the tagging block right underneath uses nested `${{ }}` expressions inside a `format()` call, which isn\'t valid GitHub Actions syntax. It would fail at evaluation time. In a template that never runs in the repository it lives in.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'Both halves are worth writing about. Graceful degradation is a pattern I\'ve since applied in three other places and I think more pipelines should use it. And the bug is a small lesson about template libraries specifically: code that isn\'t executed where it lives will rot, and being careful is not a substitute for running it.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'Container images are the deploy artifact for most of these services, and moving the build into CI rather than someone\'s laptop solved three separate things.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Reproducibility first. An image built on my machine inherits my Docker cache, whatever base image I happened to pull three weeks ago, and my architecture. An image built on a clean runner from a clean checkout is defined by the Dockerfile and the lockfile and nothing else. Once you\'ve spent an afternoon debugging an "it works locally" problem that turned out to be a stale cached layer from a previous month, you stop building release images locally. I\'ve spent that afternoon.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Traceability second. "What commit is that container running?" needs an answer, and tagging only `latest` guarantees it doesn\'t have one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And decoupling build from deploy. Publishing to a registry means the image exists independently of any environment. ECS can pull it, a staging box can pull it, a colleague reproducing a bug can pull it, and you can pull it three weeks later to roll back. That decoupling is basically the entire point of a registry, and it\'s why this workflow lives separately from the deploy workflows rather than being a step inside them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The credential probing came from an incident rather than a principle, which is usually how the good patterns arrive. Someone forked a repo, opened a PR, and CI failed because `docker/login-action` got an empty username. GitHub deliberately withholds secrets from `pull_request` runs originating in forks, and that\'s correct behaviour, otherwise anyone could open a PR that modifies the workflow to print your registry token. But the contributor was staring at a failure with no possible fix on their end, and that\'s a rubbish experience.',
+      },
+      {
+        type: 'paragraph',
+        text: 'So I restructured it to ask what it can do instead of assuming what it will do.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          'push:live / workflow_dispatch\n' +
+          '          │\n' +
+          '          ▼\n' +
+          '    checkout ──► setup-buildx\n' +
+          '          │\n' +
+          '          ▼\n' +
+          '  ┌───────────────────────────┐\n' +
+          '  │  probe: is DOCKER_USER    │\n' +
+          '  │  secret non-empty?        │\n' +
+          '  └────────┬──────────┬───────┘\n' +
+          '        yes│          │no\n' +
+          '           ▼          ▼\n' +
+          '     login to    (skip login)\n' +
+          '     Docker Hub       │\n' +
+          '           │          │\n' +
+          '           └────┬─────┘\n' +
+          '                ▼\n' +
+          '        docker/build-push-action\n' +
+          '        ├── cache-from: type=gha      ◄── restore layers from\n' +
+          '        ├── cache-to:   type=gha,max      GitHub\'s cache backend\n' +
+          '        ├── build-args: BUILD_DATE, VCS_REF\n' +
+          '        └── push: <probe result>\n' +
+          '                │\n' +
+          '                ▼\n' +
+          '        write $GITHUB_STEP_SUMMARY',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two properties matter here.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The probe result is a step output, not a condition that gets re-evaluated. It runs once, writes `push=true|false` to `$GITHUB_OUTPUT`, and every downstream step reads that one value. Which means the login step, the push flag, and the summary can\'t disagree with each other. That\'s a class of bug I\'ve hit elsewhere, where the same condition is written in three places and one of them drifts during a refactor.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And build and push are one step rather than two. `docker/build-push-action` with `push: false` still does the whole build. That\'s the property that makes the degradation work without forking the build logic into a separate no-push branch. One code path, one switch.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'Buildx setup first:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: docker/setup-buildx-action@v3',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is a prerequisite, not an optimisation, and getting that wrong is a nasty little trap. Buildx installs BuildKit, and the GitHub Actions cache backend (`type=gha`) only exists under BuildKit. Leave this step out and `cache-from`/`cache-to` are silently ignored. You get a working build with zero caching and no error telling you why it\'s slow.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the probe:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- name: Check DockerHub credentials\n' +
+          '  id: check-dockerhub\n' +
+          '  run: |\n' +
+          '    if [ -n "${{ secrets.DOKCER_USERNAME }}" ]; then\n' +
+          '      echo "push=true" >> $GITHUB_OUTPUT\n' +
+          '    else\n' +
+          '      echo "push=false" >> $GITHUB_OUTPUT\n' +
+          '    fi',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two things to flag, one embarrassing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The secret name is misspelled. `DOKCER_USERNAME`. It\'s consistent across all four places it appears, so it works, but this is a genuinely dangerous typo. Referencing an undefined secret in Actions isn\'t an error, it interpolates to an empty string. So if someone later "fixes" the spelling in the repository settings without fixing all four references in the YAML, the probe silently returns false and the pipeline stops publishing while still reporting green. A misspelling that fails safe is still a misspelling that\'s going to bite somebody.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The second thing is the interpolation. `${{ secrets.… }}` inside a `run:` block gets substituted into the script text before the shell ever sees it. That\'s templating, not variable expansion. For a value I control it\'s harmless, but as a habit it\'s exactly how shell injection vulnerabilities get written, and the safe form costs nothing:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- env:\n' +
+          '    DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}\n' +
+          '  run: |\n' +
+          '    if [ -n "$DOCKER_USERNAME" ]; then …',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now the value arrives through the environment as data and the shell never parses it as source. I\'ll come back to this properly in the Discord article, where the same pattern is actually exploitable rather than just untidy.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Login, conditionally:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- if: steps.check-dockerhub.outputs.push == \'true\'\n' +
+          '  uses: docker/login-action@v2',
+      },
+      {
+        type: 'paragraph',
+        text: 'Note the string comparison. Step outputs are always strings, so `== \'true\'`, never `== true`. I\'ve written `== true` and watched a step skip silently more than once.',
+      },
+      {
+        type: 'paragraph',
+        text: '`@v2` is also outdated, current is v3. Look at the version spread across this one file: `setup-buildx@v3`, `login-action@v2`, `build-push-action@v4`. Three actions, three different vintages, all added at different times and never revisited. That\'s what Dependabot is for and I didn\'t have it configured.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now the build step, which is where the bug lives:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: docker/build-push-action@v4\n' +
+          '  with:\n' +
+          '    context: .\n' +
+          '    push: ${{ steps.check-dockerhub.outputs.push }}\n' +
+          '    tags: |\n' +
+          '      ${{ … format(\'{0}/${{project_name}}:latest\', secrets.DOKCER_USERNAME) … }}\n' +
+          '    cache-from: type=gha\n' +
+          '    cache-to: type=gha,mode=max\n' +
+          '    build-args: |\n' +
+          '      BUILD_DATE=${{ github.event.head_commit.timestamp }}\n' +
+          '      VCS_REF=${{ github.sha }}',
+      },
+      {
+        type: 'paragraph',
+        text: 'That tags block is broken twice over.',
+      },
+      {
+        type: 'paragraph',
+        text: '`${{project_name}}` isn\'t valid Actions expression syntax. `project_name` isn\'t a context or a named value, and the runner rejects it with `Unrecognized named-value: \'project_name\'`. It\'s meant to be a find-and-replace placeholder, something you swap out before using the template. But it\'s written in syntax that looks like it evaluates, which is the worst possible choice. A placeholder should look like a placeholder. `__PROJECT_NAME__` and nobody\'s confused.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And it\'s nested inside `format(…)`, which is already inside a `${{ }}`. Expressions don\'t nest. Everything from the inner `${{` onward gets parsed as part of the outer expression, so it\'s a syntax error regardless of the named-value problem.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The fix kills both issues and gets rid of the placeholder entirely:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'env:\n' +
+          '  IMAGE_NAME: ${{ github.event.repository.name }}\n' +
+          '…\n' +
+          '    tags: |\n' +
+          '      ${{ steps.check-dockerhub.outputs.push == \'true\'\n' +
+          '          && format(\'{0}/{1}:latest\', secrets.DOCKER_USERNAME, env.IMAGE_NAME)\n' +
+          '          || format(\'{0}:local\', env.IMAGE_NAME) }}',
+      },
+      {
+        type: 'paragraph',
+        text: '`github.event.repository.name` is always right and never needs replacing. A template that derives its values can\'t be deployed half-configured, which is the actual lesson.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The caching is the performance story and it\'s the part that works well. `cache-from: type=gha` with `cache-to: type=gha,mode=max` stores BuildKit\'s layer cache in GitHub\'s cache service, so layers survive across runs on ephemeral runners.',
+      },
+      {
+        type: 'paragraph',
+        text: '`mode=max` is the flag that matters. The default is `min`, which only caches layers present in the final image and throws away intermediate stages. On a multi-stage Node build, where the expensive stage is `npm ci` running in a builder that gets discarded, `min` caches almost nothing you care about. `mode=max` keeps every stage.',
+      },
+      {
+        type: 'paragraph',
+        text: 'On a commit where dependencies haven\'t moved this is the difference between a multi-minute build and a sub-minute one. The trade-off is cache size against GitHub\'s 10GB per-repository budget, and eviction is LRU, so a busy repo running several caching workflows can start thrashing. If that happens, `scope` on the cache config lets you partition per workflow.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The build args:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'build-args:\n' +
+          '  BUILD_DATE=${{ github.event.head_commit.timestamp }}\n' +
+          '  VCS_REF=${{ github.sha }}',
+      },
+      {
+        type: 'paragraph',
+        text: 'These follow the OCI annotation convention and make the image self-describing, so `docker inspect` on a mystery container tells you which commit built it and when. Worth knowing that `github.event.head_commit` only exists on `push` events, so on a `workflow_dispatch` run `BUILD_DATE` comes out empty. `github.event.repository.updated_at` or just generating a timestamp is the robust version.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The summary step writes markdown to `$GITHUB_STEP_SUMMARY`, which renders on the run page. I think this is badly underused. The difference between reading a rendered table of image tags and expanding six collapsed log groups to hunt for them is real, especially when you\'re triaging something.',
+      },
+      {
+        type: 'paragraph',
+        text: 'One flaw though. The summary hardcodes `**Status**: ✅ Build completed successfully`. The step has no `if:` guard and no failure branch, so it only ever runs on success, which means the line is technically accurate and also completely meaningless. It\'s stating a constant, not reporting a result. A summary that can only say "success" is decoration.',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'Graceful degradation generalises further than I expected. The rule is roughly: when a pipeline can\'t do the privileged thing, it should still do the useful thing, and be explicit about which one happened. Applies to signing, deploying, publishing coverage, anywhere a fork or a permission boundary can withhold credentials. The alternative, failing hard on missing secrets, trains people to ignore red builds, and a build status people ignore is worse than no build status at all.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The dual tagging is the rollback story. `latest` for convenience, `:${{ github.sha }}` for immutability. `latest` is a moving pointer and should never be the thing production pins to, but as a human-facing convenience sitting next to an immutable tag it earns its place.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Skipping `setup-buildx-action` and then wondering why the caching isn\'t doing anything is the one I\'d bet money on people hitting. No BuildKit, no `type=gha`, no error message.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Leaving `cache-to` at the default `min` on a multi-stage build caches the cheap layers and rebuilds the expensive ones on every run, which is close to the worst possible outcome since you\'re paying the cache write cost for nothing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Deploying `latest` in production. It\'s a mutable pointer, two deploys "of the same image" can be different bytes, and immutable digests or SHA tags are the only defensible thing to pin to.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Comparing step outputs to booleans. They\'re strings. `== true` is always false.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Assuming a misspelled secret errors. It doesn\'t, it\'s empty.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Interpolating secrets into shell scripts, which works fine until the day it\'s user-controlled data instead of a secret and then it\'s a vulnerability.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Writing placeholders in syntax that looks executable.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And hardcoding "success" in a summary, which is reporting your intent rather than the outcome.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'Templates that aren\'t executed where they live will rot. The tagging bug survived because this workflow sits in a reference repo with no Dockerfile. It gets copied out and modified before it ever runs, so nothing validates it in place. If I were rebuilding this library from scratch the single most valuable thing I\'d add is a CI job running `actionlint` over every workflow, which catches invalid named-values and nested expressions statically. That one addition would have caught the bug the day I wrote it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'A placeholder\'s syntax is part of its contract. Make unreplaced placeholders look obviously unreplaced, or better, derive the value so there\'s nothing to replace and the failure mode doesn\'t exist.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Designing for the least-privileged caller improved the pipeline for everyone. That surprised me a bit. The fork PR case felt like an edge case I was accommodating, and it ended up producing a cleaner design than what I had.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And version drift is silent debt. Three actions, three vintages, all working. Nothing forces the update, so nothing updates. That\'s precisely the decay Dependabot exists to stop, and I didn\'t have it on.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'Registry credentials are a supply chain asset and I don\'t think that\'s widely internalised. A leaked Docker Hub push token means someone can publish a malicious `latest` that your infrastructure pulls automatically. Use an access token scoped to a single repository, never a password, and rotate it. Where the registry supports OIDC federation, that removes the stored credential entirely.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s no vulnerability scanning. The image ships without anything ever looking at it. A Trivy or Grype step that fails on HIGH or CRITICAL is a few lines and it\'s the most obvious missing control here.',
+      },
+      {
+        type: 'paragraph',
+        text: 'No signing, no attestation. Nothing proves this image came out of this pipeline. `build-push-action` v6 will generate SLSA provenance and an SBOM with two flags, and cosign signing is a short extra step.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Single architecture, `linux/amd64` only. Deploy to Graviton or hand it to someone on an ARM laptop and it won\'t start. `platforms: linux/amd64,linux/arm64` fixes it, at roughly double the build time when the cache is cold.',
+      },
+      {
+        type: 'paragraph',
+        text: 'No concurrency control, which means two quick pushes to `live` race and whichever finishes last wins `latest`. That may not be the newer commit. A `concurrency` group with `cancel-in-progress: true` sorts it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And cache poisoning across branches is a documented attack surface worth reading about. GitHub scopes the cache per branch with fallback to the default branch, which mostly contains it, but layer cache written by a build on a compromised branch is a real vector.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Fix the tags block and drop the placeholder, using `github.event.repository.name`. That\'s the change that makes the template actually correct rather than nearly correct.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add `actionlint` to CI, because it catches exactly the bug class above:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- run: |\n' +
+          '    bash <(curl -s https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)\n' +
+          '    ./actionlint -color',
+      },
+      {
+        type: 'paragraph',
+        text: 'Upgrade and SHA-pin everything, with Dependabot managing the bumps.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add concurrency:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'concurrency:\n' +
+          '  group: docker-${{ github.ref }}\n' +
+          '  cancel-in-progress: true',
+      },
+      {
+        type: 'paragraph',
+        text: 'Replace the hand-rolled tag logic with `docker/metadata-action`, which generates semver tags, branch tags, SHA tags and OCI labels from the event context and is far better tested than anything I\'d write:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- id: meta\n' +
+          '  uses: docker/metadata-action@v5\n' +
+          '  with:\n' +
+          '    images: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}\n' +
+          '    tags: |\n' +
+          '      type=sha,format=long\n' +
+          '      type=raw,value=latest,enable={{is_default_branch}}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Scan before publishing, with Trivy and `exit-code: 1` on HIGH/CRITICAL, sitting between build and push so a vulnerable image never reaches the registry at all.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Generate SBOM and provenance with `sbom: true` and `provenance: mode=max` on v6.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Multi-arch via QEMU plus `platforms`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And make the summary honest. Derive the status from the job state instead of asserting it, and add an `if: failure()` branch so a failed build reports as a failed build.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Next: `push-ecs.yml`, which contains the one line I\'d defend hardest and a deploy mechanism that only works by accident.',
+      },
+    ],
+  },
+  {
+    id: 11,
+    slug: 'ecs-deployment-github-actions',
+    ogImage: '/og/blog-ecs-deployment-github-actions.png',
+    title: 'GitHub Actions in Production, Part 4: The Line That Makes a Green Check Mean Something',
+    excerpt:
+      'Deploying to ECS Fargate from GitHub Actions. Why `aws ecs wait services-stable` is the line I would defend hardest, and why `--force-new-deployment` against a latest tag is a race condition that makes rollback impossible and your running version unknowable.',
+    metaTitle: 'Deploy to AWS ECS with GitHub Actions: Avoiding the latest Tag Trap',
+    metaDescription:
+      'Why --force-new-deployment redeploys the old task definition, how mutable latest tags make concurrent deploys nondeterministic, and how immutable task definition revisions plus OIDC fix it.',
+    category: 'Cloud & DevOps',
+    date: '2026-08-01',
+    readTime: '14 min read',
+    tags: ['AWS', 'Amazon ECS', 'Docker', 'GitHub Actions', 'CI/CD', 'DevOps', 'OIDC', 'Fargate'],
+    entities: [
+      { name: 'Amazon Web Services', sameAs: ['https://en.wikipedia.org/wiki/Amazon_Web_Services', 'https://aws.amazon.com'] },
+      { name: 'Docker', sameAs: ['https://en.wikipedia.org/wiki/Docker_(software)', 'https://www.docker.com'] },
+      { name: 'OpenID Connect', sameAs: 'https://en.wikipedia.org/wiki/OpenID#OpenID_Connect_(OIDC)' },
+    ],
+    relatedSlugs: ['ec2-ssh-pm2-zero-downtime-deploy', 'docker-buildx-caching-github-actions', 'aws-ec2-s3-kubernetes-production-deployments'],
+    faq: [
+      {
+        question: 'Does aws ecs update-service --force-new-deployment deploy a new image?',
+        answer:
+          'No. It starts new tasks using the service\'s currently registered task definition and never changes that definition. It only appears to deploy new code when the task definition references a mutable tag such as latest that you happened to move just beforehand.',
+      },
+      {
+        question: 'Why is deploying through the latest tag a race condition?',
+        answer:
+          'Two runs started minutes apart both push latest before either calls update-service, so the first run can pull the second run\'s image. The pipeline reports that the first commit deployed when it did not, and nothing anywhere records that the mismatch happened.',
+      },
+      {
+        question: 'What does aws ecs wait services-stable actually check?',
+        answer:
+          'It polls until the service has one deployment in PRIMARY, the running task count matches the desired count, and tasks are passing health checks. Without it, update-service returns 200 immediately and the job goes green while new tasks are crash-looping in the background.',
+      },
+      {
+        question: 'How do you roll back an ECS deployment?',
+        answer:
+          'Point the service at a previous task definition revision: `aws ecs update-service --task-definition my-app:41`. That only works if each deploy registered a new revision pinned to an immutable image tag. If your task definition references latest, no previous revision exists to roll back to.',
+      },
+      {
+        question: 'Should GitHub Actions use IAM access keys or OIDC for AWS?',
+        answer:
+          'OIDC. The runner presents a signed identity token, AWS STS exchanges it for credentials scoped to that job, and the role\'s trust policy constrains which repository and branch may assume it. There is no long-lived stored credential to leak, expire, or forget to rotate.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['An AWS account', 'An ECS cluster and service', 'An ECR repository'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'There\'s exactly one line in this workflow I\'d defend to the death:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'aws ecs wait services-stable --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE"',
+      },
+      {
+        type: 'paragraph',
+        text: 'Everything before it is plumbing. Checkout, build, push, an API call. That line is the difference between a pipeline that starts a deployment and one that confirms a deployment, and it\'s the reason a green check here means containers are running and healthy rather than meaning AWS accepted an HTTP request.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s also a design flaw in how the image actually reaches those containers that I didn\'t spot for a long time, and which I\'ve since seen in nearly every ECS pipeline I\'ve looked at. Walking through it is most of this article.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'These services run on ECS Fargate behind a load balancer. This is the most operationally serious workflow in the library, in the sense that it\'s the one that can take a production service down, and it\'s the one I\'ve rewritten the most times.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'Before the pipeline existed, deploying meant: build locally, push to ECR, open the AWS console, find the service, click Update service, tick Force new deployment, click through three screens, then sit on the Tasks tab hitting refresh to find out whether the new tasks stabilised or crash-looped.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Three problems with that, and the tedium is the least of them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It isn\'t reproducible. Which image did you push? Tagged how? Built from which commit? From a working tree that may or may not have had uncommitted changes in it? An hour later nobody knows, including you.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It has no failure signal, and this is the one that actually hurt. The console shows a deployment in progress. If the new task definition crashes on startup, and it usually crashes for boring reasons like a missing env var or a migration that hasn\'t run, ECS just retries it. The old tasks keep serving. The deployment sits in `IN_PROGRESS` more or less forever. Unless somebody is watching that tab, the outcome is "we think we deployed and we didn\'t," which is strictly worse than a clean failure because now the whole team believes the change is live and starts reasoning from that.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And it doesn\'t work with more than one person. Console deploys can\'t be reviewed, can\'t be audited, and can\'t happen while you\'re asleep.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The second requirement was cheap Dockerfile validation on a non-production branch. Finding out your Dockerfile is broken during a production deploy is entirely avoidable. Pushing to `dev` builds the image and stops, with no AWS credentials anywhere in the execution path.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          '                    push\n' +
+          '                     │\n' +
+          '         ┌───────────┴────────────┐\n' +
+          '         ▼                        ▼\n' +
+          '    branch: dev              branch: live\n' +
+          '         │                        │\n' +
+          '    docker build             configure-aws-credentials\n' +
+          '    (no creds,                    │\n' +
+          '     no registry)            amazon-ecr-login\n' +
+          '         │                        │\n' +
+          '    build summary            docker build + tag (sha, latest)\n' +
+          '         │                        │\n' +
+          '         ✓                   docker push × 2\n' +
+          '                                  │\n' +
+          '                             ecs update-service --force-new-deployment\n' +
+          '                                  │\n' +
+          '                             ecs wait services-stable  ◄── blocks here\n' +
+          '                                  │                        until steady state\n' +
+          '                             ┌────┴────┐                   or timeout\n' +
+          '                             ▼         ▼\n' +
+          '                          stable    timeout → job fails',
+      },
+      {
+        type: 'paragraph',
+        text: 'One job handling two behaviours via step-level `if:` guards, rather than two files or two jobs.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The argument for that: `dev` and `live` share the checkout, the Dockerfile, and the build semantics. Split them into separate files and every fix to the shared part has to happen twice, and the second one gets forgotten. Drift between "the thing that validates" and "the thing that deploys" is how you end up with a build that\'s green on `dev` and dies on `live`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The argument against is also real. A nine-step job where six steps carry `if: github.ref_name == \'live\'` is harder to read than two focused files, and the run log on a `dev` push is mostly skipped steps, which looks broken to anyone who doesn\'t already know the structure. There\'s a cleaner middle ground with a shared reusable workflow and two thin callers, which I\'ll get to.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The environment separation here is stronger than it looks, and it\'s worth calling out. On a `dev` push, `configure-aws-credentials` never runs, so AWS credentials are never materialised in the runner environment at all. That\'s not a policy or a convention. It\'s a structural property of the workflow, and structural guarantees survive people editing things in ways that policies don\'t.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'Starting with the trigger, which contains a filter that does nothing:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'on:\n' +
+          '  push:\n' +
+          '    branches: [live, dev]\n' +
+          '    paths:\n' +
+          '      - \'**\'\n' +
+          '      - \'Dockerfile\'',
+      },
+      {
+        type: 'paragraph',
+        text: '`\'**\'` matches every file in the repo, so adding `\'Dockerfile\'` is redundant and the filter as a whole is equivalent to having no filter. Harmless, but it reads like there\'s path-based optimisation happening, and there isn\'t. If the intent was "only run when things affecting the image change" it\'d need to be an actual list: `src/**`, `package.json`, `pnpm-lock.yaml`, `Dockerfile`. That\'s meaningful on a monorepo and pure overhead on a single-service repo. I\'d just delete it rather than half-implement it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Environment config:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'env:\n' +
+          '  AWS_REGION: us-east-1\n' +
+          '  ECR_REPOSITORY: egystay\n' +
+          '  ECS_CLUSTER: ${{ secrets.AWS_ECS_CLUSTER }}\n' +
+          '  ECS_SERVICE: ${{ secrets.AWS_ECS_SERVICE }}',
+      },
+      {
+        type: 'paragraph',
+        text: 'Cluster and service names are stored as secrets, and they aren\'t secrets. They\'re configuration. They show up in CloudTrail and they\'re sitting in your Terraform anyway. GitHub repository variables (`vars.*`) are the right home: same injection mechanism, but visible in the UI and in logs, which makes debugging a failed deploy dramatically less painful than staring at a wall of `***`. Reserve secrets for things that grant access.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Also `AWS_REGION: us-east-1` is declared and never used, because the credentials step reads `secrets.AWS_IAM_REGION` instead. Two sources of truth for one value, one of them dead. Small thing, but it\'s the kind of small thing that sends someone down a wrong path at 3am.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Dockerfile validation on `dev`:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- name: Check Docker build\n' +
+          '  if: github.ref_name == \'dev\'\n' +
+          '  run: docker build -t $ECR_REPOSITORY:${{ github.sha }} .',
+      },
+      {
+        type: 'paragraph',
+        text: 'Simple and it works. No credentials, no registry, no BuildKit cache, which means a cold build every single time. On a slow Dockerfile that\'s minutes of runner time per push, and adding `setup-buildx-action` with `cache-from: type=gha` here would cost nothing. The Docker Hub workflow in this same repo already does that. Same repo, same image, two different caching strategies, because I wrote them months apart and never went back.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then AWS auth:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- uses: aws-actions/configure-aws-credentials@v4\n' +
+          '  with:\n' +
+          '    aws-access-key-id: ${{ secrets.AWS_IAM_ACCESS_KEY }}\n' +
+          '    aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_ACCESS_KEY }}',
+      },
+      {
+        type: 'paragraph',
+        text: 'This works, and it\'s the first thing I\'d change. Long-lived IAM access keys are permanent credentials living in GitHub\'s secret store. They don\'t expire, they don\'t rotate themselves, and if they leak through a compromised action or an over-permissive trigger or someone debugging with an `env` dump, whoever has them can do whatever that IAM user can do, indefinitely, until a human notices and revokes.',
+      },
+      {
+        type: 'paragraph',
+        text: 'GitHub\'s OIDC provider replaces the whole arrangement. The runner presents a signed identity token, AWS STS swaps it for credentials valid only for that job, and the role\'s trust policy constrains which repository and which branch is allowed to assume it. There\'s no stored credential to leak because there\'s no stored credential.',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'permissions:\n' +
+          '  id-token: write\n' +
+          '  contents: read\n' +
+          '\n' +
+          '- uses: aws-actions/configure-aws-credentials@v4\n' +
+          '  with:\n' +
+          '    role-to-assume: arn:aws:iam::<account>:role/github-actions-ecs-deploy\n' +
+          '    aws-region: us-east-1',
+      },
+      {
+        type: 'paragraph',
+        text: 'One-time IAM setup, removes an entire category of standing risk. There\'s an irony I enjoy here, which is that `test-build.yml` declares `id-token: write` and has no use for it, while this workflow needs it and doesn\'t declare it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Build, tag, push:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .\n' +
+          'docker tag  … :$IMAGE_TAG  … :latest\n' +
+          'docker push … :$IMAGE_TAG\n' +
+          'docker push … :latest',
+      },
+      {
+        type: 'paragraph',
+        text: 'Dual tagging again, immutable SHA plus moving `latest`. Right instinct.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the deploy, and this is the part I got wrong:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'aws ecs update-service --cluster "$ECS_CLUSTER" --service "$ECS_SERVICE" --force-new-deployment',
+      },
+      {
+        type: 'paragraph',
+        text: 'What that command actually does is tell ECS to start new tasks using the service\'s currently registered task definition. It does not change the task definition. It does not tell ECS anything about the image you just built.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The only reason this deploys your new code is that the task definition presumably references `…:latest`, and you just moved `latest` to point at the new image. So the deploy works as a side effect. Push a tag, then trigger a pull of that tag.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Three things go wrong with that.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It\'s a race. Two commits merged a couple of minutes apart produce two workflow runs. Run A pushes `latest`, run B pushes `latest`, then run A\'s `update-service` fires and pulls B\'s image. Your pipeline reports that commit A deployed successfully. It didn\'t. Nothing anywhere records that this happened.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The deployed version is unknowable from AWS. The task definition says `:latest` and nothing in ECS records which digest that resolved to at pull time. So "what\'s running in production right now" has no reliable answer, and that question always gets asked during an incident.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And rollback isn\'t possible through ECS. There\'s no previous task definition revision to go back to, because the revision never changed. Rolling back means re-pushing an old image to `latest` and forcing another deployment, which is mutating a tag to undo a deploy. That\'s the opposite of what you want while production is down.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The correct pattern registers a new task definition revision pinned to the immutable SHA tag, then points the service at that revision. AWS ships actions for exactly this:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- id: task-def\n' +
+          '  uses: aws-actions/amazon-ecs-render-task-definition@v1\n' +
+          '  with:\n' +
+          '    task-definition: .aws/task-definition.json\n' +
+          '    container-name: api\n' +
+          '    image: ${{ steps.build-image.outputs.image }}   # the :sha tag\n' +
+          '\n' +
+          '- uses: aws-actions/amazon-ecs-deploy-task-definition@v1\n' +
+          '  with:\n' +
+          '    task-definition: ${{ steps.task-def.outputs.task-definition }}\n' +
+          '    service: ${{ vars.ECS_SERVICE }}\n' +
+          '    cluster: ${{ vars.ECS_CLUSTER }}\n' +
+          '    wait-for-service-stability: true',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now every deploy creates an auditable revision bound to exactly one commit, and rollback is `update-service --task-definition my-app:41`. Which you can run from your phone.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the line that earns the whole workflow:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'aws ecs wait services-stable --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE"',
+      },
+      {
+        type: 'paragraph',
+        text: 'This polls until the service has one deployment in `PRIMARY`, running count matches desired count, and tasks are passing health checks. If the new tasks crash-loop, it never reaches stable, the command eventually times out non-zero, and the job goes red.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Without it, `update-service` returns immediately with a 200 and the job goes green while your new tasks are failing health checks in the background. The pipeline would be reporting the success of an API call as the success of a deployment. That\'s the failure mode that makes teams stop trusting CI/CD entirely, and once that trust is gone you don\'t get it back cheaply.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Worth knowing the default waiter polls every 15 seconds up to 40 times, so about ten minutes. Services with long draining periods or slow health checks can blow through that and fail a deploy that would have succeeded, so it\'s worth tuning against your actual rollout time rather than accepting the default.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Last, the summary step, which lies.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It has no `if:` guard, so it runs on `dev` too, where it prints `✅ Image pushed to ECR`, an empty `Registry:` field because ECR login never ran, and a SHA tag that exists only on the runner\'s local Docker daemon. Every single `dev` push produces a run page stating something untrue.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It also contradicts itself. After `wait services-stable` has already completed the deployment, the summary says "Next Steps: 1. Update ECS task definition 2. Deploy new task/service." That\'s leftover text from an earlier version where the workflow stopped at ECR and I never cleaned it up. A summary claiming the deploy hasn\'t happened, printed after the deploy happened, is worse than having no summary.',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'The structural environment isolation is the thing I\'m happiest with. The `dev` path can\'t reach AWS because the credentials step is guarded, not because a document says it shouldn\'t. Guarantees enforced by structure survive contact with people editing things.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And the fact that most of the value of this workflow lives in a command that produces no output and does nothing except refuse to return early still strikes me as funny.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Small practical note: the `aws` CLI is preinstalled on GitHub-hosted runners, which is why there\'s no install step. Convenient, and a hidden dependency on the runner image that will surprise you the day you move to self-hosted.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Using `--force-new-deployment` as your deploy mechanism. It redeploys the existing task definition, and if that definition points at a mutable tag then your deploys are racy and your rollbacks are impossible. This is the big one and it\'s everywhere.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Skipping the stability wait, so green means "AWS accepted the request" and nothing else.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Long-lived IAM keys where OIDC is available.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Storing configuration in secrets, which buys you nothing and makes every failed deploy harder to debug.',
+      },
+      {
+        type: 'paragraph',
+        text: '`paths: [\'**\']`, a filter that filters nothing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Unguarded summary steps, which will eventually report the wrong thing on whichever branch you weren\'t thinking about when you wrote them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'No concurrency group, so two `live` pushes produce overlapping `update-service` calls against the same service.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And no rollback path at all. `wait services-stable` detects the failure and then nothing acts on it. ECS\'s deployment circuit breaker will, if you turn it on.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'A deploy isn\'t done when the API accepts it. That reframed how I look at every deployment pipeline I encounter now, and the question I ask first is: what does green actually mean here? If the answer is "we sent a request," the pipeline is a notification system wearing a deployment costume.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Mutable tags in production configuration are a latent incident waiting for enough traffic. `latest` is fine as a human convenience and disqualifying as a deployment reference. The moment two deploys can overlap, "which image is running" stops having an answer, and that\'s precisely the question you need answered when you can least afford to go looking.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Summaries have to be derived, never asserted. Both this workflow and the Docker Hub one hardcode success strings, which is the same bug twice: reporting intent instead of outcome. Any status line that can\'t render "failed" isn\'t reporting anything.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And consistency across a library is itself a feature. Two workflows in one repo building the same image with different caching, different tagging, different auth. Each was reasonable on the day it was written. Together they\'re inconsistent, and inconsistency is where the bugs live, because it\'s where your assumptions stop transferring.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'The deployment circuit breaker is the single most valuable setting here and it isn\'t in the pipeline at all, it\'s service configuration:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        code:
+          '"deploymentConfiguration": {\n' +
+          '  "deploymentCircuitBreaker": { "enable": true, "rollback": true }\n' +
+          '}',
+      },
+      {
+        type: 'paragraph',
+        text: 'That turns a detected failure into an automatic recovery. Everything the pipeline does to detect failure is worth more once something acts on it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Database migrations aren\'t addressed anywhere and they\'re the thing most likely to hurt. Rolling deploys mean old and new code run simultaneously for the duration of the rollout. Any schema change has to be backward compatible for that whole window or you get errors from whichever version loses the race. Expand/contract is the standard answer, and it\'s a discipline the pipeline fundamentally can\'t enforce for you.',
+      },
+      {
+        type: 'paragraph',
+        text: 'IAM scope matters here more than anywhere else in the library. The deploy role needs `ecr:*` on one repository and `ecs:UpdateService` plus `DescribeServices` on one service. Not `PowerUserAccess`. Deploy credentials are the highest-value target in the entire system.',
+      },
+      {
+        type: 'paragraph',
+        text: 'No timeout, so a hung waiter can sit for the six-hour default.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And there\'s an observability gap I want to be honest about: the pipeline knows the deploy stabilised. It has no idea whether error rates spiked afterward. Stability is a much weaker signal than health, and this workflow only verifies the former.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Pin deploys to immutable task definition revisions using `render-task-definition` and `deploy-task-definition`. That single change fixes the race, the auditability, and the rollback story together.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Migrate to OIDC and delete the standing credential.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Turn on the ECS circuit breaker with rollback.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add concurrency, deliberately without cancellation:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'concurrency:\n' +
+          '  group: ecs-deploy-${{ github.ref }}\n' +
+          '  cancel-in-progress: false',
+      },
+      {
+        type: 'paragraph',
+        text: '`false` matters here. Cancelling a deploy halfway through a rollout is worse than queueing it behind the current one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Guard the summary, derive its content, delete the stale next-steps text, add an `if: failure()` branch.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Use GitHub Environments. An `environment: production` on the job gets you required reviewers, deployment history, environment-scoped secrets, and the deployment timeline in the UI. That\'s the piece of real environment management that\'s currently missing, and right now it\'s being approximated with branch names and suffixed secret names.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add layer caching to both build paths so they match the Docker Hub workflow.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Move cluster and service to `vars`, delete the dead `AWS_REGION`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Extract the shared parts into a `workflow_call` workflow taking `environment`, `cluster`, `service` and `ecr-repository` inputs, so the dev/live split becomes two five-line callers instead of six `if:` guards scattered through one job.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And add a post-deploy smoke test. Curl a health endpoint through the load balancer once the service is stable. Stable tasks and a working service are not the same claim, and I\'d rather the pipeline made the stronger one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Next: `push-ec2.yml`, where the deploy runs over SSH and a heredoc expands variables on the wrong machine.',
+      },
+    ],
+  },
+  {
+    id: 12,
+    slug: 'ec2-ssh-pm2-zero-downtime-deploy',
+    ogImage: '/og/blog-ec2-ssh-pm2-zero-downtime-deploy.png',
+    title: 'GitHub Actions in Production, Part 5: The Heredoc That Expands on the Wrong Machine',
+    excerpt:
+      'Deploying a Node service to a single EC2 box over SSH with pm2. Zero downtime comes down to one word, the runner is a control plane rather than a build host, and an unquoted heredoc delimiter means your shell variables resolve on entirely the wrong machine.',
+    metaTitle: 'Zero-Downtime EC2 Deploys with GitHub Actions, SSH and pm2',
+    metaDescription:
+      'Why pm2 reload beats restart, how an unquoted heredoc delimiter expands variables on the runner instead of the server, and why building on the production host caps your reliability.',
+    category: 'Cloud & DevOps',
+    date: '2026-08-01',
+    readTime: '14 min read',
+    tags: ['AWS', 'EC2', 'pm2', 'Node.js', 'GitHub Actions', 'SSH', 'DevOps', 'Zero Downtime'],
+    entities: [
+      { name: 'Amazon Elastic Compute Cloud', sameAs: ['https://en.wikipedia.org/wiki/Amazon_Elastic_Compute_Cloud', 'https://aws.amazon.com/ec2/'] },
+      { name: 'Secure Shell', sameAs: 'https://en.wikipedia.org/wiki/Secure_Shell' },
+      { name: 'Node.js', sameAs: ['https://en.wikipedia.org/wiki/Node.js', 'https://nodejs.org'] },
+    ],
+    relatedSlugs: ['ecs-deployment-github-actions', 'snapshot-source-to-s3-threat-model', 'aws-ec2-s3-kubernetes-production-deployments'],
+    faq: [
+      {
+        question: 'What is the difference between pm2 reload and pm2 restart?',
+        answer:
+          'reload performs a rolling restart across cluster-mode workers, starting a replacement and routing to it before killing the old one, so the listening socket never closes. restart kills every process and starts fresh, dropping in-flight requests. That one word is the entire zero-downtime story on this model.',
+      },
+      {
+        question: 'Why does an unquoted heredoc delimiter break an SSH deploy?',
+        answer:
+          'With `<< ENDSSH` the runner\'s shell expands every $ in the body before anything reaches the server, so server-side variables resolve locally and command substitution executes on the runner. Quoting it as `<< \'ENDSSH\'` stops local expansion; pass the values you do want as explicit environment variables.',
+      },
+      {
+        question: 'Does pm2 reload alone guarantee zero downtime?',
+        answer:
+          'Only in cluster mode with more than one instance, and only if the application handles SIGINT and SIGTERM by draining connections. A single fork-mode process still has a gap, and an app that ignores the signal gets hard-killed after kill_timeout, dropping requests anyway.',
+      },
+      {
+        question: 'Why use git fetch and reset --hard instead of git pull when deploying?',
+        answer:
+          'git pull is fetch plus merge, and merges conflict. On a server anyone has ever edited a file on directly, the pull either fails mid-deploy or produces a merge commit on production. fetch followed by reset --hard makes the server\'s tree exactly match the remote, unconditionally.',
+      },
+      {
+        question: 'Why is running npm install on the production server a problem?',
+        answer:
+          'Dependency installation is CPU and IO heavy, so on a small instance it competes with the application it is deploying and makes the service slow during every deploy. It is also non-deterministic; npm ci installs exactly the lockfile and fails on drift, which is what a production deploy wants.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['An EC2 instance', 'pm2', 'Node.js 20+'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'Not everything runs in a container. There are profitable, load-bearing Node services out there running on a single EC2 instance under pm2 behind Nginx, and they\'ll keep running that way for years, because migrating them to ECS costs more than it returns.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This workflow deploys to those. It\'s the least fashionable pipeline in the library and, measured by actual traffic served, probably the most important one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It also has the most interesting bug, which is a shell heredoc that expands variables on the runner instead of the server. It works. It has always worked. It\'s one added line away from not working, and the way it breaks is unpleasant.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'The starting point was a procedure in a document. Someone with the PEM file SSHes in, `cd`s to the project directory, pulls, installs, builds, restarts pm2, saves. Six commands in order on the correct host.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Everything below is what happened when I tried to turn that into a workflow, and what I\'d do differently now.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'The failure modes of a documented manual procedure are boringly predictable once you\'ve watched them a few times.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Steps get skipped. `pm2 save` is the classic, because nothing breaks when you forget it. Everything works fine right up until the instance reboots and pm2 comes back running a process list from three deploys ago.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The wrong verb gets used. `pm2 restart` instead of `pm2 reload`, which drops every in-flight request. Nobody notices at 2pm on a Tuesday with light traffic.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The wrong host gets deployed to. Two servers, two similar hostnames, one terminal, one person who\'s been at it since morning.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And access becomes the bottleneck. Only people holding a production PEM can deploy, so every deploy queues behind one person\'s availability, which is fine until that person is on a plane.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Encoding it fixed all four. Order is fixed, host is derived from the branch, the correct pm2 verb is baked in, and the private key lives in GitHub\'s secret store instead of on laptops.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s one constraint that shaped everything else here, and it\'s worth stating plainly: the server is the source of truth for the running code. No registry, no artifact store, no image. Deploying means making the server\'s working tree match the branch and then reloading the process. That constraint drives the good decisions below and all of the bad ones.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          '   push: live\n' +
+          '       │\n' +
+          '       ▼\n' +
+          '  ubuntu-latest runner\n' +
+          '       │\n' +
+          '       │  ── no checkout! ──────────────────┐\n' +
+          '       │                                     │ the runner never needs\n' +
+          '       ▼                                     │ the source; the server\n' +
+          '  write SSH key → ~/.ssh/deploy_key          │ pulls it directly\n' +
+          '  chmod 600                                  │\n' +
+          '  ssh-keyscan host → known_hosts             │\n' +
+          '       │                                     │\n' +
+          '       ▼                                     │\n' +
+          '  ssh root@host << ENDSSH  ──────────────────┘\n' +
+          '       │\n' +
+          '       │  ┌─────────────── on the EC2 box ───────────────┐\n' +
+          '       │  │  set -e                                       │\n' +
+          '       │  │  cd /root/properties                          │\n' +
+          '       │  │  git pull origin live                         │\n' +
+          '       │  │  npm install                                  │\n' +
+          '       │  │  [ -f tsconfig.json ] && npm run build        │\n' +
+          '       │  │  pm2 reload ecosystem.config.cjs --only app   │  ◄── zero downtime\n' +
+          '       │  │  pm2 save                                     │\n' +
+          '       │  └───────────────────────────────────────────────┘\n' +
+          '       ▼\n' +
+          '  rm -f deploy_key   (if: always())',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two things I\'d keep.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s no `actions/checkout`. The runner is a control plane here, not a build host. It issues an SSH command and waits while the server fetches its own source from git. Skipping checkout saves time, and more usefully it expresses what the runner\'s job actually is. A lot of SSH deploy workflows check out code they then never touch, which always reads to me like someone pasted a template without asking what each step was for.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And the key never persists. Written to the ephemeral runner\'s disk, used, deleted under `if: always()` so a failed deploy still cleans up. Runners get destroyed after the job anyway so this is belt-and-braces, but it\'s the right instinct and `if: always()` on cleanup steps is a habit worth having everywhere.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Where it\'s weak: there\'s no artifact. The deployed state is whatever `git pull` plus `npm install` happened to produce on that machine at that moment. Two servers deploying the identical commit can end up with different `node_modules` if some transitive dependency published in between. There\'s no rollback target, no way to answer "what exactly is running," and no atomicity, so if `npm install` dies halfway you have a live server with a half-updated dependency tree serving traffic.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'Key setup, which contains a small contradiction:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- run: |\n' +
+          '    mkdir -p ~/.ssh\n' +
+          '    if [ "${{ github.ref_name }}" = "live" ]; then\n' +
+          '      echo "${{ secrets.EC2_SSH_KEY_LIVE }}" > ~/.ssh/deploy_key\n' +
+          '      ssh-keyscan -H "${{ secrets.EC2_IP_LIVE_HOST }}" >> ~/.ssh/known_hosts\n' +
+          '    else\n' +
+          '      …PBE variants…\n' +
+          '    fi\n' +
+          '    chmod 600 ~/.ssh/deploy_key',
+      },
+      {
+        type: 'paragraph',
+        text: '`chmod 600` is required rather than tidy. OpenSSH flatly refuses to use a key file that\'s group or world readable.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The `ssh-keyscan` is the interesting part. It fetches the host\'s public key into `known_hosts`, which looks like host verification. But the deploy step then passes `-o StrictHostKeyChecking=no`, which tells SSH not to verify anything. The two cancel out.',
+      },
+      {
+        type: 'paragraph',
+        text: 'I want to be precise about what\'s lost, because it\'s less than it first appears. `ssh-keyscan` on a fresh runner is trust-on-first-use against a host you\'ve never seen before, so it isn\'t real verification either. Someone sitting in the middle at scan time poisons the file and you\'re none the wiser. The genuinely secure version pins the host key as a secret:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- run: echo "${{ secrets.EC2_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts',
+      },
+      {
+        type: 'paragraph',
+        text: 'and drops `StrictHostKeyChecking=no` entirely, so you\'re comparing against a fingerprint you established out of band. In practice what\'s here is about as safe as most SSH deploy pipelines. It just shouldn\'t look like it\'s doing verification when it isn\'t, because that\'s the kind of thing someone reads quickly and then stops worrying about.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s also dead code in the branch selector. The trigger is `branches: ["live"]`, so the entire `else` branch, the whole PBE staging path with its own key and host, is unreachable. The README claims this deploys on push to `live` or `dev`, which means the trigger got narrowed at some point and the body didn\'t. Unreachable conditionals in deploy scripts are worse than dead code elsewhere, because they read as tested paths and nobody checks. Either add `dev` to the trigger or delete the branch.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now the heredoc:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $HOST << ENDSSH\n' +
+          '  set -e\n' +
+          '  cd $PROJECT_DIR\n' +
+          '  git pull origin ${{ github.ref_name }}\n' +
+          '  …\n' +
+          'ENDSSH',
+      },
+      {
+        type: 'paragraph',
+        text: 'The delimiter is unquoted. `<< ENDSSH`, not `<< \'ENDSSH\'`. That means the runner\'s shell expands every `$…` in the body before a single byte travels over the network.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It happens to work. `$PROJECT_DIR` is set on the runner, so it expands to the right path and the server receives a literal `cd /root/properties`. Fine.',
+      },
+      {
+        type: 'paragraph',
+        text: 'But it\'s a trap with the safety off, and the trap springs on whoever edits this file next. Add any line referencing a server-side variable, `$HOME`, `$PATH`, `$NODE_ENV`, `$(date)` for a log line, `$(git rev-parse HEAD)` to record what got deployed, and it gets evaluated on the runner instead. `$NODE_ENV` comes out empty. `$(date)` gives you the runner\'s clock. And `$(...)` is arbitrary command execution on the runner, which is currently holding your production SSH key in a file it can read.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The robust form quotes the delimiter and passes values deliberately:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'ssh -i ~/.ssh/deploy_key "$HOST" \\\n' +
+          '    "PROJECT_DIR=\'$PROJECT_DIR\' REF=\'${{ github.ref_name }}\' bash -s" << \'ENDSSH\'\n' +
+          '  set -euo pipefail\n' +
+          '  cd "$PROJECT_DIR"\n' +
+          '  git fetch --prune origin "$REF"\n' +
+          '  git reset --hard "origin/$REF"\n' +
+          '  …\n' +
+          'ENDSSH',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now the boundary is explicit. Quoted delimiter means nothing expands locally, and the values you do want get passed across as environment variables on purpose. This is the change I\'d make first out of everything in this article.',
+      },
+      {
+        type: 'paragraph',
+        text: 'One thing that is wired correctly: `set -e` works. The remote shell reads the script from stdin, aborts on first failure, ssh propagates the exit code, the step fails. Fail-fast is fine.',
+      },
+      {
+        type: 'paragraph',
+        text: '`git pull` is not fine. It\'s fetch plus merge, and merges conflict. If anyone has ever edited a file directly on the server, and on a box people SSH into somebody has, the pull either fails or produces a merge commit on a production server. `git fetch` followed by `git reset --hard origin/<branch>` is deterministic: the server\'s tree becomes exactly the remote\'s, no negotiation.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then `npm install`, which has two problems stacked on each other.',
+      },
+      {
+        type: 'paragraph',
+        text: '`install` rather than `ci`. `npm ci` installs exactly what\'s in the lockfile, wipes `node_modules` first, and fails if they\'ve drifted. `install` mutates the lockfile and resolves fresh versions. On a production deploy you want the deterministic one, obviously, and I don\'t have a good reason for why this says `install` other than that\'s what I type locally.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And it runs on the server that\'s currently serving traffic. Dependency installation is CPU and IO heavy. On a small instance it competes directly with the running application, so deploys make the service slow, which is exactly when you don\'t want deploys to feel risky. The image-based workflows in this same library don\'t have this problem at all, because build and run happen on different machines.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The conditional build is a bit I still like:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'if [ -f tsconfig.json ]; then npm run build; fi',
+      },
+      {
+        type: 'paragraph',
+        text: 'One template serving both JS and TS services without forking. Checking for `tsconfig.json` is a slightly indirect proxy and checking whether a `build` script exists in `package.json` would be more direct, but the intent holds up.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the good part:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'pm2 reload ecosystem.config.cjs --only ${{project_name}}',
+      },
+      {
+        type: 'paragraph',
+        text: '`reload` does a rolling restart across cluster-mode workers. It starts a replacement, waits for it to come up, routes traffic to it, kills the old one, then moves to the next. The listening socket is never closed, so nothing gets refused. `pm2 restart` kills everything and starts fresh, dropping whatever was in flight.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That distinction is the entire zero-downtime story on this deployment model, and it\'s one word.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two caveats people miss. Reload only gives you true zero downtime in cluster mode with more than one instance; a single fork-mode process still has a gap while it comes back. And your app has to actually handle `SIGINT`/`SIGTERM` by draining connections, otherwise pm2 hard-kills it after `kill_timeout` and you drop requests anyway. The pipeline can\'t enforce that. The application has to cooperate, and mine didn\'t for the first few months.',
+      },
+      {
+        type: 'paragraph',
+        text: '`${{project_name}}` is the same invalid placeholder I wrote about in the Docker Hub article. Not a valid Actions named-value, fails expression evaluation. Deriving it from `github.event.repository.name` or reading the app name out of the ecosystem file removes the manual substitution entirely.',
+      },
+      {
+        type: 'paragraph',
+        text: '`pm2 save` persists the process list so `pm2 resurrect` can restore it after a reboot. Forgetting it is how a server comes back from an instance restart running nothing at all, quietly, at whatever hour AWS decided to retire the underlying hardware.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Last thing: the deploy runs as `root`. `HOST="root@…"`. Which means the deploy has unrestricted control of the machine. A dedicated `deploy` user owning the project directory, with a narrow sudoers entry if a service restart genuinely needs one, shrinks the blast radius of a leaked key from "the whole box" to "one app directory."',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'The runner-as-control-plane thing is the design I\'d carry forward. No checkout, no build, no artifact, just an authenticated instruction and a wait. It makes the workflow fast regardless of repository size, and it draws a clean line around what each machine is responsible for.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The branch-scoped secret naming, `EC2_SSH_KEY_LIVE` next to `EC2_SSH_KEY_PBE`, lets one file serve multiple environments while only ever materialising one environment\'s credentials per run. GitHub Environments do this properly, with approval gates and an audit trail. As a zero-infrastructure approximation it\'s sound.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Unquoted heredoc delimiters, where the expansion silently happens on the wrong machine and the failure mode escalates from "wrong value in a log line" to "code execution on the CI runner holding your production key."',
+      },
+      {
+        type: 'paragraph',
+        text: '`pm2 restart` where `reload` belongs.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Forgetting `pm2 save`, which works until it very much doesn\'t.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Running `ssh-keyscan` and then `StrictHostKeyChecking=no`, which is theatre. Pick one.',
+      },
+      {
+        type: 'paragraph',
+        text: '`git pull` on a server people have SSHed into.',
+      },
+      {
+        type: 'paragraph',
+        text: '`npm install` where `npm ci` belongs.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Deploying as root because it was easiest on day one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Building on the production host, so your deploys degrade the service they\'re deploying.',
+      },
+      {
+        type: 'paragraph',
+        text: 'No concurrency group, and this is the one workflow where a race actually corrupts state rather than just confusing you. Two overlapping deploys running `git pull` and `npm install` in the same directory at the same time is genuinely destructive.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And no timeout, so a hung SSH connection sits there for six hours.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'Know which machine your shell is running on. That\'s the sharpest lesson in this whole series for me. In a workflow spanning a runner and a server, every single line carries an implicit "where does this evaluate," and the syntax answering that question is one quote character that\'s easy to leave off and impossible to notice afterward. Quote the delimiter by default. Unquote only where you mean to inject something.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Zero downtime turned out to be one word, decided once, and invisible until a deploy lands during real traffic.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Convenience defaults compound. `root` because it was easiest. `StrictHostKeyChecking=no` because a fingerprint prompt blocked a run once and I was in a hurry. `install` because that\'s what I type. Each one individually defensible in the moment, and collectively a deploy path with full machine access, no host verification, and non-deterministic dependencies.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And your deploy model sets a ceiling on your reliability. Pull-and-build-on-server can\'t give you atomic deploys, instant rollback, or artifact immutability. Not because I implemented it badly, but because there\'s no artifact to roll back to. Recognising a ceiling is more useful than polishing underneath it, and it took me a while to stop polishing.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'Rollback is manual and slow. Recovery means SSHing in, `git reset --hard <previous-sha>`, reinstalling, reloading, all while the service is degraded and someone is asking for updates. The classic fix on this model is timestamped release directories with a `current` symlink and an atomic swap, which makes rollback a symlink change plus a reload. That\'s the Capistrano pattern and it\'s still the right answer for VM deploys twenty years later.',
+      },
+      {
+        type: 'paragraph',
+        text: 'One instance, one deploy target, no load balancer. The reload is the only availability mechanism there is.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Migrations are unaddressed, same as ECS, but worse here because reload means old and new code genuinely overlap with no orchestrator managing the transition.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Secret rotation is a real gap. A long-lived root SSH key in GitHub secrets has no expiry. On AWS specifically there\'s a strictly better answer: Systems Manager Session Manager removes the key entirely. The runner authenticates with IAM, ideally via OIDC, SSM brokers the session, and every session is logged in CloudTrail. No persistent credential exists.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And there\'s no health check after the reload. pm2 reports that the process started. It doesn\'t report that the app is answering requests. A `curl -fsS localhost:PORT/health` with a retry loop would catch a process that boots successfully and then immediately fails on a bad config value, which is a thing that has happened to me.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Quote the heredoc delimiter and pass variables explicitly. Highest value, smallest diff.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add concurrency, without cancellation:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'concurrency:\n' +
+          '  group: ec2-deploy-${{ github.ref }}\n' +
+          '  cancel-in-progress: false',
+      },
+      {
+        type: 'paragraph',
+        text: 'Never cancel a running deploy on this model. Queue it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Swap `git pull` for `git fetch` plus `git reset --hard`. Swap `npm install` for `npm ci`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add a post-reload health check with retries and fail the job if it doesn\'t pass.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Deploy as a non-root user. Pin the host key as a secret and drop `StrictHostKeyChecking=no`. Add `timeout-minutes: 15`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Delete the dead staging branch, or enable it properly with GitHub Environments rather than suffixed secret names.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Move to release directories with an atomic symlink swap so rollback is instant and deploys stop mutating the live tree in place.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And the bigger one, longer term: build the artifact in CI. Build on the runner, ship a tarball or a container, let the server only unpack and reload. That takes install-time load off production, makes deploys deterministic, and finally gives you something to roll back to. It closes most of the gap with the container workflows without having to leave the VM model behind, which for these services is the right trade.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Next: `push-s3.yml`, and the uncomfortable question of what a backup is actually protecting you from.',
+      },
+    ],
+  },
+  {
+    id: 13,
+    slug: 'snapshot-source-to-s3-threat-model',
+    ogImage: '/og/blog-snapshot-source-to-s3-threat-model.png',
+    title: 'GitHub Actions in Production, Part 6: What Is This Backup Actually Protecting Me From?',
+    excerpt:
+      'A workflow that zips the repository to S3 on every push, and the uncomfortable question underneath it: git already backs up your code. On provider independence as the real threat model, why the cadence was wrong, and why a backup you have never restored from is a hypothesis.',
+    metaTitle: 'S3 Backup Automation: What Are You Actually Protecting Against?',
+    metaDescription:
+      'Why source snapshots to S3 are about provider independence rather than disaster recovery, why excluding .env leaves a documented restore gap, and why Object Lock matters for backup buckets.',
+    category: 'Cloud & DevOps',
+    date: '2026-08-01',
+    readTime: '11 min read',
+    tags: ['AWS', 'Amazon S3', 'GitHub Actions', 'Backup', 'Disaster Recovery', 'DevOps', 'Cloud Security'],
+    entities: [
+      { name: 'Amazon S3', sameAs: ['https://en.wikipedia.org/wiki/Amazon_S3', 'https://aws.amazon.com/s3/'] },
+      { name: 'Backup', sameAs: 'https://en.wikipedia.org/wiki/Backup' },
+      { name: 'Git', sameAs: ['https://en.wikipedia.org/wiki/Git', 'https://git-scm.com'] },
+    ],
+    relatedSlugs: ['ec2-ssh-pm2-zero-downtime-deploy', 'nodejs-pino-s3-log-archiving-cron'],
+    faq: [
+      {
+        question: 'Is zipping a git repository to S3 a useful backup?',
+        answer:
+          'Only against provider loss, not against data loss. Git already replicates your code, so the value is having a dated copy inside your own AWS account if a GitHub organisation is suspended, an owner account is compromised, or access disappears. It restores no database and no user uploads.',
+      },
+      {
+        question: 'Should a source backup workflow run on every push?',
+        answer:
+          'No. Provider independence needs a recent copy, not one per commit, so twenty pushes a day produce twenty near-identical archives that mitigate nothing extra. A daily schedule with workflow_dispatch for manual pre-migration snapshots serves the same threat model at a fraction of the storage cost.',
+      },
+      {
+        question: 'Why exclude .env files from a backup archive?',
+        answer:
+          'Environment files hold database credentials and API keys, and backup buckets are usually secured as though they contain "just code". Excluding them is correct, but it means the archive cannot restore a running service on its own, so the separate secrets path must be written into the restore runbook.',
+      },
+      {
+        question: 'How do you stop a compromised CI credential from deleting your backups?',
+        answer:
+          'Scope the CI principal to s3:PutObject on a single prefix and deny s3:DeleteObject entirely, so it can write new objects and never remove old ones. S3 Object Lock in compliance mode makes that guarantee cryptographic, which is the standard defence against ransomware that targets backups.',
+      },
+      {
+        question: 'How do you know a backup actually works?',
+        answer:
+          'Restore from it on a schedule. A monthly job that fetches the newest archive, unzips it, installs dependencies and builds proves the artifact is complete and usable. Until something does that, you have a hypothesis, and teams routinely discover empty backups during the incident itself.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['An AWS account', 'An S3 bucket'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'This workflow zips the repository on every push to `live` and uploads it to S3 under a timestamped key with the short SHA appended. Twenty-eight lines. It runs reliably and it has never failed.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It\'s also the one where I had to argue with myself the hardest, because the obvious criticism is brutal and mostly correct: you already have a backup of your source code. It\'s called git, and it exists on every developer\'s machine and on GitHub\'s infrastructure. Zipping a git checkout and putting it in a bucket is, on the face of it, backing up the one thing that needs backing up least.',
+      },
+      {
+        type: 'paragraph',
+        text: 'I still think there\'s a real case for this. It\'s just narrower than "backups are good," and getting to it meant being honest about what I was actually afraid of.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'The YAML here is trivial and I\'ll walk through it quickly. The part worth reading is the reasoning, because the reasoning determines whether the YAML is worth running at all, and for a while mine wasn\'t.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'The naive framing is "back up the code." That framing is wrong and it produces a workflow that costs money and provides nothing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The framing I\'d defend is provider independence. Git protects you against losing a file, a branch, or a laptop. It does not protect you against losing your GitHub account, and that isn\'t hypothetical:',
+      },
+      {
+        type: 'paragraph',
+        text: 'An organisation gets suspended over a billing dispute or a suspected ToS violation, sometimes automatically, sometimes wrongly. An owner account gets compromised by someone with force-push rights and the ability to delete repositories. A sole maintainer leaves, their account is deactivated, and the repos go with it. Or there\'s a prolonged provider outage during an incident where you need to deploy right now.',
+      },
+      {
+        type: 'paragraph',
+        text: 'In every one of those, a dated archive in a bucket inside your own AWS account, inside your own security boundary, turns a catastrophe into an annoyance. That\'s a real threat model and it\'s the one this addresses.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two things fall out of stating it that plainly, and I didn\'t see either until I wrote it down.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Push-triggered is the wrong cadence for that threat. Provider independence needs a recent copy, not a copy per commit. Twenty pushes on a busy day produce twenty near-identical archives, and the difference between them is worth nothing against the risk being mitigated. A daily schedule serves the same purpose at a fraction of the cost. I built it push-triggered because push-triggered is the reflex, not because it followed from anything.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The bigger one: this is not a disaster recovery backup and I shouldn\'t describe it as one. There\'s no database in it. No user uploads. No environment configuration. If the server burns down tomorrow, this archive restores your code, which you could also have gotten from git, and not one byte of the state your users actually care about. Everything irreplaceable is outside this workflow\'s scope.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That distinction is the whole point of the article. A workflow called "backup" that people believe covers disaster recovery is worse than no workflow, because it manufactures confidence, and manufactured confidence only gets discovered during an actual disaster.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          '  push: live\n' +
+          '      │\n' +
+          '      ▼\n' +
+          '  actions/checkout            (shallow, depth 1 — no history)\n' +
+          '      │\n' +
+          '      ▼\n' +
+          '  zip -r <name> . --exclude …\n' +
+          '      │  name = <project>-YYYYMMDD-HHMMSS-<sha7>.zip\n' +
+          '      │  export via $GITHUB_ENV\n' +
+          '      ▼\n' +
+          '  aws s3 cp → s3://<bucket>/backups/<project>/<name>.zip',
+      },
+      {
+        type: 'paragraph',
+        text: 'Linear, stateless, no dependencies beyond the preinstalled AWS CLI. All the interesting decisions are in naming and exclusion.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The key naming scheme is the part I\'d keep unchanged:',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          '<project>-20260801-142317-a3f9c21.zip',
+      },
+      {
+        type: 'paragraph',
+        text: 'Sortable by name, because `YYYYMMDD-HHMMSS` sorts lexicographically. Readable by a human. Traceable to an exact commit via the short SHA. When you\'re restoring under pressure, "which archive do I want" has to be answerable from an `aws s3 ls` listing alone, with no metadata lookup and no guessing, and this gets you that.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Prefixing with `backups/<project>/` means one bucket can serve many projects with clean per-project lifecycle rules.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'Checkout runs at the default `fetch-depth: 1`, so it\'s a shallow clone with no history. Combined with the `.git/*` exclusion below, what you get is a point-in-time snapshot rather than a repository. You can restore the code as it was. You cannot restore the project\'s history, branches, or tags.',
+      },
+      {
+        type: 'paragraph',
+        text: 'For the "GitHub is gone" scenario that\'s a meaningful hole. You\'d recover a working codebase and lose every commit message, every blame trail, every tag. If provider independence is genuinely the goal then a mirror clone preserves all of it and is barely more work, which I\'ll come back to.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Building the archive:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'ZIP_NAME="${{project_name}}-$(date +\'%Y%m%d-%H%M%S\')-${GITHUB_SHA::7}.zip"\n' +
+          'echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV',
+      },
+      {
+        type: 'paragraph',
+        text: '`${GITHUB_SHA::7}` is bash substring expansion, first seven characters, matching git\'s conventional short SHA without spawning a subprocess.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Writing to `$GITHUB_ENV` is how you pass a value between steps. Plain `export` doesn\'t survive, because each `run:` block is a separate shell process, which is one of those things that\'s obvious in retrospect and confusing the first time. `$GITHUB_OUTPUT` with a step `id` is the more modern idiom and scopes better, but this is fine.',
+      },
+      {
+        type: 'paragraph',
+        text: '`${{project_name}}` is the same invalid Actions named-value that shows up across this library. `github.event.repository.name` removes the substitution step entirely.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the exclusions:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'zip -r "$ZIP_NAME" . \\\n' +
+          '  --exclude "node_modules/*" ".git/*" ".env" ".env.dev" ".env.test" \\\n' +
+          '            "logs/*" "*.log" "coverage/*" ".nyc_output/*" ".cache/*"',
+      },
+      {
+        type: 'paragraph',
+        text: 'The thinking here is right and I\'d keep it in principle.',
+      },
+      {
+        type: 'paragraph',
+        text: '`node_modules` is regenerable from the lockfile and routinely ten to a hundred times the size of the source, so including it makes the archive expensive and slow without adding anything you could actually recover from. Same reasoning for coverage output, `.nyc_output`, `.cache`, and logs.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Excluding `.env*` is the one that matters for a different reason. Environment files hold database credentials, API keys, signing secrets. An archive containing them turns your backup bucket into a credential store, and backup buckets tend to be under-secured relative to their contents precisely because everyone thinks of them as holding "just code."',
+      },
+      {
+        type: 'paragraph',
+        text: 'But that creates a tension the workflow doesn\'t resolve, and I want to name it rather than gloss over it: the archive is deliberately not sufficient to restore a running service. You get the code and no configuration. That\'s the correct security call and it means the restore procedure has a gap that has to be filled by a separate secrets path, Secrets Manager or SSM Parameter Store or 1Password. If that isn\'t written down somewhere, it becomes a very unpleasant discovery halfway through an incident.',
+      },
+      {
+        type: 'paragraph',
+        text: 'One practical warning. `zip`\'s `--exclude` patterns match against paths as they\'re stored in the archive, and getting them subtly wrong (`node_modules/*` versus `./node_modules/*`) fails silently. You get a bigger archive and no warning. The only way to know your exclusions work is to open the result and look, which is a specific instance of the general rule further down.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Upload:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'env:\n' +
+          '  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}\n' +
+          '  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}\n' +
+          '  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}\n' +
+          'run: aws s3 cp "$ZIP_NAME" "s3://${{ secrets.AWS_S3_BACKUP_BUCKET }}/backups/…"',
+      },
+      {
+        type: 'paragraph',
+        text: 'Passing credentials through `env:` rather than interpolating them into the command body is exactly right. The AWS CLI reads them from the environment natively and the values never appear in the shell command text.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two issues. These are long-lived IAM keys again, and they\'re a different set from the ECS workflow\'s: `AWS_ACCESS_KEY_ID` here versus `AWS_IAM_ACCESS_KEY` there. Two IAM identities, two rotation obligations, two things to forget about. Consolidating both onto OIDC role assumption gets rid of both.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And there\'s no `permissions:` block at all, so the job\'s `GITHUB_TOKEN` inherits the repository default, which on older repos is read/write across the board. A job that reads code and uploads a file wants `contents: read`.',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'Sortable keys are an incident response feature, which sounds grandiose for a date format but I stand by it. Lexicographic sorting means `aws s3 ls` gives you chronological order for free, and at 3am you want zero cognitive overhead between you and the right file.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The workflow is cheap by construction. No Docker, no dependency install, no build. Checkout, zip, upload, done in seconds. Which is exactly why the wrong cadence survived as long as it did. Cheap wrong things last much longer than expensive wrong things, because nothing ever forces you to look at them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And the exclusion list is doing two completely different jobs in identical syntax. `node_modules` is about size. `.env` is about not creating a second credential store. Same line format, entirely different stakes, and nothing in the file distinguishes them. That deserves a comment, because the next person tidying up the list has no way to tell which entries are load-bearing.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Calling it a backup when it\'s a source snapshot. The dangerous part isn\'t the workflow, it\'s the belief it creates about what\'s covered.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Including `.env` files, which converts a backup bucket into a credential leak with a very long half-life.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Never testing a restore. I mean this seriously: if you\'ve never restored from it, you don\'t know whether it works. You have a hypothesis. The number of teams that discover their backups were empty during the incident is not small, and it\'s not a beginner mistake either.',
+      },
+      {
+        type: 'paragraph',
+        text: 'No lifecycle policy, so objects accumulate in Standard storage forever. A per-push cadence on an active repo produces thousands of near-identical multi-megabyte archives and the bill grows linearly until someone questions a line item.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Trusting silent exclusions.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Push cadence for a threat model that needs daily.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Long-lived IAM keys where OIDC works.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And no integrity verification anywhere. Nothing checks that the upload arrived intact or that the archive is even readable.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'Name the threat before you build the mitigation. I built this before articulating what it defended against, and the wrong cadence is the direct result. Push-triggered was the instinct; it doesn\'t follow from the actual risk at all. Writing the threat model first would have produced `schedule:` on the first attempt and saved a lot of S3 objects.',
+      },
+      {
+        type: 'paragraph',
+        text: '"Backup" is an overloaded word and the ambiguity is genuinely dangerous. Source snapshot, database backup, disaster recovery, and archival retention are four different things with four different RPO and RTO profiles. Calling all of them "backup" is how a team ends up confident that the important one exists. This file should be called `snapshot-source-to-s3.yml`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'A backup you haven\'t restored from isn\'t a backup. The highest-value addition here is a scheduled job that pulls the newest archive, unzips it, installs, and builds, proving the thing is complete and usable. Everything short of that is faith.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And security decisions and optimisation decisions look identical in a config file. Without a comment, nobody can tell them apart, and the person cleaning up your exclusion list six months from now is going to make a judgement call with no information.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'A lifecycle policy isn\'t optional, it\'s the difference between this workflow costing nothing and costing something. Transition to Infrequent Access after 30 days, Glacier after 90, expire at whatever your retention period is. Without it the cost climbs monotonically and nobody notices until it\'s large enough to be a question in a meeting.',
+      },
+      {
+        type: 'paragraph',
+        text: 'On bucket security: Block Public Access on, encryption enabled (S3 encrypts by default with SSE-S3 now, but SSE-KMS with a dedicated key gives you separate access control and an audit trail), versioning on, and a bucket policy denying deletes from the CI principal.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That last one matters more than it looks. The CI identity should be able to write new objects and never remove old ones, so a compromised pipeline credential can\'t destroy your history on its way out. Object Lock in compliance mode makes that guarantee cryptographic rather than policy-based, which is the standard defence against ransomware that specifically hunts for backups. Which it does.',
+      },
+      {
+        type: 'paragraph',
+        text: 'IAM scope: `s3:PutObject` on `arn:aws:s3:::bucket/backups/<project>/*`. Not `s3:*`, not bucket-wide, and specifically not `s3:DeleteObject`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Cross-account is the version of this that actually delivers on the premise. If provider independence is the goal, a backup sitting in the same AWS account as your production infrastructure shares a failure domain with it, and an account compromise takes both. A separate account with cross-account replication is the meaningful control.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And write the restore runbook. Which archive, how to fetch it, where the environment configuration comes from given it\'s deliberately absent, and what recovery time to expect. Undocumented restores take hours longer than they need to, and those hours land at the worst possible moment.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Rename it to `snapshot-source-to-s3.yml` so it stops implying something it doesn\'t do.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Move to a schedule:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'on:\n' +
+          '  schedule:\n' +
+          '    - cron: \'0 3 * * *\'\n' +
+          '  workflow_dispatch:',
+      },
+      {
+        type: 'paragraph',
+        text: 'Matches the threat model, cuts object count by an order of magnitude, and `workflow_dispatch` keeps the manual pre-migration snapshot available for when you want one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add the lifecycle policy. Best cost control available here by a distance.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Migrate to OIDC and consolidate with the ECS credentials. Add `permissions: contents: read` and `timeout-minutes: 15`.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Mirror the repository rather than the working tree:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          'git clone --mirror "https://github.com/${{ github.repository }}.git" repo.git\n' +
+          'tar czf repo-mirror.tar.gz repo.git',
+      },
+      {
+        type: 'paragraph',
+        text: 'Full history, branches, tags. That\'s what actually delivers provider independence rather than approximating it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Verify the upload with `aws s3api head-object`, compare the size, fail on mismatch. Ten seconds of runtime for a real integrity signal instead of an assumed one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And add a scheduled restore test. Monthly: fetch the newest archive, unzip, `pnpm install --frozen-lockfile`, `pnpm build`. If it fails, the backup was already broken and you found out on a Tuesday afternoon instead of during an outage. That\'s the improvement that moves this from faith to evidence, and it\'s the one I\'d actually prioritise.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then comment the security-critical exclusions so the `.env` lines never get mistaken for size optimisation.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And finally, deal with the real gap: back up the data. Database dumps and user uploads are the irreplaceable assets. This workflow doesn\'t touch either, and until something does, "we have backups" isn\'t a true statement about the system as a whole. It\'s a true statement about the least important part of it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Next: `notify.discord.yml`. Twelve lines, more day-to-day value than anything else in the library, and a security bug I wrote without noticing.',
+      },
+    ],
+  },
+  {
+    id: 14,
+    slug: 'github-actions-script-injection',
+    ogImage: '/og/blog-github-actions-script-injection.png',
+    title: 'GitHub Actions in Production, Part 7: Twelve Lines and a Script Injection',
+    excerpt:
+      'The smallest workflow I have written posts deploy notifications to Discord, and it contains a real script injection. Why ${{ }} in a run block is templating rather than variable expansion, why merge commit messages are untrusted input, and why the file nobody reviewed had the bug.',
+    metaTitle: 'GitHub Actions Script Injection: The Bug in My 12-Line Workflow',
+    metaDescription:
+      'How github.event.head_commit.message becomes executable code inside a run block, why merge commits carry attacker-authored text, and the env plus jq pattern that closes it.',
+    category: 'Backend Security',
+    date: '2026-08-01',
+    readTime: '11 min read',
+    tags: ['GitHub Actions', 'Application Security', 'CI/CD', 'Shell', 'DevSecOps', 'Discord', 'Supply Chain Security'],
+    entities: [
+      { name: 'GitHub Actions', sameAs: ['https://en.wikipedia.org/wiki/GitHub', 'https://github.com/features/actions'] },
+      { name: 'Code injection', sameAs: 'https://en.wikipedia.org/wiki/Code_injection' },
+      { name: 'jq', sameAs: ['https://en.wikipedia.org/wiki/Jq_(programming_language)', 'https://jqlang.github.io/jq/'] },
+      { name: 'Discord', sameAs: ['https://en.wikipedia.org/wiki/Discord', 'https://discord.com'] },
+    ],
+    relatedSlugs: ['github-actions-build-gate-trigger', 'ecs-deployment-github-actions', 'jwt-vs-paseto-tokens'],
+    faq: [
+      {
+        question: 'What is GitHub Actions script injection?',
+        answer:
+          'The runner substitutes ${{ }} expressions into a run block as text before the shell parses it, so event data becomes part of the script\'s source rather than arriving as data. A commit message or PR title containing shell command substitution then executes on the runner alongside your secrets.',
+      },
+      {
+        question: 'Is head_commit.message untrusted if only maintainers can push?',
+        answer:
+          'Yes. On a merge commit the message contains the pull request title and source branch name, both chosen by whoever opened the PR, including fork contributors with no repository access. The maintainer performs the push; the text inside the message is still attacker-controlled.',
+      },
+      {
+        question: 'How do you safely use event data in a GitHub Actions run block?',
+        answer:
+          'Pass it through an env: mapping so the runner sets a variable and the shell reads it as data, then quote the reference. For JSON payloads, build the body with jq --arg rather than string concatenation so quotes, newlines and backslashes are escaped correctly.',
+      },
+      {
+        question: 'Should deploy notifications trigger on push or on workflow completion?',
+        answer:
+          'On completion. A push trigger only announces that a deploy started and can never report whether it worked. Using workflow_run with types: [completed] lets the message carry the real conclusion, which is the signal people actually want when something breaks.',
+      },
+      {
+        question: 'Is a Discord webhook URL a secret?',
+        answer:
+          'Yes. The URL is the credential: anyone holding it can post anything to that channel as anyone, since webhooks let the caller override username and avatar per message. They never expire, so a leaked URL stays usable until someone manually regenerates it.',
+      },
+    ],
+    proficiencyLevel: 'Expert',
+    dependencies: ['A GitHub repository', 'A Discord webhook URL'],
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'The smallest workflow in this library posts a message to Discord whenever someone pushes to `live`. Who pushed, which branch, what the commit said, with the person\'s GitHub avatar attached. It took about ten minutes to write.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It has answered "when did this change?" more times than any dashboard I\'ve ever built.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It also contains a real security bug. The GitHub Actions script injection pattern, where untrusted event data gets interpolated straight into a shell command. It\'s the most common vulnerability class in Actions, it\'s called out in GitHub\'s own hardening docs, and I wrote it anyway, in twelve lines, without noticing.',
+      },
+      {
+        type: 'heading',
+        text: 'Introduction',
+      },
+      {
+        type: 'paragraph',
+        text: 'That combination is why this one gets a full article. The value is real and I\'d write it again tomorrow. The bug is real too, and it\'s about one character of syntax away from not existing.',
+      },
+      {
+        type: 'heading',
+        text: 'Why this workflow exists',
+      },
+      {
+        type: 'paragraph',
+        text: 'Automating deployment had a side effect I didn\'t anticipate: it made deploys invisible.',
+      },
+      {
+        type: 'paragraph',
+        text: 'When deploying meant somebody SSHing into a server, the deploy was a social event. Someone said "pushing the fix now" in chat. Everyone knew. Once the pipeline does it automatically on merge, code reaches production with no human announcement at all, and the team quietly loses a signal it had been depending on without ever noticing it was a signal.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The failure mode this creates is specific. Something breaks. Someone asks whether anything changed. Nobody knows. You open the Actions tab, cross-reference run timestamps against the error spike, find the commit, read the diff. Ten minutes minimum, every time, and those ten minutes land at the very front of an incident where latency is most expensive.',
+      },
+      {
+        type: 'paragraph',
+        text: 'A chat message collapses that into a scroll. "When did this change?" stops being an investigation and becomes a lookup.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two decisions came out of framing it that way.',
+      },
+      {
+        type: 'paragraph',
+        text: 'It targets a team chat channel, not a monitoring system. Nothing pages anyone, there\'s no threshold, no acknowledgement. It\'s ambient awareness in a place people already have open. Every time I\'ve seen someone try to make a notification like this into proper alerting, it turned into noise and then got muted.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And it posts as the developer rather than as a bot. The webhook overrides `username` and `avatar_url` with the pushing actor\'s GitHub identity, so the channel shows a face instead of a generic integration icon. That was deliberate. It makes deploys feel attributable, and more practically, you recognise a colleague\'s face far faster than you read a username when you\'re scrolling back through a channel.',
+      },
+      {
+        type: 'heading',
+        text: 'Architecture',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        code:
+          '  push: live\n' +
+          '      │\n' +
+          '      ▼\n' +
+          '  ubuntu-latest\n' +
+          '      │  (no checkout — nothing to check out)\n' +
+          '      ▼\n' +
+          '  curl -X POST  ──────►  Discord webhook endpoint\n' +
+          '      │                        │\n' +
+          '      │  JSON body:            ▼\n' +
+          '      │   avatar_url      ┌──────────────┐\n' +
+          '      │   username        │  #deploys    │\n' +
+          '      │   content ────────│  channel     │\n' +
+          '      │                   └──────────────┘',
+      },
+      {
+        type: 'paragraph',
+        text: 'One job, one step, nothing else.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The property worth pointing at is the decoupling. This subscribes to the same `push` event as the deploy workflows rather than being a step inside them. If the webhook gets rotated, or rate-limited, or Discord goes down, the deploy is completely unaffected. Notification failures can\'t break deployment.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s right, and it comes with a cost I\'ll get to: because it\'s triggered by the push rather than by the deploy outcome, it announces that a deploy started. It can\'t tell you whether it worked.',
+      },
+      {
+        type: 'heading',
+        text: 'Step-by-step explanation',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s one step, so here\'s the whole thing:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- run: |\n' +
+          '    curl -H "Content-Type: application/json" \\\n' +
+          '         -X POST \\\n' +
+          '         -d "{\n' +
+          '              \\"avatar_url\\": \\" https://github.com/${{ github.actor }}.png \\",\n' +
+          '              \\"username\\": \\" ${{ github.actor }} \\",\n' +
+          '              \\"content\\": \\" Admin: @elrefai99 \\nServer: **0Gosha Server*** \\nNew push in branch: **${{ github.ref_name }}** \\nCommit: **${{ github.event.head_commit.message }}**\\"\n' +
+          '            }" \\\n' +
+          '         ${{ secrets.DISCORD_WEBHOOK_0GOSHA }}',
+      },
+      {
+        type: 'paragraph',
+        text: '`https://github.com/<user>.png` is a nice trick that I use constantly now. GitHub serves any user\'s avatar at that URL, with `?size=64` if you want it smaller. No API call, no token, no storage, and Discord fetches it directly.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The webhook URL is stored as a secret, correctly. A Discord webhook URL is the credential. Anyone holding it can post anything to that channel as anyone. It should be quoted in the command for safety, but keeping it out of the YAML is the important part.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then there are the string problems, which are minor and visible in every message this thing has ever sent.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The avatar URL has leading and trailing spaces inside the string: `\\" https://github.com/… .png \\"`. Discord may reject the malformed URL and fall back to a default avatar, which defeats the entire point of the avatar trick. The username has the same padding, so the display name renders with visible whitespace. `**0Gosha Server***` has three closing asterisks against two opening ones, so it renders with a stray `*` hanging off the end. And `Admin: @elrefai99` is a plain string; Discord mentions need `<@USER_ID>` with a numeric snowflake, so `@username` renders as literal text and pings precisely nobody.',
+      },
+      {
+        type: 'paragraph',
+        text: 'None of that breaks anything. All of it has been in every message for months, which is its own small lesson about output nobody re-reads after the first test.',
+      },
+      {
+        type: 'heading',
+        text: 'The injection',
+      },
+      {
+        type: 'paragraph',
+        text: 'Here\'s the line that matters:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        code:
+          '\\"content\\": \\"… Commit: **${{ github.event.head_commit.message }}**\\"',
+      },
+      {
+        type: 'paragraph',
+        text: '`${{ … }}` inside a `run:` block is not shell variable expansion. The runner does textual substitution into the script before the shell parses it. So the commit message doesn\'t arrive as data. It becomes part of the source code of the script.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Which means the shell parses whatever the commit message happens to contain.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The mild version: a commit message with a double quote in it terminates the JSON string early and the request goes out malformed. The notification silently fails or posts garbage.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The serious version: a commit message containing shell command substitution syntax gets executed on the runner. And the runner, at that moment, has `secrets.DISCORD_WEBHOOK_0GOSHA` in its environment and `curl` sitting right there. Anything the job can reach, injected code can reach.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The obvious objection is that only people with write access can push to `live`, so an attacker would need commit rights already. That\'s true, and it does limit the risk here substantially. But it doesn\'t eliminate it, and the reason is easy to miss:',
+      },
+      {
+        type: 'paragraph',
+        text: 'On a merge commit, `head_commit.message` contains text written by whoever opened the pull request. Merge a fork PR and the resulting commit message includes the PR title and the source branch name, both chosen entirely by someone with no access to your repository. The push to `live` is performed by a trusted maintainer. The content of the message is not trusted. That\'s exactly the boundary GitHub\'s hardening guide warns about, and `github.event.head_commit.message` is named in its list of untrusted inputs alongside PR titles, branch names, and issue bodies.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Branch names deserve their own mention, because they flow into merge commit messages, they\'re attacker-chosen on fork PRs, and git permits a surprising range of characters in them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The fix is to stop letting the value be code. Pass it through the environment so the runner sets a variable and the shell reads it as data:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          '- env:\n' +
+          '    COMMIT_MSG: ${{ github.event.head_commit.message }}\n' +
+          '    ACTOR: ${{ github.actor }}\n' +
+          '    BRANCH: ${{ github.ref_name }}\n' +
+          '    WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_0GOSHA }}\n' +
+          '  run: |\n' +
+          '    jq -n \\\n' +
+          '      --arg actor "$ACTOR" \\\n' +
+          '      --arg branch "$BRANCH" \\\n' +
+          '      --arg msg "$COMMIT_MSG" \\\n' +
+          '      \'{\n' +
+          '        username: $actor,\n' +
+          '        avatar_url: "https://github.com/\\($actor).png",\n' +
+          '        content: "**\\($branch)** — \\($msg)"\n' +
+          '      }\' \\\n' +
+          '    | curl -sS -X POST -H "Content-Type: application/json" -d @- "$WEBHOOK"',
+      },
+      {
+        type: 'paragraph',
+        text: 'Two independent protections there. `env:` keeps the value out of the script text entirely, so the shell sees `$COMMIT_MSG`, a variable reference, and quoting it prevents word splitting. And `jq -n --arg` builds the JSON with correct escaping for quotes, newlines and backslashes, so malformed payloads become impossible rather than just unlikely. `jq` is preinstalled on GitHub-hosted runners.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s the whole fix. It isn\'t more code. It\'s arguably cleaner code, and it closes the hole completely.',
+      },
+      {
+        type: 'heading',
+        text: 'Interesting implementation details',
+      },
+      {
+        type: 'paragraph',
+        text: 'No checkout, no setup, no actions. A workflow that only makes an HTTP call needs none of it, and adding `actions/checkout` out of habit would roughly double the runtime for nothing. Worth noticing when the boilerplate genuinely isn\'t required.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The identity spoofing is a UX feature and a security consideration at the same time. Discord webhooks let the caller override the display name and avatar per message, which is what makes the channel scannable. It\'s also exactly why a leaked webhook URL is bad: whoever has it can impersonate anyone in that channel.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The `\\n` handling works, though more by luck than design. `\\n` inside a double-quoted shell string passed to `-d` gets sent literally, and Discord\'s JSON parser interprets `\\n` in a string value as a newline. Correct outcome, not a correct reason.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And it\'s cheap enough that nobody\'s ever been tempted to remove it. A few seconds of runner time per push. This is the good version of what I said in the S3 article about cheap things surviving. Cheap wrong things last too long, but cheap right things also last, and low cost is exactly why this one never came up in a cleanup.',
+      },
+      {
+        type: 'heading',
+        text: 'Common mistakes',
+      },
+      {
+        type: 'paragraph',
+        text: 'Interpolating `${{ }}` event data into `run:` blocks. That\'s the vulnerability. `github.event.head_commit.message`, `github.event.pull_request.title`, `github.head_ref`, issue bodies, review comments — all attacker-influenceable, all routinely pasted straight into shell.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Hand-building JSON in shell, where any user-supplied string with a quote or backslash or newline in it breaks the payload.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Notifying on the trigger instead of the outcome. This announces that a push happened and says nothing about whether the deploy succeeded, which is the thing people actually want to know.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Treating webhook URLs as configuration when they\'re credentials.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Assuming write access bounds the threat, when merge commit messages carry text authored by untrusted contributors.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And never re-reading your own output. Four separate formatting defects shipped in every message this system has sent, because nobody looked at the rendered result after the first successful test.',
+      },
+      {
+        type: 'heading',
+        text: 'Lessons learned',
+      },
+      {
+        type: 'paragraph',
+        text: 'Notification is infrastructure, not decoration. Highest return per line of anything I\'ve written. Deploy visibility is a real operational capability and the fact that it\'s trivial to build makes it easy to undervalue, right up until the week you don\'t have it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Automation removes social signals and you have to replace them deliberately. The old manual deploy broadcast itself as a side effect of being manual. Automating it silently deleted that broadcast, and nobody could articulate what was missing for a while. Any time you automate a human process, it\'s worth asking what implicit communication just disappeared with it.',
+      },
+      {
+        type: 'paragraph',
+        text: '`${{ }}` in `run:` is templating, not variable expansion. Internalising that one distinction prevents an entire vulnerability class, and the rule is mechanical enough to apply without thinking: event data goes through `env:`, never into script text.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Small workflows get no review. This is twelve lines that nobody read carefully, me included, because it\'s "just a curl." The Docker and ECS workflows got scrutiny proportional to how complicated they looked. The injection bug is sitting in the file everyone assumed wasn\'t worth reviewing, and that\'s not a coincidence. Review effort should track what a workflow can touch, not how complex it appears.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And look at what you shipped. Padded strings, stray asterisks, a mention that mentions nobody, all visible on the very first render.',
+      },
+      {
+        type: 'heading',
+        text: 'Production considerations',
+      },
+      {
+        type: 'paragraph',
+        text: 'Discord webhook URLs don\'t expire. If one leaks in a log, a screenshot, or a fork, anyone can post to that channel as anyone, indefinitely, until a human manually regenerates it. It belongs on the same rotation schedule as any other credential and it almost certainly isn\'t on one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Rate limits are worth knowing about. Discord limits webhooks to roughly 5 requests per 2 seconds, with per-channel limits behind that. A burst of pushes gets 429s, and this workflow doesn\'t check the response at all. `curl` without `-f` exits 0 on an HTTP error, so a dropped notification looks exactly like a successful one. For ambient signalling that\'s arguably acceptable, but it should be a choice rather than an assumption, and mine was an assumption.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Information disclosure is the one I\'d think hardest about before copying this pattern. Commit messages go to a chat channel. If that channel has broader membership than the repository, contractors, a community server, people who joined for something unrelated, you\'re publishing commit messages to that audience. Commit messages reference internal systems, customer names, and security fixes all the time.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There\'s no failure path anywhere. Nothing notifies when a deploy fails. That\'s the biggest functional gap here: the system is chattier about routine success than about failure, which is backwards for anything operational.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And it\'s coupled to one channel. The channel name is baked into a secret name and the message body hardcodes a server name, which is fine for one project and awkward the moment you reuse the template, which is supposedly the entire premise of the repository it lives in.',
+      },
+      {
+        type: 'heading',
+        text: 'Improvements',
+      },
+      {
+        type: 'paragraph',
+        text: 'Fix the injection with `env:` plus `jq`. Non-negotiable, and it\'s what makes everything below worth doing.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Then the structural change: notify on the deploy outcome instead of the push.',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        code:
+          'on:\n' +
+          '  workflow_run:\n' +
+          '    workflows: ["Deploy to AWS", "Deploy to EC2"]\n' +
+          '    types: [completed]',
+      },
+      {
+        type: 'paragraph',
+        text: 'Now the message can carry the actual result, and `${{ github.event.workflow_run.conclusion }}` lets you colour it green or red. That\'s what turns this from "someone pushed" into "production changed, and here\'s how it went."',
+      },
+      {
+        type: 'paragraph',
+        text: 'Always notify on failure, and consider throttling success. Failures are the high-value signal. A team receiving twenty green messages a day stops reading the channel, and then misses the red one, which is the worst possible outcome.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Use Discord embeds instead of plain content. Structured fields, a colour bar keyed to success or failure, a clickable link to the run and the commit. Scannable at a glance and it\'s not more code than the current string concatenation.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Add a link to the run: `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`. One line, and every notification becomes a starting point for triage instead of a dead end.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Fix the formatting. Strip the padding, balance the asterisks, use `<@USER_ID>` if the mention is meant to actually ping someone.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Check the response with `curl -fsS` so an HTTP error fails the step, plus `continue-on-error: true` on the job so a notification failure is visible without being mistaken for a deployment failure.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Truncate long commit messages, since Discord\'s `content` field caps at 2000 characters and a long message body silently fails the request.',
+      },
+      {
+        type: 'paragraph',
+        text: 'And parameterise it for reuse. As a `workflow_call` workflow taking `status`, `environment`, and a `secrets.WEBHOOK_URL`, one notification implementation serves every repository, which is what this template library was supposed to deliver in the first place.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s the series. Seven workflows: a compile gate in the wrong place, a release automation that\'s nearly perfect, two container pipelines that don\'t agree with each other, a VM deploy with a shell trap in it, a snapshot job with an unstated threat model, and twelve lines of chat notification that turned out to be carrying the most important lesson of the lot.',
+      },
+    ],
+  },
   {
     id: 7,
     slug: 'gen-import-typescript-barrel-generator-deep-dive',
