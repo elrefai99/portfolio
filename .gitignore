@@ -37,3 +37,4 @@ vite.config.ts.timestamp-1772191965944-4f0e504ee23c9.mjs
 !.env.example
 .output
 .nuxt
+docs
