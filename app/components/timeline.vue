@@ -5,24 +5,17 @@ const modernAcademyLogo = "/projects/modern-academy.png";
 const timeline = [
   {
     company: "Lesoll",
-    role: "Software Engineer II",
+    role: "Software Engineer",
     period: "2023 - 2026",
     logo: lesollLogo,
     logoWidth: 96,
     logoHeight: 96,
-    desc: [
-      "Leading backend development and architecture decisions for Lesoll and EgyStay, including system design, technology choices, and production operations.",
-      "Built and maintained payment integrations with Paymob and Amazon Payment Services, handling around 10K transactions per month with webhook validation, idempotency, and reconciliation processes.",
-      "Designed and implemented asynchronous workflows using BullMQ and Redis for notifications, emails, SMS, OTPs, and other background jobs.",
-      "Worked on several core business modules including booking, cancellation policies, CoHost management, reporting, employee tools, and internal traffic intelligence systems built with Puppeteer.",
-      "Deployed and managed applications on AWS using Docker, EC2, and EKS, while maintaining CI/CD pipelines with GitHub Actions and automated deployments.",
-      "Collaborated closely with product and engineering teams to deliver new features, define technical solutions, and ensure platform reliability.",
-    ],
+    desc: "Backend engineering across Lesoll and EgyStay.",
     link: "https://lesoll.com",
     color: "bg-[var(--bp-blue)]",
   },
   {
-    company: "Modern Academy (CS)",
+    company: "Modern Academy in Maadi (CS)",
     role: "B.S. Computer Science",
     period: "2018 - 2022",
     logo: modernAcademyLogo,
@@ -33,7 +26,7 @@ const timeline = [
   },
   {
     company: ".md",
-    role: "Founder",
+    role: "Backend Developer",
     period: "2019 - Present",
     desc: "Freelance software projects built together with a friend from the academy.",
     color: "bg-[var(--bp-muted)]",

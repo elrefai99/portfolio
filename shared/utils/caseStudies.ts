@@ -39,6 +39,7 @@ export interface CaseStudy {
   link?: string
   github?: string
   overview: string[]
+  responsibilities?: string[]
   challenges: CaseNote[]
   built: CaseBuiltItem[]
   incidents: CaseIncident[]
@@ -58,6 +59,7 @@ export interface CaseStudy {
 export const caseStudyWordCount = (cs: CaseStudy) => {
   const texts: string[] = [
     ...cs.overview,
+    ...(cs.responsibilities ?? []),
     ...cs.challenges.flatMap((n) => [n.title, n.body]),
     ...cs.built.flatMap((b) => [b.title, b.problem ?? '', b.approach ?? '', b.implementation ?? '', b.outcome ?? '']),
     ...cs.incidents.flatMap((i) => [i.title, i.problem, i.rootCause, i.solution, i.result]),
@@ -98,6 +100,14 @@ export const caseStudies: CaseStudy[] = [
       'Lesoll is a large-scale classifieds marketplace for the Egyptian real-estate market. Users buy, sell, and rent residential, commercial, land, and compound properties; the platform also carries premium listing packages, real-time messaging, a blog, and a complete internal administration system.',
       'The business goal is straightforward: connect property owners and seekers directly, and monetize through premium listing packages — which makes the listing lifecycle, search, and payments the load-bearing parts of the backend.',
       'As the Backend Engineer I owned the backend implementation end to end: REST APIs, business logic, database architecture, third-party integrations, and performance work — across the listing lifecycle, authentication, payments, notifications, search, analytics, and internal admin services, on a production platform with real users, where mistakes are visible.',
+    ],
+    responsibilities: [
+      'Leading backend development and architecture decisions for Lesoll and EgyStay, including system design, technology choices, and production operations.',
+      'Built and maintained payment integrations with Paymob and Amazon Payment Services, handling around 10K transactions per month with webhook validation, idempotency, and reconciliation processes.',
+      'Designed and implemented asynchronous workflows using BullMQ and Redis for notifications, emails, SMS, OTPs, and other background jobs.',
+      'Worked on several core business modules including booking, cancellation policies, CoHost management, reporting, employee tools, and internal traffic intelligence systems built with Puppeteer.',
+      'Deployed and managed applications on AWS using Docker, EC2, and EKS, while maintaining CI/CD pipelines with GitHub Actions and automated deployments.',
+      'Collaborated closely with product and engineering teams to deliver new features, define technical solutions, and ensure platform reliability.',
     ],
     challenges: [
       {

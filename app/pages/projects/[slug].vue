@@ -28,6 +28,7 @@ const sections = computed(() => {
   if (!c) return []
   return [
     { id: 'overview', label: 'Overview', has: c.overview.length > 0 },
+    { id: 'responsibilities', label: 'Responsibilities', has: (c.responsibilities?.length ?? 0) > 0 },
     { id: 'challenges', label: 'Challenges', has: c.challenges.length > 0 },
     { id: 'built', label: 'What I Built', has: c.built.length > 0 },
     { id: 'production', label: 'Production Problems', has: c.incidents.length > 0 },
@@ -236,6 +237,22 @@ onUnmounted(() => observer?.disconnect())
             <div class="case-prose mt-8 space-y-5">
               <p v-for="(paragraph, i) in cs.overview" :key="i">{{ paragraph }}</p>
             </div>
+          </section>
+
+          <!-- Responsibilities -->
+          <section
+            v-if="cs.responsibilities?.length"
+            id="responsibilities"
+            data-case-section
+            class="case-section case-rule"
+          >
+            <p class="case-label">{{ sectionNumber("responsibilities") }}</p>
+            <h2 class="case-h2">Responsibilities</h2>
+            <ul class="case-prose mt-8 list-disc space-y-4 pl-5">
+              <li v-for="(responsibility, i) in cs.responsibilities ?? []" :key="i">
+                {{ responsibility }}
+              </li>
+            </ul>
           </section>
 
           <!-- Challenges -->
