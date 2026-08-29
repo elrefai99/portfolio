@@ -1,6 +1,7 @@
 export const tagIconMap: Record<string, string> = {
      'node': 'logos:nodejs-icon-alt',
      'typescript': 'logos:typescript-icon',
+     'go': 'logos:go',
      'javascript': 'logos:javascript',
      'express': 'skill-icons:expressjs-dark',
      'mongodb': 'logos:mongodb-icon',
