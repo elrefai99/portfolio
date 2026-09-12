@@ -1,6 +1,6 @@
 const lesoll = '/projects/lesoll-logo.png'
 const egystay = '/projects/egy-stay-logo.png'
-const keepits = '/projects/keepits.png'
+const Qars = '/projects/Qar.png'
 const Gosha0 = '/projects/0Gosha.png'
 const GenImport = '/projects/Gen-Import.jpg'
 const srvj = '/projects/srvj.png'
@@ -351,14 +351,14 @@ export const projects: IProject[] = [
   },
   {
     id: 6,
-    name: "KeepITs",
-    slug: "keepits",
+    name: "Qar",
+    slug: "Qar",
     category: "Live",
-    logo: keepits,
+    logo: Qars,
     logoWidth: 96,
     logoHeight: 82,
     class: "w-5 h-5",
-    link: "https://keepit.elrefai.me/",
+    link: "https://Qar.elrefai.me/",
     github: "",
     tagline: "Lightweight schedule & task management web app",
     desc: "A lightweight schedule management web app built for organizing daily tasks and dates in a simple, clean interface. The application is deployed on Vercel, providing fast loading, automatic deployments, and reliable hosting for modern web projects.",
@@ -376,8 +376,8 @@ export const projects: IProject[] = [
       "GitHub"
     ],
     keywords: [
-      "KeepITs",
-      "KeepITs Task Manager",
+      "Qars",
+      "Qars Task Manager",
       "Task Management App",
       "Task Management System",
       "Schedule Management",
@@ -405,7 +405,7 @@ export const projects: IProject[] = [
       "Cloud Deployment"
     ],
     metaDescription:
-      "Technical case study of KeepITs, a lightweight task and schedule management application built with Vue.js, TypeScript, Firebase, and Vercel. Explore its architecture, implementation, and deployment decisions."
+      "Technical case study of Qars, a lightweight task and schedule management application built with Vue.js, TypeScript, Firebase, and Vercel. Explore its architecture, implementation, and deployment decisions."
   },
   {
     id: 5,
@@ -469,6 +469,34 @@ export const projects: IProject[] = [
   },
   {
     id: 7,
+    name: "Leoxy",
+    slug: "leoxy",
+    category: "Backend",
+    github: "https://github.com/elrefai99/Leoxy",
+    tagline: "Leoxy is a lightweight HTTP reverse proxy built in Go. It routes incoming requests to configurable upstream servers based on path prefixes, with built-in health-check endpoints and request logging.",
+    desc: [
+      "Reverse proxy – forwards requests to multiple backend services using httputil.ReverseProxy.",
+      "Path-based routing – each upstream is mapped to a configurable path prefix; the prefix is stripped before forwarding.",
+      "Health checks – exposes liveness and ping endpoints for monitoring.",
+      "Request logging – logs method, path, remote address, and latency for every request.",
+      "CLI – start, stop, and run the service as a background process with cobra-based subcommands.",
+      "YAML configuration – upstreams and server settings are defined in leoxy/config.yaml via viper.",
+      "Timeouts – explicit read/write/idle timeouts and max header size for safety."
+    ],
+    tags: [
+      "Go",
+      "git/github"
+    ],
+    keywords: [
+      "Leoxy",
+      "Open Source",
+      "GitHub"
+    ],
+    metaDescription:
+      "Leoxy is an open-source project by Mohammed Mostafa. Explore its implementation, documentation, and development history on GitHub."
+  },
+  {
+    id: 8,
     name: "Elrecord",
     slug: "elrecord",
     category: "Backend",

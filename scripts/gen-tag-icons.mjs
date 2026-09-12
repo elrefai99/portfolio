@@ -4,7 +4,7 @@ const require = createRequire(import.meta.url)
 
 const ids = [
   'logos:aws', 'logos:axios', 'logos:docker-icon', 'logos:firebase',
-  'logos:github-actions', 'logos:github-icon', 'logos:javascript',
+  'logos:github-actions', 'logos:github-icon', 'logos:go', 'logos:javascript',
   'logos:kubernetes', 'logos:mongodb-icon', 'logos:nginx', 'logos:nodejs-icon-alt',
   'logos:pinia', 'logos:pnpm', 'logos:postgresql', 'logos:prisma',
   'logos:puppeteer', 'logos:redis', 'logos:socket-io', 'logos:swagger',

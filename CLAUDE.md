@@ -58,7 +58,7 @@ Content is plain TypeScript data modules under **`shared/utils/`** (importable f
 
 **`server/routes/sitemap.xml.ts`** generates `sitemap.xml` and **`server/routes/rss.xml.ts`** generates `rss.xml` (RSS 2.0, full `content:encoded`, newest first). Both are prerendered into `.output/public` (and served live in `nuxt dev`). `<lastmod>` per route is derived from **git commit dates** (`git log -1 --format=%cs`) of the source files mapped in `routeSources`/`globalSources` in the sitemap route, falling back to the hand-set `lastmod` in `sitemapEntries` when git is unavailable (uncommitted files, Docker builds that exclude `.git`). When adding a route: add it to `sitemapEntries`, and optionally to `routeSources`. The RSS discovery `<link>` lives in `nuxt.config.ts` `app.head`.
 
-> **Same-host only**: sitemap entries must be `elrefai.me` paths. Subdomain URLs (`srvj.elrefai.me`, `keepit.elrefai.me`) are forbidden — the sitemap protocol bans cross-host URLs and Google ignores them.
+> **Same-host only**: sitemap entries must be `elrefai.me` paths. Subdomain URLs (`srvj.elrefai.me`, `Qar.elrefai.me`) are forbidden — the sitemap protocol bans cross-host URLs and Google ignores them.
 
 ## Styling
 
