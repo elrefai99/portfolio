@@ -305,6 +305,35 @@ export const projects: IProject[] = [
   },
   {
     id: 4,
+    name: "Leoxy",
+    slug: "leoxy",
+    category: "Backend",
+    github: "https://github.com/elrefai99/Leoxy",
+    tagline: "Leoxy is a lightweight HTTP reverse proxy built in Go. It routes incoming requests to configurable upstream servers based on path prefixes, with built-in health-check endpoints and request logging.",
+    desc: [
+      "Reverse proxy – forwards requests to multiple backend services using httputil.ReverseProxy.",
+      "Path-based routing – each upstream is mapped to a configurable path prefix; the prefix is stripped before forwarding.",
+      "Health checks – exposes liveness and ping endpoints for monitoring.",
+      "Request logging – logs method, path, remote address, and latency for every request.",
+      "CLI – start, stop, and run the service as a background process with cobra-based subcommands.",
+      "YAML configuration – upstreams and server settings are defined in leoxy/config.yaml via viper.",
+      "Timeouts – explicit read/write/idle timeouts and max header size for safety."
+    ],
+    tags: [
+      "Go",
+      "Docker",
+      "git/github"
+    ],
+    keywords: [
+      "Leoxy",
+      "Open Source",
+      "GitHub"
+    ],
+    metaDescription:
+      "Leoxy is an open-source project by Mohammed Mostafa. Explore its implementation, documentation, and development history on GitHub."
+  },
+  {
+    id: 5,
     name: "Gen Import",
     slug: "gen-import",
     category: "Package",
@@ -408,7 +437,7 @@ export const projects: IProject[] = [
       "Technical case study of Qars, a lightweight task and schedule management application built with Vue.js, TypeScript, Firebase, and Vercel. Explore its architecture, implementation, and deployment decisions."
   },
   {
-    id: 5,
+    id: 7,
     name: "data-localizer",
     slug: "data-localizer",
     category: "Backend",
@@ -466,82 +495,5 @@ export const projects: IProject[] = [
     ],
     metaDescription:
       "Technical case study of 0Gosha, a self-contained rule-based prompt-optimization engine that rewrites raw text into structured LLM prompts and learns from feedback — built with TypeScript, Express.js, MongoDB, Redis, and BullMQ, with no external AI API calls."
-  },
-  {
-    id: 7,
-    name: "Leoxy",
-    slug: "leoxy",
-    category: "Backend",
-    github: "https://github.com/elrefai99/Leoxy",
-    tagline: "Leoxy is a lightweight HTTP reverse proxy built in Go. It routes incoming requests to configurable upstream servers based on path prefixes, with built-in health-check endpoints and request logging.",
-    desc: [
-      "Reverse proxy – forwards requests to multiple backend services using httputil.ReverseProxy.",
-      "Path-based routing – each upstream is mapped to a configurable path prefix; the prefix is stripped before forwarding.",
-      "Health checks – exposes liveness and ping endpoints for monitoring.",
-      "Request logging – logs method, path, remote address, and latency for every request.",
-      "CLI – start, stop, and run the service as a background process with cobra-based subcommands.",
-      "YAML configuration – upstreams and server settings are defined in leoxy/config.yaml via viper.",
-      "Timeouts – explicit read/write/idle timeouts and max header size for safety."
-    ],
-    tags: [
-      "Go",
-      "git/github"
-    ],
-    keywords: [
-      "Leoxy",
-      "Open Source",
-      "GitHub"
-    ],
-    metaDescription:
-      "Leoxy is an open-source project by Mohammed Mostafa. Explore its implementation, documentation, and development history on GitHub."
-  },
-  {
-    id: 8,
-    name: "Elrecord",
-    slug: "elrecord",
-    category: "Backend",
-    github: "https://github.com/elrefai99/elrecord",
-    tagline: "Scalable real-time chat backend inspired by Discord",
-    desc: "Elrecord is a powerful, scalable backend for a real-time chat application inspired by Discord. It supports direct messaging, group chats, and server-based communities with voice/video call capabilities.",
-    tags: [
-      "TypeScript",
-      "Express.js",
-      "PostgreSQL",
-      "Prisma",
-      "Amazon Payment Service (APS)",
-      "Message Queue (BullMQ)",
-      "Swagger",
-      "Redis",
-      "Socket.IO",
-      "Docker",
-      "AWS S3",
-      "NGINX",
-      "pm2",
-      "pnpm",
-      "git/github",
-    ],
-    keywords: [
-      "Elrecord",
-      "Discord Clone Backend",
-      "Real-time Chat Backend",
-      "Chat Application Backend",
-      "Direct Messaging",
-      "Group Chat",
-      "Voice and Video Calls",
-      "WebSocket Chat",
-      "TypeScript",
-      "Node.js",
-      "Express.js",
-      "PostgreSQL",
-      "Prisma",
-      "Redis",
-      "Socket.IO",
-      "BullMQ",
-      "Docker",
-      "Scalable Backend",
-      "Real-time Backend"
-    ],
-    metaDescription:
-      "Technical case study of Elrecord, a scalable real-time chat backend inspired by Discord with direct messaging, group chats, communities, and voice/video calls — built with TypeScript, Express.js, PostgreSQL/Prisma, Redis, and Socket.IO."
   },
 ]

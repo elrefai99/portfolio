@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { projects } from "~~/shared/utils/projects";
 
 const selectedProjects = computed(() =>
-  projects.filter((p: any) => p.category === "Live" || p.slug === "gen-import").slice(0, 4)
+  projects.filter((p: any) => p.category === "Live" || p.slug === "leoxy").slice(0, 4)
 );
 
 const getDesc = (desc: string | string[]) => (Array.isArray(desc) ? desc[0] : desc);

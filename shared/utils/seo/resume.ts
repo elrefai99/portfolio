@@ -10,27 +10,27 @@ import {
 } from './shared'
 
 export const resumeSEO = createSeo({
-  title: 'Mohammed Mostafa • Resume',
+  title: 'Mohamed Mostafa • Resume',
   description:
-    'Software Engineer II at Lesoll. Node.js, TypeScript, scalable APIs, payment integrations, MongoDB, PostgreSQL, Redis, BullMQ, Docker, Kubernetes, and AWS.',
+    'Software Engineer at Lesoll with 4+ years of experience building production APIs, real-time systems, payment integrations, and cloud infrastructure.',
   path: sitePaths.resume,
   keywords: [
     ...brandKeywords,
-    'Mohammed Mostafa resume',
-    'Mohammed Mostafa CV',
+    'Mohamed Mostafa resume',
+    'Mohamed Mostafa CV',
     'Software Engineer resume',
     'Backend Engineer CV',
     ...skillKeywords,
   ],
   image: `${siteUrl}/og/page-resume.png`,
-  imageAlt: 'Mohammed Mostafa • Resume',
+  imageAlt: 'Mohamed Mostafa • Resume',
   schema: [
     personSchema,
     {
       '@context': 'https://schema.org',
       '@type': 'AboutPage',
       '@id': `${new URL(sitePaths.resume, siteUrl).toString()}#webpage`,
-      name: 'Mohammed Mostafa Resume',
+      name: 'Mohamed Mostafa Resume',
       url: new URL(sitePaths.resume, siteUrl).toString(),
       isPartOf: { '@id': websiteId },
       about: { '@id': personId },

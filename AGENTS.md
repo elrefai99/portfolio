@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is a Vue 3 + Vite + TypeScript portfolio site. Application code lives in `src/`: route views in `src/views`, reusable UI in `src/components`, shared logic in `src/composables`, and static data/helpers in `src/utils`. Routing is defined in `src/router/index.ts`; localized copy lives in `src/locales/lang/{en,ar}.json`. Public assets such as images, icons, and `resume.pdf` live in `public/`. Build output goes to `dist/` and should not be edited manually.
+This repository is a Vue 3 + Vite + TypeScript portfolio site. Application code lives in `src/`: route views in `src/views`, reusable UI in `src/components`, shared logic in `src/composables`, and static data/helpers in `src/utils`. Routing is defined in `src/router/index.ts`; localized copy lives in `src/locales/lang/{en,ar}.json`. Public assets such as images, icons, and `Mohamed_Mostafa_Software_Engineer.pdf` live in `public/`. Build output goes to `dist/` and should not be edited manually.
 
 ## Build, Test, and Development Commands
 Use the package scripts already defined in `package.json`:

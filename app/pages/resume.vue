@@ -26,7 +26,7 @@ useHead(resumeSEO);
         <!-- Real <a href> (not a JS-triggered download) so the PDF is crawlable -->
         <div flex justify-end mb-6>
           <a
-            href="/resume.pdf"
+            href="/Mohamed_Mostafa_Software_Engineer.pdf"
             download
             class="inline-flex items-center min-h-11 gap-2 px-4 py-2 rounded-lg bg-[var(--bp-blue)] text-[var(--bp-canvas)] font-semibold text-sm hover:opacity-80 transition-all duration-200 shadow-lg hover:scale-105"
           >
@@ -43,7 +43,7 @@ useHead(resumeSEO);
             <!-- Header -->
             <div text-center mb-8>
               <h1 class="text-4xl font-bold text-[var(--bp-blue)] mb-1">
-                Mohammed Mostafa
+                Mohamed Mostafa
               </h1>
 
               <p class="text-base font-semibold text-[var(--bp-blue-dim)] mb-3">
@@ -110,12 +110,14 @@ useHead(resumeSEO);
               </h2>
               <hr class="border-[var(--bp-line-soft)] mb-3" />
               <p class="text-sm text-[var(--bp-blue-dim)] leading-relaxed">
-                Backend Engineer with 3+ years of experience building and maintaining
-                production backend systems using Node.js and TypeScript. Experienced in
-                designing scalable APIs, real-time services, background processing, cloud
-                infrastructure, and payment integrations. Built and operated the backend
-                for live marketplace platforms, focusing on performance, reliability,
-                maintainability, and clean system design.
+                Software Engineer with 4+ years of experience designing, building, and
+                operating production systems end-to-end: API and data architecture,
+                real-time infrastructure, payment processing, and cloud deployment. Sole
+                engineer for two live marketplace platforms handling 30k–120k requests per
+                day, with full ownership of architecture, tooling decisions, and production
+                incident resolution. Builds across the stack in independent work, including
+                Go network services, CRDT-based real-time collaboration, and open-source
+                developer tooling.
               </p>
             </section>
 
@@ -132,7 +134,7 @@ useHead(resumeSEO);
                 <div flex items-baseline justify-between flex-wrap gap-2 mb-2>
                   <div class="flex items-baseline gap-1.5 flex-wrap">
                     <h3 class="text-sm font-bold text-[var(--bp-blue)]">
-                      Software Engineer II
+                      Software Engineer
                     </h3>
                     <span class="text-sm text-[var(--bp-muted)]">|</span>
                     <a
@@ -148,40 +150,45 @@ useHead(resumeSEO);
                   >
                 </div>
                 <p class="text-sm text-[var(--bp-blue-dim)] leading-relaxed mb-2">
-                  Worked as the sole Backend Engineer responsible for developing and
-                  maintaining the backend systems for Lesoll and EgyStay, managing
-                  production infrastructure, cloud services, and third-party integrations.
+                  Sole backend engineer for two live production platforms: Lesoll
+                  Marketplace and EgyStay hospitality/property management. Owned backend
+                  architecture, infrastructure, and tooling decisions.
                 </p>
                 <ul
                   class="list-disc pl-5 space-y-1.5 text-sm text-[var(--bp-blue-dim)] leading-relaxed"
                 >
                   <li>
-                    Developed and maintained scalable REST APIs using Node.js, Express.js,
-                    TypeScript, and MongoDB.
+                    Designed and rebuilt backend architecture from the ground up using
+                    Node.js, Express.js, TypeScript, and MongoDB, including REST APIs,
+                    authentication, authorization, and database design.
                   </li>
                   <li>
-                    Built backend services for authentication, property management,
-                    bookings, payments, reporting, and admin operations.
+                    Owned backend architecture for platforms serving 30k–120k requests per
+                    day; cut key endpoint latency from 680ms/1.2s to 234ms/138ms and reduced
+                    database load by 40% through Redis caching, query optimization, and
+                    BullMQ background processing.
                   </li>
                   <li>
-                    Implemented Redis caching and BullMQ background jobs to improve
-                    performance and reduce database load.
+                    Independently diagnosed and resolved critical production incidents,
+                    including a runaway N+1 query that took the database offline and an
+                    image-handling defect affecting live listings.
                   </li>
                   <li>
-                    Developed real-time features using Socket.IO, including chat,
-                    notifications, and online user tracking.
+                    Built real-time features with Socket.IO, including chat, notifications,
+                    and live user presence across both platforms.
                   </li>
                   <li>
-                    Integrated Paymob and Amazon Payment Services, implementing secure
-                    payment workflows and webhook processing.
+                    Integrated Paymob and Amazon Payment Services with secure webhook
+                    processing, HMAC verification, and idempotency ledgers.
                   </li>
                   <li>
                     Managed production infrastructure using AWS (EC2, S3, CloudFront,
                     Route 53), Docker, Nginx, PM2, and GitHub Actions.
                   </li>
                   <li>
-                    Improved backend SEO by optimizing API performance and generating
-                    dynamic XML sitemaps for active listings.
+                    Owned AWS infrastructure (EC2, S3, CloudFront, Route 53), Docker,
+                    Nginx, PM2, and GitHub Actions CI/CD; built automated MongoDB backups
+                    and dynamic XML sitemaps for active listings.
                   </li>
                 </ul>
               </div>
@@ -235,9 +242,9 @@ useHead(resumeSEO);
                     high-frequency diagram mutations.
                   </li>
                   <li>
-                    Implemented horizontally scalable notifications using SSE with Redis
-                    Pub/Sub fan-out, alongside BullMQ workers for asynchronous email and
-                    notification processing.
+                    Built horizontally scalable notifications using BullMQ workers, Redis
+                    Pub/Sub, and SSE fan-out, plus transactional email templates with
+                    cross-client (MSO/Outlook) compatibility.
                   </li>
                   <li>
                     Improved platform reliability and security through Zod validation,
@@ -246,6 +253,19 @@ useHead(resumeSEO);
                     behavior with integration tests and containerized the platform using
                     Docker Compose behind Nginx.
                   </li>
+                </ul>
+              </div>
+
+              <!-- Leoxy -->
+              <div mt-6>
+                <div class="flex items-baseline gap-1.5 flex-wrap mb-2">
+                  <h3 class="text-sm font-bold text-[var(--bp-blue)]">Leoxy</h3>
+                  <a href="https://github.com/elrefai99" target="_blank" rel="noopener noreferrer" class="inline-flex items-center min-h-11 text-xs font-semibold text-[var(--bp-blue-dim)] underline hover:text-[var(--bp-blue)] transition-colors">GitHub</a>
+                </div>
+                <ul class="list-disc pl-5 space-y-1.5 text-sm text-[var(--bp-blue-dim)] leading-relaxed">
+                  <li>Built a production-grade HTTP reverse proxy in Go with path-prefix routing across configurable upstream servers and a Cobra-based CLI for managed background processes.</li>
+                  <li>Implemented per-IP and global rate limiting, Redis-backed multi-instance support, API-key and JWT (HS256) authentication, and optional mTLS.</li>
+                  <li>Added health and liveness endpoints, structured request logging, and explicit read, write, and idle timeouts for production safety.</li>
                 </ul>
               </div>
 
@@ -335,17 +355,17 @@ useHead(resumeSEO);
               <div class="space-y-1.5 text-sm text-[var(--bp-blue-dim)]">
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]">Languages:</span>
-                  JavaScript, Python, Go Lang, C++
+                  JavaScript, TypeScript, Go, Python, C++
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]">Backend:</span>
-                  Node.js, Express.js, TypeScript, RESTful APIs, WebSockets, SSE
+                  Gin (Go), Node.js, Express.js, TypeScript, REST API design, WebSockets (Socket.IO), SSE
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]"
                     >Databases &amp; Caching:</span
                   >
-                  MongoDB, PostgreSQL, Prisma, Redis
+                  MongoDB, PostgreSQL, Prisma, Mongoose, Redis
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]"
@@ -361,8 +381,16 @@ useHead(resumeSEO);
                   <span class="font-bold text-[var(--bp-blue)]"
                     >Cloud &amp; DevOps:</span
                   >
-                  AWS (EC2, EKS, S3, ECR, Lambda), Docker &amp; Docker Compose,
-                  GitHub Actions CI/CD
+                  AWS (EC2, EKS, S3, ECR, Lambda, CloudFront, Route 53), Docker &amp; Docker
+                  Compose, GitHub Actions CI/CD, Nginx, PM2
+                </p>
+                <p>
+                  <span class="font-bold text-[var(--bp-blue)]">Real-Time &amp; Distributed:</span>
+                  CRDTs (Yjs), Redis Pub/Sub fan-out, event-driven architecture, idempotency patterns
+                </p>
+                <p>
+                  <span class="font-bold text-[var(--bp-blue)]">Observability:</span>
+                  Prometheus, Pino structured logging
                 </p>
                 <p>
                   <span class="font-bold text-[var(--bp-blue)]">Frontend:</span>
@@ -376,7 +404,7 @@ useHead(resumeSEO);
         <!-- Bottom Download Button -->
         <div flex justify-center mt-8 mb-4>
           <a
-            href="/resume.pdf"
+            href="/Mohamed_Mostafa_Software_Engineer.pdf"
             download
             class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--bp-blue)] text-[var(--bp-canvas)] font-semibold hover:opacity-80 transition-all duration-200 shadow-lg hover:scale-105"
           >
