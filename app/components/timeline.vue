@@ -1,12 +1,24 @@
 <script setup lang="ts">
 const lesollLogo = "/projects/lesoll-logo.png";
 const modernAcademyLogo = "/projects/modern-academy.png";
+const swakipLogo = "/projects/swakip.png"
 
 const timeline = [
-  {
+{
+    company: "Swakip",
+    role: "Technical Assessment Project • Remote",
+    period: "Jul 2026 - Sep 2026",
+    logo: swakipLogo,
+    logoWidth: 96,
+    logoHeight: 96,
+    desc:"Analyzed an existing SaaS backend and identified architectural, scalability and code quality bottlenecks",
+    link: "https://lesoll.com",
+    color: "bg-[var(--bp-blue)]",
+  },
+{
     company: "Lesoll",
-    role: "Software Engineer",
-    period: "2023 - 2026",
+    role: "Software Engineer • Full time",
+    period: "Jun 2023 - Jul 2026",  
     logo: lesollLogo,
     logoWidth: 96,
     logoHeight: 96,
@@ -26,7 +38,7 @@ const timeline = [
   },
   {
     company: ".md",
-    role: "Backend Developer",
+    role: "Backend Developer • Full Time",
     period: "2019 - Present",
     desc: "Freelance software projects built together with a friend from the academy.",
     color: "bg-[var(--bp-muted)]",
