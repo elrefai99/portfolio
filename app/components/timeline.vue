@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const lesollLogo = "/projects/lesoll-logo.png";
 const modernAcademyLogo = "/projects/modern-academy.png";
-const swakipLogo = "/projects/swakip.png"
+const swakipLogo = "/projects/swa-kip.png"
 
 const timeline = [
 {
@@ -12,7 +12,7 @@ const timeline = [
     logoWidth: 96,
     logoHeight: 96,
     desc:"Analyzed an existing SaaS backend and identified architectural, scalability and code quality bottlenecks",
-    link: "https://lesoll.com",
+    link: "",
     color: "bg-[var(--bp-blue)]",
   },
 {
